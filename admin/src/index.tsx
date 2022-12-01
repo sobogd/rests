@@ -6,7 +6,7 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./styles/theme";
 import { Layout } from "./features/layout";
 
-export const backUrl = "http://18.156.79.96:4000";
+export const backUrl = "http://18.192.128.184:4000";
 
 ReactDOM.render(
   <React.StrictMode>
