@@ -41,6 +41,7 @@ const models: TsoaRoute.Models = {
             "id": {"dataType":"double"},
             "element": {"dataType":"string","required":true},
             "price": {"dataType":"string","required":true},
+            "priceForCount": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },

@@ -17,7 +17,7 @@ export const CategoriesList: React.FC = () => {
   return (
     <>
       <Header
-        title="Category items"
+        title="Список категорий"
         onClickAdd={() => dispatch(categoriesSlice.actions.toggleIsOpenForm())}
       />
       <List disablePadding>

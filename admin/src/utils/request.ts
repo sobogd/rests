@@ -1,9 +1,9 @@
-const baseUrl = "http://localhost:4000";
+import { backUrl } from "..";
 
 export const request = async (rejectWithValue: any, url: string, method: string, data?: object) => {
   const token = sessionStorage.getItem("token");
 
-  const response = await fetch(baseUrl + url, {
+  const response = await fetch(backUrl + url, {
     method,
     headers: {
       "Content-Type": "application/json",

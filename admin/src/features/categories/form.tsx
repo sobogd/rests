@@ -71,7 +71,7 @@ export const CategoriesForm: React.FC = () => {
   return (
     <>
       <Header
-        title={id.value ? "Edit category" : "New category"}
+        title={id.value ? "Изменение категории" : "Новая категория"}
         onClickBack={() => dispatch(categoriesSlice.actions.toggleIsOpenForm())}
       />
       <YouSure
@@ -87,7 +87,7 @@ export const CategoriesForm: React.FC = () => {
         ) : null}
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
-          label={"Category title"}
+          label={"Наименование"}
           variant="outlined"
           helperText={name.error}
           error={!!name.error}
@@ -98,7 +98,7 @@ export const CategoriesForm: React.FC = () => {
         />
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
-          label={"Description"}
+          label={"Описание"}
           multiline
           maxRows={4}
           minRows={2}
@@ -111,7 +111,7 @@ export const CategoriesForm: React.FC = () => {
           onChange={handleChangeValue}
         />
         <Button variant="contained" onClick={handleSubmitForm}>
-          {id.value ? "Save" : "Add"}
+          {id.value ? "Сохранить" : "Добавить"}
         </Button>
         {!!id.value && (
           <Button
@@ -120,7 +120,7 @@ export const CategoriesForm: React.FC = () => {
             variant="outlined"
             onClick={() => dispatch(categoriesSlice.actions.toggleIsOpenYouSure())}
           >
-            Delete
+            Удалить
           </Button>
         )}
       </MyForm>

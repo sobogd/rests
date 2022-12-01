@@ -16,7 +16,10 @@ export const ElementsList: React.FC = () => {
 
   return (
     <>
-      <Header title="Elements items" onClickAdd={() => dispatch(elementsSlice.actions.toggleIsOpenForm())} />
+      <Header
+        title="Список элементов для состава"
+        onClickAdd={() => dispatch(elementsSlice.actions.toggleIsOpenForm())}
+      />
       <List disablePadding>
         {!!items.length &&
           items.map((i) => (
@@ -33,7 +36,7 @@ export const ElementsList: React.FC = () => {
                 </IconButton>
               }
             >
-              <ListItemText primary={i.element} secondary={i.price + " TL"} />
+              <ListItemText primary={i.element} secondary={i.price + " лир"} />
             </ListItem>
           ))}
       </List>

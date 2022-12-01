@@ -1,11 +1,14 @@
 import PG from "pg";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default new PG.Pool({
-  host: "rest-s.c1f3tolasjej.us-east-1.rds.amazonaws.com",
-  user: "rests",
-  password: "11021996.aS",
-  database: "rests",
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  host: process.env.S3_HOST,
+  user: process.env.S3_USER,
+  password: process.env.S3_PASSWORD,
+  database: process.env.S3_DATABASE,
+  max: Number(process.env.S3_MAX),
+  idleTimeoutMillis: Number(process.env.S3_IDLE_TIMEOUT),
+  connectionTimeoutMillis: Number(process.env.S3_CONN_TIMEOUT),
 });

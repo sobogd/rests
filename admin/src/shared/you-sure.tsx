@@ -52,13 +52,13 @@ const YouSure: React.FC<{ onClickYes: () => void; onClickNo: () => void; isOpen:
 }) => (
   <YouSureContainer isOpen={isOpen}>
     <YouSureModal>
-      <YouSureText>Are you sure?</YouSureText>
+      <YouSureText>Вы уверены?</YouSureText>
       <YouSureButtons>
         <Button color="error" variant="contained" onClick={onClickYes}>
-          Yes
+          Да
         </Button>
         <Button variant="outlined" onClick={onClickNo}>
-          No
+          Нет
         </Button>
       </YouSureButtons>
     </YouSureModal>

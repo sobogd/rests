@@ -6,6 +6,7 @@ const props = [
   { name: "id", dbName: "id" },
   { name: "element", dbName: "element" },
   { name: "price", dbName: "price" },
+  { name: "priceForCount", dbName: "price_for_count" },
 ];
 
 const tableName = "elements";
@@ -26,25 +27,25 @@ const findById = async (id: number) => {
   return queryBuilder.mapFromDb(foundedRows, props)[0];
 };
 
-const create = async ({ element, price }: IElement) => {
+const create = async (element: IElement) => {
   const client = await pool.connect();
 
   const createdRows = await queryBuilder.insertOne(
     client,
     tableName,
-    queryBuilder.mapToDb({ element, price }, props)
+    queryBuilder.mapToDb({ ...element, id: undefined }, props)
   );
   client.release();
 
   return queryBuilder.mapFromDb(createdRows, props)[0];
 };
 
-const updateById = async ({ element, price }: IElement, id: number) => {
+const updateById = async (element: IElement, id: number) => {
   const client = await pool.connect();
   const updatdRows = await queryBuilder.updateOneBySpec(
     client,
     tableName,
-    queryBuilder.mapToDb({ element, price }, props),
+    queryBuilder.mapToDb({ ...element, id: undefined }, props),
     { id }
   );
   client.release();

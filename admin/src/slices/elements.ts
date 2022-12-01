@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IElement, IElementState } from "../interfaces/elements";
+import { createSlice } from "@reduxjs/toolkit";
+import { IElementState } from "../interfaces/elements";
 import { elementsService } from "../services/elements";
 
 const defaultField = { value: "", error: "" };
 
 const initialState: IElementState = {
   items: [],
-  form: { id: defaultField, element: defaultField, price: defaultField },
+  form: { id: defaultField, element: defaultField, price: defaultField, priceForCount: defaultField },
   isLoading: false,
   isOpenForm: false,
   isOpenYouSure: false,
@@ -33,6 +33,7 @@ export const elementsSlice = createSlice({
         id: { value: payload.id, error: "" },
         element: { value: payload.element, error: "" },
         price: { value: payload.price, error: "" },
+        priceForCount: { value: payload.price, error: "" },
       };
       state.isOpenForm = true;
     },

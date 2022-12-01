@@ -37,11 +37,15 @@
 					},
 					"price": {
 						"type": "string"
+					},
+					"priceForCount": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"element",
-					"price"
+					"price",
+					"priceForCount"
 				],
 				"type": "object",
 				"additionalProperties": false

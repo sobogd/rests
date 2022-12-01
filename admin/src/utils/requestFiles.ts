@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:4000";
+import { backUrl } from "..";
 
 export const requestFiles = async (rejectWithValue: any, url: string, method: string, data: FileList) => {
   const token = sessionStorage.getItem("token");
@@ -11,7 +11,7 @@ export const requestFiles = async (rejectWithValue: any, url: string, method: st
 
   console.log({ formData, data });
 
-  const response = await fetch(baseUrl + url, {
+  const response = await fetch(backUrl + url, {
     method,
     headers: {
       Authorization: `Bearer ${token}`,

@@ -9,8 +9,7 @@ import { ITable } from "../../interfaces/tables";
 import { tablesService } from "../../services/tables";
 import { tablesSlice } from "../../slices/tables";
 import styled from "@emotion/styled";
-
-const backUrl = "http://localhost:4000";
+import { backUrl } from "../..";
 
 const TableSetBlock = styled.div<{ positionX: string; positionY: string }>`
   position: relative;

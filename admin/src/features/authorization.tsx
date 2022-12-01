@@ -29,13 +29,13 @@ const Authorization: React.FC = () => {
       <AuthorizationForm onSubmit={handleClickEnter}>
         <Loading isLoading={isLoading} />
         <Typography variant="h5" component="h5">
-          Authorization
+          Авторизация
         </Typography>
         {error ? <AlertStyled severity="error">{error}</AlertStyled> : null}
         <TextFieldStyled
           inputProps={{ form: { autocomplete: "off" } }}
           id="login"
-          label="Login"
+          label="Логин"
           variant="standard"
           name="login"
           error={!!form.login.error}
@@ -46,7 +46,7 @@ const Authorization: React.FC = () => {
         <TextFieldStyled
           id="password"
           name="password"
-          label="Password"
+          label="Пароль"
           variant="standard"
           type="password"
           error={!!form.password.error}
@@ -55,7 +55,7 @@ const Authorization: React.FC = () => {
           onChange={handleChangeValues}
         />
         <Button variant="contained" onClick={handleSubmitForm}>
-          Sign in
+          Вход
         </Button>
       </AuthorizationForm>
     </AuthorizationContainer>

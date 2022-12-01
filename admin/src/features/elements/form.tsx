@@ -12,7 +12,7 @@ import YouSure from "../../shared/you-sure";
 export const ElementsForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const { form, error, isOpenYouSure } = useAppSelector((s) => s.elements);
-  const { id, element, price } = form;
+  const { id, element, price, priceForCount } = form;
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(elementsSlice.actions.setFormValue({ name: e.target.name, value: e.target.value }));
@@ -26,12 +26,17 @@ export const ElementsForm: React.FC = () => {
         case "price":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validatePrice(form[key].value, 1, 1000) },
+            [key]: { value: form[key].value, error: validatePrice(form[key].value, 1, 1500) },
           };
         case "element":
           return {
             ...acc,
             [key]: { value: form[key].value, error: validateString(form[key].value, 2, 100) },
+          };
+        case "priceForCount":
+          return {
+            ...acc,
+            [key]: { value: form[key].value, error: validatePrice(form[key].value, 1, 500) },
           };
         default:
           return acc;
@@ -44,6 +49,7 @@ export const ElementsForm: React.FC = () => {
       id: validatedForm.id.value,
       element: validatedForm.element.value,
       price: validatedForm.price.value,
+      priceForCount: validatedForm.priceForCount.value,
     };
 
     if (isValid) {
@@ -64,6 +70,7 @@ export const ElementsForm: React.FC = () => {
         id: id.value,
         element: element.value,
         price: price.value,
+        priceForCount: priceForCount.value,
       })
     );
   };
@@ -71,7 +78,7 @@ export const ElementsForm: React.FC = () => {
   return (
     <>
       <Header
-        title={id.value ? "Edit element" : "New element"}
+        title={id.value ? "Редактировать элемент" : "Новый элемент"}
         onClickBack={() => dispatch(elementsSlice.actions.toggleIsOpenForm())}
       />
       <YouSure
@@ -87,9 +94,9 @@ export const ElementsForm: React.FC = () => {
         ) : null}
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
-          label={"Element title"}
+          label={"Наименование"}
           variant="outlined"
-          helperText={element.error}
+          helperText={element.error || `Например: "Яйца" или "Мука"`}
           error={!!element.error}
           required
           name="element"
@@ -98,7 +105,7 @@ export const ElementsForm: React.FC = () => {
         />
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
-          label={"Price"}
+          label={"Цена за упаковку"}
           variant="outlined"
           helperText={price.error}
           error={!!price.error}
@@ -106,11 +113,24 @@ export const ElementsForm: React.FC = () => {
           name="price"
           value={price.value}
           type="number"
-          InputProps={{ endAdornment: <InputAdornment position="end">TL</InputAdornment> }}
+          InputProps={{ endAdornment: <InputAdornment position="end">лир</InputAdornment> }}
+          onChange={handleChangeValue}
+        />
+        <TextField
+          inputProps={{ form: { autocomplete: "off" } }}
+          label={"Вес/количество в упаковке"}
+          variant="outlined"
+          helperText={priceForCount.error || `Например: "1000" грамм муки или "10" штук яиц`}
+          error={!!priceForCount.error}
+          required
+          name="priceForCount"
+          value={priceForCount.value}
+          type="number"
+          InputProps={{ endAdornment: <InputAdornment position="end">г/шт</InputAdornment> }}
           onChange={handleChangeValue}
         />
         <Button variant="contained" onClick={handleSubmitForm}>
-          {id.value ? "Save" : "Add"}
+          {id.value ? "Сохранить" : "Добавить"}
         </Button>
         {!!id.value && (
           <Button
@@ -119,7 +139,7 @@ export const ElementsForm: React.FC = () => {
             variant="outlined"
             onClick={() => dispatch(elementsSlice.actions.toggleIsOpenYouSure())}
           >
-            Delete
+            Удалить
           </Button>
         )}
       </MyForm>

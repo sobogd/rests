@@ -1,14 +1,12 @@
-import { Avatar, Button, Stack, Typography } from "@mui/material";
-import { Container } from "@mui/system";
+import { Avatar, Button, Stack } from "@mui/material";
 import React from "react";
+import { backUrl } from "..";
 import { tablesService } from "../services/tables";
 import Header from "../shared/header";
 import Loading from "../shared/loading";
 import { signOut } from "../slices/user";
 import { useAppDispatch, useAppSelector } from "../store";
 import { MyFormSubtitle } from "../styles/common";
-
-const backUrl = "http://localhost:4000";
 
 export const Account: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -32,13 +30,15 @@ export const Account: React.FC = () => {
 
   return (
     <>
-      <Header onClickBack={handleSignOut} title="General" />
+      <Header onClickBack={handleSignOut} title="Основное" />
       <Loading isLoading={isLoading} />
-      <MyFormSubtitle>Scheme of tables</MyFormSubtitle>
+      <MyFormSubtitle>Схема ресторана</MyFormSubtitle>
       <Stack direction="row" spacing={2}>
-        {!!imageSrc && <Avatar alt="Table Image" src={backUrl + imageSrc} sx={{ width: 34, height: 34 }} />}
+        {!!imageSrc && (
+          <Avatar alt="Схема ресторана" src={backUrl + imageSrc} sx={{ width: 34, height: 34 }} />
+        )}
         <Button variant="contained" component="label">
-          {imageSrc ? "Change image" : "Upload image"}
+          {imageSrc ? "Изменить схему" : "Загрузить схему"}
           <input hidden accept="image/*" multiple type="file" onChange={handleChangeTableImage} />
         </Button>
       </Stack>

@@ -17,7 +17,7 @@ export const PositionsList: React.FC = () => {
   return (
     <>
       <Header
-        title="Positions items"
+        title="Список позиций меню"
         onClickAdd={() => dispatch(positionsSlice.actions.toggleIsOpenForm())}
       />
       <List disablePadding>
@@ -36,7 +36,7 @@ export const PositionsList: React.FC = () => {
                 </IconButton>
               }
             >
-              <ListItemText primary={i.name} secondary={i.price + " TL"} />
+              <ListItemText primary={i.name} secondary={i.price + " лир"} />
             </ListItem>
           ))}
       </List>

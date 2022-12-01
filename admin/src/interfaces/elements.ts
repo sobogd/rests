@@ -2,6 +2,7 @@ export interface IElement {
   id: string;
   element: string;
   price: string;
+  priceForCount: string;
 }
 
 export interface IElementState {

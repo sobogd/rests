@@ -1,20 +1,11 @@
-import { Box, Button, Step, StepContent, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import Header from "../../shared/header";
 import { AlertStyled, MyForm } from "../../styles/common";
-import { validateString } from "../../utils/validate";
-import YouSure from "../../shared/you-sure";
-import { categoriesSlice } from "../../slices/categories";
-import { ICategory } from "../../interfaces/categories";
-import { categoriesService } from "../../services/categories";
 import { ordersSlice } from "../../slices/orders";
 import { tablesService } from "../../services/tables";
-import styled from "@emotion/styled";
 import { EOrderSteps } from "../../enums/orders";
 import { OrdersTable } from "./table";
-
-const backUrl = "http://localhost:4000";
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -80,7 +71,7 @@ export const OrdersForm: React.FC = () => {
 
   return (
     <>
-      <Header title="Новый заказ" onClickBack={() => dispatch(ordersSlice.actions.backStep())} />
+      <Header title="Новый заказ" onClickBack={() => dispatch(ordersSlice.actions.toggleIsOpenForm())} />
       {/* <YouSure
         onClickYes={handleDeleteItem}
         onClickNo={() => dispatch(categoriesSlice.actions.toggleIsOpenYouSure())}

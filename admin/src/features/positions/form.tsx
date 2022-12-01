@@ -222,7 +222,7 @@ export const PositionsForm: React.FC = () => {
   return (
     <>
       <Header
-        title={id.value ? "Edit position" : "New position"}
+        title={id.value ? "Изменение позиции меню" : "Новая позиция меню"}
         onClickBack={() => dispatch(positionsSlice.actions.toggleIsOpenForm())}
       />
       <YouSure
@@ -238,7 +238,7 @@ export const PositionsForm: React.FC = () => {
         ) : null}
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
-          label={"Title"}
+          label={"Наименование"}
           variant="outlined"
           helperText={name.error}
           error={!!name.error}
@@ -249,7 +249,7 @@ export const PositionsForm: React.FC = () => {
         />
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
-          label={"Description"}
+          label={"Описание"}
           multiline
           maxRows={4}
           minRows={2}
@@ -263,7 +263,7 @@ export const PositionsForm: React.FC = () => {
         />
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
-          label={"Price"}
+          label={"Цена"}
           variant="outlined"
           helperText={price.error}
           error={!!price.error}
@@ -274,7 +274,7 @@ export const PositionsForm: React.FC = () => {
           InputProps={{ endAdornment: <InputAdornment position="end">TL</InputAdornment> }}
           onChange={handleChangeValue}
         />
-        <MyFormSubtitle>Composition</MyFormSubtitle>
+        <MyFormSubtitle>Состав</MyFormSubtitle>
         {composition.length > 0 &&
           composition.map((c, index) => (
             <ElementField>
@@ -282,14 +282,14 @@ export const PositionsForm: React.FC = () => {
                 <DeleteForeverIcon />
               </RemoveButton>
               <FormControl>
-                <InputLabel id={"element" + index + "label"}>Element</InputLabel>
+                <InputLabel id={"element" + index + "label"}>Элемент</InputLabel>
                 <Select
                   labelId={"element" + index}
                   id={"element" + index}
                   value={c.element.value}
                   name="element"
                   error={!!c.element.error}
-                  label="Element"
+                  label="Элемент"
                   required
                   onChange={({ target: { name, value } }) =>
                     dispatch(positionsSlice.actions.setCompositionValue({ name, value, index }))
@@ -302,15 +302,15 @@ export const PositionsForm: React.FC = () => {
               </FormControl>
               <TextField
                 inputProps={{ form: { autocomplete: "off" } }}
-                label={"Weigth/Quantity"}
+                label={"Вес/количество"}
                 variant="outlined"
-                helperText={c.weight.error}
+                helperText={c.weight.error || `Например: "100" грамм муки или "1" яйцо`}
                 error={!!c.weight.error}
                 required
                 name="weight"
                 value={c.weight.value}
                 type="number"
-                InputProps={{ endAdornment: <InputAdornment position="end">g/pcs</InputAdornment> }}
+                InputProps={{ endAdornment: <InputAdornment position="end">г/шт</InputAdornment> }}
                 onChange={({ target: { name, value } }) =>
                   dispatch(positionsSlice.actions.setCompositionValue({ name, value, index }))
                 }
@@ -325,9 +325,9 @@ export const PositionsForm: React.FC = () => {
             marginTop: "-5px",
           }}
         >
-          Add element
+          Добавить элемент в состав
         </Button>
-        <MyFormSubtitle>Categories</MyFormSubtitle>
+        <MyFormSubtitle>Категории</MyFormSubtitle>
         {categories.length > 0 &&
           categories.map((c, index) => (
             <ElementField>
@@ -335,14 +335,14 @@ export const PositionsForm: React.FC = () => {
                 <DeleteForeverIcon />
               </RemoveButton>
               <FormControl>
-                <InputLabel id={"categoryId" + index + "label"}>Category</InputLabel>
+                <InputLabel id={"categoryId" + index + "label"}>Категория</InputLabel>
                 <Select
                   labelId={"categoryId" + index}
                   id={"categoryId" + index}
                   value={c.categoryId.value}
                   name="categoryId"
                   error={!!c.categoryId.error}
-                  label="Category"
+                  label="Категория"
                   required
                   onChange={({ target: { name, value } }) =>
                     dispatch(positionsSlice.actions.setCategoryValue({ name, value, index }))
@@ -363,9 +363,9 @@ export const PositionsForm: React.FC = () => {
             marginTop: "-5px",
           }}
         >
-          Add category
+          Добавить категорию для позиции
         </Button>
-        <MyFormSubtitle>Additional positions</MyFormSubtitle>
+        <MyFormSubtitle>Дополнительная позиция</MyFormSubtitle>
         <FormControl>
           <FormControlLabel
             style={{ marginBottom: 20 }}
@@ -376,7 +376,7 @@ export const PositionsForm: React.FC = () => {
                 onChange={() => dispatch(positionsSlice.actions.toggleIsAdditional())}
               />
             }
-            label="This is additional position"
+            label="Эта позиция является дополнительной"
           />
         </FormControl>
         {additional.length > 0 &&
@@ -387,14 +387,14 @@ export const PositionsForm: React.FC = () => {
                 <DeleteForeverIcon />
               </RemoveButton>
               <FormControl>
-                <InputLabel id={"positionId" + index + "label"}>Position</InputLabel>
+                <InputLabel id={"positionId" + index + "label"}>Дополнительная позиция</InputLabel>
                 <Select
                   labelId={"positionId" + index}
                   id={"positionId" + index}
                   value={a.positionId.value}
                   name="positionId"
                   error={!!a.positionId.error}
-                  label="Position"
+                  label="Дополнительная позиция"
                   required
                   onChange={({ target: { name, value } }) =>
                     dispatch(positionsSlice.actions.setAdditionalValue({ name, value, index }))
@@ -418,11 +418,11 @@ export const PositionsForm: React.FC = () => {
               marginTop: "-5px",
             }}
           >
-            Add position
+            Добавить дополнительную позицию
           </Button>
         )}
         <Button variant="contained" onClick={handleSubmitForm}>
-          {id.value ? "Save" : "Add"}
+          Сохранить
         </Button>
         {!!id.value && (
           <Button
@@ -431,7 +431,7 @@ export const PositionsForm: React.FC = () => {
             variant="outlined"
             onClick={() => dispatch(positionsSlice.actions.toggleIsOpenYouSure())}
           >
-            Delete
+            Удалить
           </Button>
         )}
       </MyForm>

@@ -5,6 +5,7 @@ import { ordersSlice } from "../../slices/orders";
 import { MyForm, MyFormSubtitle } from "../../styles/common";
 import styled from "@emotion/styled";
 import { EOrderSteps } from "../../enums/orders";
+import { backUrl } from "../..";
 
 const TableSetBlock = styled.div`
   position: relative;
@@ -33,8 +34,6 @@ const TableSetBlockItem = styled(Typography)`
   font-weight: 600;
   cursor: pointer;
 `;
-
-const backUrl = "http://localhost:4000";
 
 export const OrdersTable: React.FC = () => {
   const dispatch = useAppDispatch();
