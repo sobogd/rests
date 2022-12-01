@@ -9,8 +9,8 @@ import { backUrl } from "../..";
 
 const TableSetBlock = styled.div`
   position: relative;
-  width: calc(100vw - 40px);
-  height: calc(100vw - 40px);
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
 
   img {
     width: 100%;

@@ -4,8 +4,8 @@ import { grey, red, teal } from "@mui/material/colors";
 
 export const Container = styled.section`
   background: ${grey[900]};
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   position: fixed;
   display: flex;
   flex-direction: column;

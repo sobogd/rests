@@ -52,6 +52,13 @@ export const theme = createTheme({
         },
       },
     },
+    MuiBottomNavigationAction: {
+      styleOverrides: {
+        root: {
+          minWidth: 0,
+        },
+      },
+    },
     MuiFormControl: {
       styleOverrides: {
         root: {

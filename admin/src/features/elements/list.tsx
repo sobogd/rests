@@ -17,7 +17,7 @@ export const ElementsList: React.FC = () => {
   return (
     <>
       <Header
-        title="Список элементов для состава"
+        title="Список элементов"
         onClickAdd={() => dispatch(elementsSlice.actions.toggleIsOpenForm())}
       />
       <List disablePadding>

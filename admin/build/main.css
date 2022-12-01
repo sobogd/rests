@@ -7,8 +7,8 @@
 }
 body,
 html {
-  height: 100vh;
-  width: 100vh;
+  height: 100%;
+  width: 100%;
   position: fixed;
 }
 body,
@@ -31,7 +31,7 @@ html:focus-within {
   scroll-behavior: smooth;
 }
 body {
-  min-height: 100vh;
+  min-height: 100%;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
 }
