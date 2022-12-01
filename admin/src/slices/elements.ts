@@ -33,7 +33,7 @@ export const elementsSlice = createSlice({
         id: { value: payload.id, error: "" },
         element: { value: payload.element, error: "" },
         price: { value: payload.price, error: "" },
-        priceForCount: { value: payload.price, error: "" },
+        priceForCount: { value: payload.priceForCount, error: "" },
       };
       state.isOpenForm = true;
     },
