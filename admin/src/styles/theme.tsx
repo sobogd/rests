@@ -59,6 +59,13 @@ export const theme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          background: backgroundDefault,
+        },
+      },
+    },
     MuiFormControl: {
       styleOverrides: {
         root: {

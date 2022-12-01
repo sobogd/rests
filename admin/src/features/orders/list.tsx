@@ -18,24 +18,23 @@ export const OrdersList: React.FC = () => {
     <>
       <Header title="Orders" onClickAdd={() => dispatch(ordersSlice.actions.toggleIsOpenForm())} />
       <List disablePadding>
-        {!!items.length &&
-          items.map((i) => (
-            <ListItem
-              divider
-              disablePadding
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  style={{ right: -10 }}
-                  onClick={() => dispatch(ordersSlice.actions.startEditItem(i))}
-                >
-                  <ModeEditOutlineIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText primary={i.id} />
-            </ListItem>
-          ))}
+        {items?.map((i) => (
+          <ListItem
+            divider
+            disablePadding
+            secondaryAction={
+              <IconButton
+                edge="end"
+                style={{ right: -10 }}
+                onClick={() => dispatch(ordersSlice.actions.startEditItem(i))}
+              >
+                <ModeEditOutlineIcon />
+              </IconButton>
+            }
+          >
+            <ListItemText primary={i.id} />
+          </ListItem>
+        ))}
       </List>
     </>
   );

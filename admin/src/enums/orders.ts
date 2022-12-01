@@ -1,5 +1,5 @@
 export enum EOrderSteps {
   TABLE = "table",
-  FORM = "form",
+  FILLING = "filling",
   ADDITIONAL = "additional",
 }

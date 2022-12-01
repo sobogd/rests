@@ -1,6 +1,16 @@
 import styled from "@emotion/styled";
-import { Alert, BottomNavigation, Divider, TextField, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  BottomNavigation,
+  Divider,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { grey, red, teal } from "@mui/material/colors";
+import { backgroundDefault } from "./theme";
 
 export const Container = styled.section`
   background: ${grey[900]};
@@ -9,6 +19,7 @@ export const Container = styled.section`
   position: fixed;
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 export const ScrollableZone = styled.section`
@@ -18,6 +29,8 @@ export const ScrollableZone = styled.section`
   overflow-y: auto;
   position: relative;
   padding: 20px;
+  max-width: 500px;
+  width: 100%;
 `;
 
 export const TextFieldStyled = styled(TextField)`
@@ -104,4 +117,35 @@ export const BottomNavigationStyled = styled(BottomNavigation)`
       color: ${teal[100]} !important;
     }
   }
+`;
+
+export const AccordionSummaryStyled = styled(AccordionSummary)`
+  background: #2f2f2f;
+  min-height: auto !important;
+
+  &.Mui-expanded {
+    background: #01695c;
+  }
+
+  .Mui-expanded {
+    margin: 12px 0 !important;
+  }
+
+  .MuiTypography-body2 {
+    color: #9c9c9c;
+  }
+
+  .MuiAccordionSummary-content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+`;
+
+export const AccordionStyled = styled(Accordion)`
+  background: ${backgroundDefault};
+  box-shadow: none;
+`;
+
+export const AccordionDetailsStyled = styled(AccordionDetails)`
+  border: 1px solid #01695c;
 `;

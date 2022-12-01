@@ -1,15 +1,44 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import Header from "../../shared/header";
-import { AlertStyled, MyForm } from "../../styles/common";
+import {
+  AccordionDetailsStyled,
+  AccordionStyled,
+  AccordionSummaryStyled,
+  AlertStyled,
+  MyForm,
+} from "../../styles/common";
 import { ordersSlice } from "../../slices/orders";
 import { tablesService } from "../../services/tables";
 import { EOrderSteps } from "../../enums/orders";
-import { OrdersTable } from "./table";
+import { Button, Typography } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import styled from "@emotion/styled";
+import { backUrl } from "../..";
+import { ITable } from "../../interfaces/tables";
+
+const TableSetBlock = styled.div`
+  position: relative;
+  width: 100%;
+  margin-top: 7px;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
+  span {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    margin: -30px;
+    cursor: pointer;
+  }
+`;
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { form, error, isOpenYouSure, activeStep } = useAppSelector((s) => s.orders);
+  const { form, error, isOpenYouSure, activeStep, selectedTable } = useAppSelector((s) => s.orders);
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
   // const { id, name, description } = form;
 
@@ -18,56 +47,55 @@ export const OrdersForm: React.FC = () => {
     dispatch(tablesService.search());
   }, []);
 
-  // const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   dispatch(categoriesSlice.actions.setFormValue({ name: e.target.name, value: e.target.value }));
-  // };
-
-  const handleSubmitForm = () => {
-    // const validatedForm: { [Key in keyof ICategory]: { value: string; error: string } } = Object.keys(
-    //   form
-    // ).reduce((acc, key) => {
-    //   switch (key) {
-    //     case "name":
-    //       return {
-    //         ...acc,
-    //         [key]: { value: form[key].value, error: validateString(form[key].value, 1, 1000) },
-    //       };
-    //     case "description":
-    //       return {
-    //         ...acc,
-    //         [key]: { value: form[key].value, error: validateString(form[key].value, 2, 100) },
-    //       };
-    //     default:
-    //       return acc;
-    //   }
-    // }, form);
-    // const isValid = !Object.values(validatedForm).filter((f) => f.error).length;
-    // const request = {
-    //   id: validatedForm.id.value,
-    //   name: validatedForm.name.value,
-    //   description: validatedForm.description.value,
-    // };
-    // if (isValid) {
-    //   dispatch(categoriesService[request.id ? "update" : "create"](request));
-    // } else {
-    //   dispatch(categoriesSlice.actions.setFormData(validatedForm));
-    // }
+  const handleSelectTable = (t: ITable) => () => {
+    dispatch(ordersSlice.actions.setSelectedTable(t));
   };
 
-  const handleClickEnter = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    handleSubmitForm();
-  };
-
-  // const handleDeleteItem = () => {
-  //   dispatch(
-  //     categoriesService.remove({
-  //       id: id.value,
-  //       name: name.value,
-  //       description: description.value,
-  //     })
-  //   );
-  // };
+  const accordions = [
+    {
+      title: "Выберите столик",
+      subtitle: !!selectedTable ? `№${selectedTable.number}: ${selectedTable.name}` : undefined,
+      step: EOrderSteps.TABLE,
+      disabled: false,
+      content: (
+        <>
+          <TableSetBlock>
+            <img
+              src={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format`}
+              srcSet={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
+              width="300"
+              height="300"
+              alt={"234324"}
+              loading="lazy"
+            />
+            {tables?.map((t) => (
+              <span
+                style={{ bottom: `${t.positionY}%`, left: `${t.positionX}%` }}
+                onClick={handleSelectTable(t)}
+              />
+            ))}
+          </TableSetBlock>
+          {!!selectedTable && (
+            <Button
+              fullWidth
+              style={{ marginTop: 15 }}
+              variant="outlined"
+              onClick={() => dispatch(ordersSlice.actions.setActiveStep(EOrderSteps.FILLING))}
+            >
+              Далее
+            </Button>
+          )}
+        </>
+      ),
+    },
+    {
+      title: "Заполните позиции",
+      // subtitle: !!selectedTable ? `№${selectedTable.number}: ${selectedTable.name}` : undefined,
+      step: EOrderSteps.FILLING,
+      disabled: !selectedTable,
+      content: <>positions</>,
+    },
+  ];
 
   return (
     <>
@@ -82,46 +110,22 @@ export const OrdersForm: React.FC = () => {
           {error}
         </AlertStyled>
       ) : null}
-      {activeStep === EOrderSteps.TABLE && <OrdersTable />}
-      <MyForm onSubmit={handleClickEnter}>
-        {/* 
-        <TextField
-          inputProps={{ form: { autocomplete: "off" } }}
-          label={"Category title"}
-          variant="outlined"
-          helperText={name.error}
-          error={!!name.error}
-          required
-          name="name"
-          value={name.value}
-          onChange={handleChangeValue}
-        />
-        <TextField
-          inputProps={{ form: { autocomplete: "off" } }}
-          label={"Description"}
-          multiline
-          maxRows={4}
-          minRows={2}
-          variant="outlined"
-          helperText={description.error}
-          error={!!description.error}
-          required
-          name="description"
-          value={description.value}
-          onChange={handleChangeValue}
-        />
-       
-        {!!id.value && (
-          <Button
-            style={{ marginTop: 10 }}
-            color="error"
-            variant="outlined"
-            onClick={() => dispatch(categoriesSlice.actions.toggleIsOpenYouSure())}
+      {accordions?.map((a) => (
+        <AccordionStyled
+          expanded={activeStep === a.step}
+          onChange={() => dispatch(ordersSlice.actions.setActiveStep(a.step))}
+        >
+          <AccordionSummaryStyled
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls={a.step + "_content"}
+            id={a.step + "_header"}
           >
-            Delete
-          </Button>
-        )} */}
-      </MyForm>
+            <Typography variant="body1">{a.title}</Typography>
+            {!!a.subtitle && <Typography variant="body2">{a.subtitle}</Typography>}
+          </AccordionSummaryStyled>
+          <AccordionDetailsStyled>{a.content}</AccordionDetailsStyled>
+        </AccordionStyled>
+      ))}
     </>
   );
 };

@@ -32,6 +32,7 @@ export const ordersSlice = createSlice({
     },
     setSelectedTable: (state, { payload }) => {
       state.selectedTable = payload;
+      state.activeStep = EOrderSteps.FILLING;
     },
     toggleIsOpenYouSure: (state) => {
       state.isOpenYouSure = !state.isOpenYouSure;
