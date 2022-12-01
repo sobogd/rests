@@ -16,7 +16,7 @@ app.use(morgan("tiny"));
 app.use(express.static("public"));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
   })
 );
 
