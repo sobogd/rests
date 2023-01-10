@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { EOrderSteps } from "../enums/orders";
+import { EOrderSteps, EPositionFormSteps } from "../enums/orders";
 import { IOrderState } from "../interfaces/orders";
 import { ordersService } from "../services/orders";
 
@@ -13,6 +13,15 @@ const initialState: IOrderState = {
   isOpenYouSure: false,
   activeStep: EOrderSteps.TABLE,
   selectedTable: undefined,
+  positionsForm: {
+    isOpened: false,
+    categoryId: undefined,
+    additional: [],
+    comment: "",
+    step: EPositionFormSteps.CATEGORY,
+  },
+  selectedPositions: [],
+  comment: "",
   error: "",
 };
 
@@ -23,9 +32,120 @@ export const ordersSlice = createSlice({
     toggleIsOpenForm: (state) => {
       if (state.isOpenForm && state.form.id.value) {
         state.form = initialState.form;
+        state.positionsForm = initialState.positionsForm;
+        state.selectedPositions = initialState.selectedPositions;
+        state.selectedTable = initialState.selectedTable;
+      }
+      if (!state.isOpenForm) {
+        state.form = initialState.form;
+        state.positionsForm = initialState.positionsForm;
+        state.selectedPositions = initialState.selectedPositions;
+        state.selectedTable = initialState.selectedTable;
+        state.activeStep = initialState.activeStep;
       }
       state.isOpenForm = !state.isOpenForm;
       state.error = "";
+    },
+    toggleIsOpenPositionForm: (state) => {
+      if (state.positionsForm.isOpened) {
+        state.positionsForm = initialState.positionsForm;
+      } else {
+        state.positionsForm.isOpened = !state.positionsForm.isOpened;
+      }
+      state.error = "";
+    },
+    setSelectedCategoryId: (state, { payload }) => {
+      state.positionsForm.categoryId = payload;
+    },
+    setSelectedPositionId: (state, { payload }) => {
+      state.positionsForm.positionId = payload;
+    },
+    setPositionFormStep: (state, { payload }) => {
+      state.positionsForm.step = payload;
+    },
+    setPositionFormComment: (state, { payload }) => {
+      state.positionsForm.comment = payload;
+    },
+    setComment: (state, { payload }) => {
+      state.comment = payload;
+    },
+    additionalPlus: (state, { payload: id }) => {
+      const foundedAdditional = state.positionsForm.additional?.find((a) => a.id === id);
+
+      if (foundedAdditional) {
+        state.positionsForm.additional = state.positionsForm.additional?.map((a) => {
+          if (a.id === id) {
+            return {
+              ...a,
+              count: a.count + 1,
+            };
+          }
+
+          return a;
+        });
+      } else {
+        state.positionsForm.additional = state.positionsForm.additional?.concat([
+          {
+            id,
+            count: 1,
+          },
+        ]);
+      }
+    },
+    additionalMinus: (state, { payload: id }) => {
+      const foundedAdditional = state.positionsForm.additional?.find((a) => a.id === id);
+
+      if (foundedAdditional) {
+        state.positionsForm.additional = state.positionsForm.additional
+          ?.map((a) => {
+            if (a.id === id) {
+              return {
+                ...a,
+                count: a.count - 1,
+              };
+            }
+
+            return a;
+          })
+          .filter((a) => a.count > 0);
+      }
+    },
+    savePositionForm: (state, { payload: editIndex }) => {
+      const { positionsForm } = state;
+
+      if (editIndex !== undefined) {
+        state.selectedPositions[editIndex] = {
+          ...state.selectedPositions[editIndex],
+          comment: positionsForm.comment,
+          additional: positionsForm.additional,
+        };
+        state.positionsForm = initialState.positionsForm;
+      } else {
+        state.selectedPositions = [
+          ...state.selectedPositions,
+          {
+            positionId: positionsForm.positionId || "",
+            comment: positionsForm.comment,
+            additional: positionsForm.additional,
+          },
+        ];
+        state.positionsForm = initialState.positionsForm;
+      }
+    },
+    editPosition: (state, { payload: editIndex }) => {
+      const isHaveAdditional = !!state.selectedPositions[editIndex].additional?.length;
+      state.positionsForm = {
+        ...state.positionsForm,
+        editIndex,
+        additional: state.selectedPositions[editIndex].additional,
+        comment: state.selectedPositions[editIndex].comment,
+        positionId: state.selectedPositions[editIndex].positionId,
+        step: isHaveAdditional ? EPositionFormSteps.ADDITIONAL : EPositionFormSteps.COMMENT,
+        isOpened: true,
+      };
+    },
+    deletePosition: (state, { payload: deleteIndex }) => {
+      state.selectedPositions = state.selectedPositions.filter((_, index) => index !== deleteIndex);
     },
     setActiveStep: (state, { payload }) => {
       state.activeStep = payload;
@@ -39,11 +159,8 @@ export const ordersSlice = createSlice({
       state.error = "";
     },
     startEditItem: (state, { payload }) => {
-      state.form = {
-        id: { value: payload.id, error: "" },
-        tableId: { value: payload.tableId, error: "" },
-        statusId: { value: payload.statusId, error: "" },
-      };
+      state.activeStep = EOrderSteps.FILLING;
+      state.selectedPositions = [];
       state.isOpenForm = true;
     },
     setFormValue: (state, { payload: { name, value } }) => {

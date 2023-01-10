@@ -11,11 +11,17 @@ import {
 import { ordersSlice } from "../../slices/orders";
 import { tablesService } from "../../services/tables";
 import { EOrderSteps } from "../../enums/orders";
-import { Button, Typography } from "@mui/material";
+import { Button, IconButton, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import styled from "@emotion/styled";
 import { backUrl } from "../..";
 import { ITable } from "../../interfaces/tables";
+import { positionsService } from "../../services/positions";
+import { AddPositionModal } from "./modal";
+import { categoriesService } from "../../services/categories";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { ordersService } from "../../services/orders";
 
 const TableSetBlock = styled.div`
   position: relative;
@@ -33,22 +39,44 @@ const TableSetBlock = styled.div`
     height: 60px;
     margin: -30px;
     cursor: pointer;
+    background: #01695c;
+    border-radius: 60px;
+    border: 6px solid #fff;
   }
 `;
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { form, error, isOpenYouSure, activeStep, selectedTable } = useAppSelector((s) => s.orders);
+  const { form, error, comment, activeStep, selectedTable, selectedPositions } = useAppSelector(
+    (s) => s.orders
+  );
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
+  const { items: positions } = useAppSelector((s) => s.positions);
   // const { id, name, description } = form;
 
   React.useEffect(() => {
     dispatch(tablesService.findImage());
     dispatch(tablesService.search());
+    dispatch(positionsService.search());
+    dispatch(categoriesService.search());
   }, []);
 
   const handleSelectTable = (t: ITable) => () => {
     dispatch(ordersSlice.actions.setSelectedTable(t));
+  };
+
+  const handleSendOrder = () => {
+    dispatch(
+      ordersService.create({
+        positions: selectedPositions.map((p) => ({
+          positionId: p.positionId,
+          additional: p.additional,
+          comment: p.comment,
+        })),
+        tableId: selectedTable?.id,
+        comment,
+      })
+    );
   };
 
   const accordions = [
@@ -93,7 +121,95 @@ export const OrdersForm: React.FC = () => {
       // subtitle: !!selectedTable ? `№${selectedTable.number}: ${selectedTable.name}` : undefined,
       step: EOrderSteps.FILLING,
       disabled: !selectedTable,
-      content: <>positions</>,
+      content: (
+        <>
+          <AddPositionModal />
+          <List>
+            {!!selectedPositions?.length &&
+              selectedPositions.map((p, index) => {
+                const positionData = positions.find((pos) => pos.id === p.positionId);
+
+                return (
+                  <ListItem
+                    secondaryAction={
+                      <>
+                        <IconButton
+                          edge="end"
+                          onClick={() => dispatch(ordersSlice.actions.deletePosition(index))}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    }
+                  >
+                    <ListItemText
+                      primary={positionData?.name}
+                      secondary={
+                        <>
+                          {p.additional?.map((a) => {
+                            const foundedAdditional = positions.find((add: any) => add.id === a.id);
+                            return (
+                              <>
+                                {a.count}x {foundedAdditional?.name}
+                                <br />
+                              </>
+                            );
+                          })}
+                          {p.comment}
+                        </>
+                      }
+                    />
+                  </ListItem>
+                );
+              })}
+          </List>
+          <Button
+            fullWidth
+            style={{ marginTop: 15 }}
+            variant="outlined"
+            onClick={() => dispatch(ordersSlice.actions.toggleIsOpenPositionForm())}
+          >
+            Добавить позицию
+          </Button>
+          {!!selectedPositions.length && (
+            <Button
+              fullWidth
+              style={{ marginTop: 15 }}
+              variant="contained"
+              onClick={() => dispatch(ordersSlice.actions.setActiveStep(EOrderSteps.ADDITIONAL))}
+            >
+              Далее
+            </Button>
+          )}
+        </>
+      ),
+    },
+    {
+      title: "Дополнительная информация",
+      // subtitle: !!selectedTable ? `№${selectedTable.number}: ${selectedTable.name}` : undefined,
+      step: EOrderSteps.ADDITIONAL,
+      disabled: !selectedPositions.length,
+      content: (
+        <>
+          <TextField
+            inputProps={{ form: { autocomplete: "off" } }}
+            label={"Комментарий к позиции"}
+            multiline
+            maxRows={15}
+            minRows={15}
+            variant="outlined"
+            required
+            name="description"
+            value={comment}
+            fullWidth
+            onChange={(e) => dispatch(ordersSlice.actions.setComment(e.target.value))}
+            style={{ marginTop: 15, marginBottom: 0 }}
+          />
+          <Button fullWidth style={{ marginTop: 15 }} variant="contained" onClick={handleSendOrder}>
+            Отправить заказ на кухню
+          </Button>
+        </>
+      ),
     },
   ];
 
@@ -114,6 +230,7 @@ export const OrdersForm: React.FC = () => {
         <AccordionStyled
           expanded={activeStep === a.step}
           onChange={() => dispatch(ordersSlice.actions.setActiveStep(a.step))}
+          disabled={a.disabled}
         >
           <AccordionSummaryStyled
             expandIcon={<ExpandMoreIcon />}

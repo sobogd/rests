@@ -8,16 +8,14 @@ const search = createAsyncThunk<IOrder[], void, IErrorResponse>(
   async (_, { rejectWithValue }) => await request(rejectWithValue, "/orders/search", "POST")
 );
 
-const create = createAsyncThunk<IOrder, IOrder, IErrorResponse>(
+const create = createAsyncThunk<any, any, IErrorResponse>(
   "orders/create",
-  async (order, { rejectWithValue }) =>
-    await request(rejectWithValue, "/orders/create", "POST", { ...order, id: undefined })
+  async (order, { rejectWithValue }) => await request(rejectWithValue, "/orders/create", "POST", order)
 );
 
-const update = createAsyncThunk<IOrder, IOrder, IErrorResponse>(
+const update = createAsyncThunk<any, any, IErrorResponse>(
   "orders/update",
-  async (order: IOrder, { rejectWithValue }) =>
-    await request(rejectWithValue, "/orders/update", "POST", order)
+  async (order, { rejectWithValue }) => await request(rejectWithValue, "/orders/update", "POST", order)
 );
 
 const remove = createAsyncThunk<{}, { id: string }, IErrorResponse>(

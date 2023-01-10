@@ -1,6 +1,9 @@
 export interface IOrderPosition {
   id?: number;
-  orderId: string;
-  positionId: string;
-  statusId: string;
+  orderId?: number;
+  positionId?: number;
+  additional?: string;
+  startTime?: string;
+  finishTime?: string;
+  comment?: string;
 }

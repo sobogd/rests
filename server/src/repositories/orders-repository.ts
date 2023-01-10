@@ -5,7 +5,10 @@ import queryBuilder from "../utils/query-builder";
 const props = [
   { name: "id", dbName: "id" },
   { name: "tableId", dbName: "table_id" },
-  { name: "statusId", dbName: "status_id" },
+  { name: "createTime", dbName: "create_time" },
+  { name: "readyTime", dbName: "ready_time" },
+  { name: "finishTime", dbName: "finish_time" },
+  { name: "comment", dbName: "comment" },
 ];
 
 const tableName = "orders";

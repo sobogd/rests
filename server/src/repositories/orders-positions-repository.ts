@@ -6,7 +6,10 @@ const props = [
   { name: "id", dbName: "id" },
   { name: "orderId", dbName: "order_id" },
   { name: "positionId", dbName: "position_id" },
-  { name: "statusId", dbName: "status_id" },
+  { name: "additional", dbName: "additional" },
+  { name: "startTime", dbName: "start_time" },
+  { name: "finishTime", dbName: "finish_time" },
+  { name: "comment", dbName: "comment" },
 ];
 
 const tableName = "orders_positions";
@@ -25,6 +28,14 @@ const findById = async (id: number) => {
   client.release();
 
   return queryBuilder.mapFromDb(foundedRows, props)[0];
+};
+
+const findAllByOrderId = async (orderId: number) => {
+  const client = await pool.connect();
+  const foundedRows = await queryBuilder.selectBySpec(client, tableName, { order_id: orderId });
+  client.release();
+
+  return queryBuilder.mapFromDb(foundedRows, props);
 };
 
 const create = async (orderPosition: IOrderPosition) => {
@@ -64,6 +75,7 @@ const removeById = async (id: number) => {
 export default {
   findAll,
   findById,
+  findAllByOrderId,
   create,
   updateById,
   removeById,

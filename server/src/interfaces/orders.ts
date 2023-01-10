@@ -1,11 +1,19 @@
 export interface IOrder {
   id?: number;
-  tableId: string;
-  statusId: string;
+  tableId?: number;
+  createTime?: string;
+  readyTime?: string;
+  finishTime?: string;
+  comment?: string;
 }
 
-export interface IOrderResponse {
+export interface IOrderCreateRequest {
   id?: number;
-  tableId: string;
-  statusId: string;
+  tableId: number;
+  positions: {
+    positionId: number;
+    additional: { id: number; count: number }[];
+    comment: string;
+  }[];
+  comment: string;
 }

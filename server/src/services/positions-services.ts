@@ -11,27 +11,29 @@ const search = async (): Promise<ICreatePositionRequest[]> => {
   const positions = await positionsRepository.findAll();
   const result: ICreatePositionRequest[] = [];
 
+  const elements: IPositionElement[] = await positionsElementsRepository.findAll();
+  const categories: IPositionCategory[] = await positionsCategoriesRepository.findAll();
+  const additionals: IPositionAdditional[] = await positionsAdditionalRepository.findAll();
+
   if (positions && positions.length) {
     for (const position of positions) {
-      const elements: IPositionElement[] = await positionsElementsRepository.findAllByPositionId(position.id);
-      const categories: IPositionCategory[] = await positionsCategoriesRepository.findAllByPositionId(
-        position.id
-      );
-      const additional: IPositionAdditional[] = await positionsAdditionalRepository.findAllByPositionId(
-        position.id
-      );
+      const elementsForPosition = elements.filter((e) => Number(e.positionId) === position.id);
+      const categoriesForPosition = categories.filter((c) => Number(c.positionId) === position.id);
+      const additionalsForPosition = additionals.filter((a) => Number(a.generalPositionId) === position.id);
 
       result.push({
         ...position,
         categories:
-          categories && categories.length ? categories.map((c) => ({ categoryId: c.categoryId })) : [],
+          categoriesForPosition && categoriesForPosition.length
+            ? categoriesForPosition.map((c) => ({ categoryId: c.categoryId }))
+            : [],
         additional:
-          additional && additional.length
-            ? additional.map((c) => ({ positionId: c.additionalPositionId }))
+          additionalsForPosition && additionalsForPosition.length
+            ? additionalsForPosition.map((c) => ({ positionId: c.additionalPositionId }))
             : [],
         composition:
-          elements && categories.length
-            ? elements.map((c) => ({ element: c.elementId, weight: c.weight }))
+          elementsForPosition && elementsForPosition.length
+            ? elementsForPosition.map((c) => ({ element: c.elementId, weight: c.weight }))
             : [],
       });
     }
@@ -225,8 +227,6 @@ const update = async (request: ICreatePositionRequest): Promise<ICreatePositionR
 };
 
 const remove = async (position: { id: number }): Promise<{}> => {
-  await positionsRepository.removeById(position.id);
-
   const positionsElements = await positionsElementsRepository.findAllByPositionId(position.id);
 
   if (positionsElements && positionsElements.length) {
@@ -250,6 +250,8 @@ const remove = async (position: { id: number }): Promise<{}> => {
       await positionsAdditionalRepository.removeById(id || 0);
     }
   }
+
+  await positionsRepository.removeById(position.id);
 
   return {};
 };

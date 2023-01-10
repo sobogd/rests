@@ -50,22 +50,90 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IOrderResponse": {
+			"IOrder": {
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
 					"tableId": {
+						"type": "number",
+						"format": "double"
+					},
+					"createTime": {
 						"type": "string"
 					},
-					"statusId": {
+					"readyTime": {
+						"type": "string"
+					},
+					"finishTime": {
+						"type": "string"
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IOrderCreateRequest": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tableId": {
+						"type": "number",
+						"format": "double"
+					},
+					"positions": {
+						"items": {
+							"properties": {
+								"comment": {
+									"type": "string"
+								},
+								"additional": {
+									"items": {
+										"properties": {
+											"count": {
+												"type": "number",
+												"format": "double"
+											},
+											"id": {
+												"type": "number",
+												"format": "double"
+											}
+										},
+										"required": [
+											"count",
+											"id"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								},
+								"positionId": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"comment",
+								"additional",
+								"positionId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"comment": {
 						"type": "string"
 					}
 				},
 				"required": [
 					"tableId",
-					"statusId"
+					"positions",
+					"comment"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -606,7 +674,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/IOrderResponse"
+										"$ref": "#/components/schemas/IOrder"
 									},
 									"type": "array"
 								}
@@ -631,15 +699,8 @@
 			"post": {
 				"operationId": "Create",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IOrderResponse"
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					}
 				},
 				"tags": [
@@ -658,7 +719,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IOrderResponse"
+								"$ref": "#/components/schemas/IOrderCreateRequest"
 							}
 						}
 					}
@@ -674,7 +735,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IOrderResponse"
+									"$ref": "#/components/schemas/IOrder"
 								}
 							}
 						}
@@ -696,7 +757,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IOrderResponse"
+								"$ref": "#/components/schemas/IOrder"
 							}
 						}
 					}

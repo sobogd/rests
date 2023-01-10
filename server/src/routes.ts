@@ -48,12 +48,26 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IOrderResponse": {
+    "IOrder": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"double"},
-            "tableId": {"dataType":"string","required":true},
-            "statusId": {"dataType":"string","required":true},
+            "tableId": {"dataType":"double"},
+            "createTime": {"dataType":"string"},
+            "readyTime": {"dataType":"string"},
+            "finishTime": {"dataType":"string"},
+            "comment": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IOrderCreateRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double"},
+            "tableId": {"dataType":"double","required":true},
+            "positions": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string","required":true},"additional":{"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"id":{"dataType":"double","required":true}}},"required":true},"positionId":{"dataType":"double","required":true}}},"required":true},
+            "comment": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -405,7 +419,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function OrdersController_create(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"ref":"IOrderResponse"},
+                    request: {"in":"body","name":"request","required":true,"ref":"IOrderCreateRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -431,7 +445,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function OrdersController_update(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"ref":"IOrderResponse"},
+                    request: {"in":"body","name":"request","required":true,"ref":"IOrder"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
