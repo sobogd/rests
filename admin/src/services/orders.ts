@@ -31,11 +31,12 @@ const orderPositionFinish = createAsyncThunk<{}, { orderPositionId: number }, IE
     })
 );
 
-const finish = createAsyncThunk<{}, { id: number }, IErrorResponse>(
+const finish = createAsyncThunk<{}, { id: number; type: string }, IErrorResponse>(
   "orders/finish",
   async (r, { rejectWithValue }) =>
     await request(rejectWithValue, "/orders/finish", "POST", {
       id: r.id,
+      type: r.type,
     })
 );
 

@@ -29,7 +29,6 @@ export const ScrollableZone = styled.section`
   overflow-y: auto;
   position: relative;
   padding: 20px;
-  max-width: 500px;
   width: 100%;
 `;
 

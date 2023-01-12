@@ -20,7 +20,6 @@ const KitchenContainer = styled.div`
   width: 100%;
   height: calc(100% - 60px);
   padding: 20px 15px;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   overflow-y: scroll;
 `;
 
@@ -29,6 +28,7 @@ const KitchenWrapper = styled.div`
   flex-direction: row;
   align-items: flex-start;
   flex-wrap: wrap;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 `;
 
 const KitchenBlock = styled.div`
@@ -153,62 +153,60 @@ export const Kitchen: React.FC = () => {
   };
 
   return (
-    <KitchenContainer>
-      <KitchenWrapper>
-        <Loading isLoading={isLoadingOrders || isLoadingTables || isLoadingPositions} />
-        {items.map((o) => {
-          const tableForOrder = tableItems.find((t) => Number(t.id) === Number(o.tableId));
-          const createDate = Date.parse(o.createTime);
-          const offset = new Date().getTimezoneOffset();
-          const dateWithTimeZone = createDate - offset * 60000;
-          const date = format(dateWithTimeZone, "H:mm");
+    <KitchenWrapper>
+      <Loading isLoading={isLoadingOrders || isLoadingTables || isLoadingPositions} />
+      {items.map((o) => {
+        const tableForOrder = tableItems.find((t) => Number(t.id) === Number(o.tableId));
+        const createDate = Date.parse(o.createTime);
+        const offset = new Date().getTimezoneOffset();
+        const dateWithTimeZone = createDate - offset * 60000;
+        const date = format(dateWithTimeZone, "H:mm");
 
-          return (
-            <KitchenBlock>
-              <KitchenBlockHeader>
-                <span>
-                  <b>{tableForOrder?.number}</b> {tableForOrder?.name}
-                </span>
-                <p>Создан: {date}</p>
-              </KitchenBlockHeader>
-              {!!o.comment && <KitchenBlockComment>{o.comment}</KitchenBlockComment>}
+        return (
+          <KitchenBlock>
+            <KitchenBlockHeader>
+              <span>
+                <b>{tableForOrder?.number}</b> {tableForOrder?.name}
+              </span>
+              <p>Создан: {date}</p>
+            </KitchenBlockHeader>
+            {!!o.comment && <KitchenBlockComment>{o.comment}</KitchenBlockComment>}
 
-              {o.ordersPositions?.map((op) => {
-                const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
+            {o.ordersPositions?.map((op) => {
+              const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
 
-                return (
-                  <KitchenBlockPosition isFinished={!!op.finishTime}>
-                    {!!op.comment && <KitchenBlockPositionComment>{op.comment}</KitchenBlockPositionComment>}
-                    {position?.name}
-                    {!!op.additional?.length && (
-                      <KitchenBlockPositionAdditional>
-                        {op.additional?.split("/").map((opa) => {
-                          const splittedValue = opa.split("-");
-                          const additional = positionItems.find(
-                            (p) => Number(p.id) === Number(splittedValue[1])
-                          );
+              return (
+                <KitchenBlockPosition isFinished={!!op.finishTime}>
+                  {!!op.comment && <KitchenBlockPositionComment>{op.comment}</KitchenBlockPositionComment>}
+                  {position?.name}
+                  {!!op.additional?.length && (
+                    <KitchenBlockPositionAdditional>
+                      {op.additional?.split("/").map((opa) => {
+                        const splittedValue = opa.split("-");
+                        const additional = positionItems.find(
+                          (p) => Number(p.id) === Number(splittedValue[1])
+                        );
 
-                          return (
-                            <div>
-                              {additional?.name} - {splittedValue[0]}
-                            </div>
-                          );
-                        })}
-                      </KitchenBlockPositionAdditional>
-                    )}
+                        return (
+                          <div>
+                            {additional?.name} - {splittedValue[0]}
+                          </div>
+                        );
+                      })}
+                    </KitchenBlockPositionAdditional>
+                  )}
 
-                    {!op.finishTime && (
-                      <KitchenBlockPositionEndButton onClick={handleEndCook(op.id || 0)}>
-                        <CheckCircleIcon sx={{ color: grey[50] }} />
-                      </KitchenBlockPositionEndButton>
-                    )}
-                  </KitchenBlockPosition>
-                );
-              })}
-            </KitchenBlock>
-          );
-        })}
-      </KitchenWrapper>
-    </KitchenContainer>
+                  {!op.finishTime && (
+                    <KitchenBlockPositionEndButton onClick={handleEndCook(op.id || 0)}>
+                      <CheckCircleIcon sx={{ color: grey[50] }} />
+                    </KitchenBlockPositionEndButton>
+                  )}
+                </KitchenBlockPosition>
+              );
+            })}
+          </KitchenBlock>
+        );
+      })}
+    </KitchenWrapper>
   );
 };

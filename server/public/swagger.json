@@ -74,6 +74,9 @@
 					},
 					"status": {
 						"type": "string"
+					},
+					"discount": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -909,12 +912,16 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"type": {
+										"type": "string"
+									},
 									"id": {
 										"type": "number",
 										"format": "double"
 									}
 								},
 								"required": [
+									"type",
 									"id"
 								],
 								"type": "object"

@@ -15,6 +15,7 @@ import { Elements } from "./elements";
 import { Positions } from "./positions";
 import { Categories } from "./categories";
 import { Kitchen } from "./kitchen";
+import { Day } from "./day";
 
 export const Layout: React.FC<{ children?: any }> = ({ children }) => {
   const isAuthorizatedUser = !!sessionStorage.getItem("token");
@@ -47,6 +48,8 @@ export const Layout: React.FC<{ children?: any }> = ({ children }) => {
           return <Categories />;
         case EPages.KITCHEN:
           return <Kitchen />;
+        case EPages.DAY:
+          return <Day />;
         default:
           return <Account />;
       }
@@ -64,27 +67,45 @@ export const Layout: React.FC<{ children?: any }> = ({ children }) => {
             value={EPages.ACCOUNT}
             icon={CPageIcons[EPages.ACCOUNT]}
           ></BottomNavigationAction>
-          <BottomNavigationAction value={EPages.MENU} icon={CPageIcons[EPages.MENU]}></BottomNavigationAction>
-          <BottomNavigationAction
-            value={EPages.TABLES}
-            icon={CPageIcons[EPages.TABLES]}
-          ></BottomNavigationAction>
-          <BottomNavigationAction
-            value={EPages.ELEMENTS}
-            icon={CPageIcons[EPages.ELEMENTS]}
-          ></BottomNavigationAction>
-          <BottomNavigationAction
-            value={EPages.ORDERS}
-            icon={CPageIcons[EPages.ORDERS]}
-          ></BottomNavigationAction>
-          <BottomNavigationAction
-            value={EPages.KITCHEN}
-            icon={CPageIcons[EPages.KITCHEN]}
-          ></BottomNavigationAction>
-          <BottomNavigationAction
-            value={EPages.CATEGORIES}
-            icon={CPageIcons[EPages.CATEGORIES]}
-          ></BottomNavigationAction>
+          {["admin"].includes(data?.type || "") && (
+            <BottomNavigationAction
+              value={EPages.MENU}
+              icon={CPageIcons[EPages.MENU]}
+            ></BottomNavigationAction>
+          )}
+          {["admin"].includes(data?.type || "") && (
+            <BottomNavigationAction
+              value={EPages.TABLES}
+              icon={CPageIcons[EPages.TABLES]}
+            ></BottomNavigationAction>
+          )}
+          {["admin"].includes(data?.type || "") && (
+            <BottomNavigationAction
+              value={EPages.ELEMENTS}
+              icon={CPageIcons[EPages.ELEMENTS]}
+            ></BottomNavigationAction>
+          )}
+          {["manager", "personal", "admin"].includes(data?.type || "") && (
+            <BottomNavigationAction
+              value={EPages.ORDERS}
+              icon={CPageIcons[EPages.ORDERS]}
+            ></BottomNavigationAction>
+          )}
+          {["kitchen", "admin"].includes(data?.type || "") && (
+            <BottomNavigationAction
+              value={EPages.KITCHEN}
+              icon={CPageIcons[EPages.KITCHEN]}
+            ></BottomNavigationAction>
+          )}
+          {["admin"].includes(data?.type || "") && (
+            <BottomNavigationAction
+              value={EPages.CATEGORIES}
+              icon={CPageIcons[EPages.CATEGORIES]}
+            ></BottomNavigationAction>
+          )}
+          {["admin", "manager"].includes(data?.type || "") && (
+            <BottomNavigationAction value={EPages.DAY} icon={CPageIcons[EPages.DAY]}></BottomNavigationAction>
+          )}
         </BottomNavigationStyled>
       )}
     </Container>

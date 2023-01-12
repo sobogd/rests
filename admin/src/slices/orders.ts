@@ -244,7 +244,16 @@ export const ordersSlice = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(ordersService.finish.fulfilled, (state) => {
-      state.isLoading = false;
+      state.isLoading = initialState.isLoading;
+      state.isOpenForm = initialState.isOpenForm;
+      state.isOpenYouSure = initialState.isOpenYouSure;
+      state.error = initialState.error;
+      state.activeStep = initialState.activeStep;
+      state.orderId = initialState.orderId;
+      state.selectedPositions = initialState.selectedPositions;
+      state.selectedTable = initialState.selectedTable;
+      state.positionsForm = initialState.positionsForm;
+      state.comment = initialState.comment;
     });
   },
 });

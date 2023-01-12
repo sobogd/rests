@@ -7,6 +7,7 @@ import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import AppsIcon from "@mui/icons-material/Apps";
 import SoupKitchenIcon from "@mui/icons-material/SoupKitchen";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
 export const CPageNames = {
   [EPages.ACCOUNT]: "Account",
@@ -18,6 +19,7 @@ export const CPageNames = {
   [EPages.ELEMENTS]: "Elements",
   [EPages.CATEGORIES]: "Categories",
   [EPages.KITCHEN]: "Kitchen",
+  [EPages.DAY]: "Day Rport",
 };
 
 export const CPageIcons = {
@@ -29,4 +31,5 @@ export const CPageIcons = {
   [EPages.ELEMENTS]: <AutoFixHighIcon sx={{ color: teal[50] }} />,
   [EPages.CATEGORIES]: <AppsIcon sx={{ color: teal[50] }} />,
   [EPages.KITCHEN]: <SoupKitchenIcon sx={{ color: teal[50] }} />,
+  [EPages.DAY]: <AssessmentIcon sx={{ color: teal[50] }} />,
 };

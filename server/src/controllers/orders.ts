@@ -45,7 +45,7 @@ export class OrdersController {
   @OperationId("Finish")
   @Security("Bearer", ["AuthService"])
   @Post("finish")
-  public async finish(@Body() request: { id: number }): Promise<{}> {
-    return await ordersServices.finish(request.id);
+  public async finish(@Body() request: { id: number; type: string }): Promise<{}> {
+    return await ordersServices.finish(request.id, request.type);
   }
 }

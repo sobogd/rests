@@ -10,6 +10,7 @@ const props = [
   { name: "finishTime", dbName: "finish_time" },
   { name: "comment", dbName: "comment" },
   { name: "status", dbName: "status" },
+  { name: "discount", dbName: "discount" },
 ];
 
 const tableName = "orders";

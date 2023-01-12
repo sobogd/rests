@@ -6,6 +6,7 @@ export interface IOrder {
   finishTime?: string;
   comment?: string;
   status?: string;
+  discount?: string;
 }
 
 export interface IOrderCreateRequest {

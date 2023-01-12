@@ -101,10 +101,11 @@ const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
   return {};
 };
 
-const finish = async (id: number): Promise<{}> => {
+const finish = async (id: number, type: string): Promise<{}> => {
   await ordersRepository.updateById(
     {
       status: "finished",
+      discount: type === "cash" ? "10" : "0",
     },
     Number(id)
   );

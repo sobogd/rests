@@ -88,11 +88,25 @@ export const OrdersForm: React.FC = () => {
     }
   };
 
-  const handleFinishOrder = () => {
+  const handleFinishOrderCard = () => {
     if (orderId) {
       dispatch(
         ordersService.finish({
           id: orderId,
+          type: "card",
+        })
+      ).then(() => {
+        dispatch(ordersService.search());
+      });
+    }
+  };
+
+  const handleFinishOrderCash = () => {
+    if (orderId) {
+      dispatch(
+        ordersService.finish({
+          id: orderId,
+          type: "cash",
         })
       ).then(() => {
         dispatch(ordersService.search());
@@ -229,11 +243,6 @@ export const OrdersForm: React.FC = () => {
           <Button fullWidth style={{ marginTop: 15 }} variant="contained" onClick={handleSendOrder}>
             {orderId ? "Сохранить изменения" : "Отправить заказ на кухню"}
           </Button>
-          {!!orderId && (
-            <Button fullWidth style={{ marginTop: 15 }} variant="outlined" onClick={handleFinishOrder}>
-              Завершить заказ
-            </Button>
-          )}
         </>
       ),
     },
@@ -241,12 +250,30 @@ export const OrdersForm: React.FC = () => {
 
   return (
     <>
-      <Header title="Новый заказ" onClickBack={() => dispatch(ordersSlice.actions.toggleIsOpenForm())} />
-      {/* <YouSure
-        onClickYes={handleDeleteItem}
-        onClickNo={() => dispatch(categoriesSlice.actions.toggleIsOpenYouSure())}
-        isOpen={isOpenYouSure}
-      /> */}
+      <Header
+        title={orderId ? "Редактирование заказа" : "Новый заказ"}
+        onClickBack={() => dispatch(ordersSlice.actions.toggleIsOpenForm())}
+      />
+      {!!orderId && [
+        <Button
+          fullWidth
+          style={{ marginBottom: 15 }}
+          color="warning"
+          variant="contained"
+          onClick={handleFinishOrderCard}
+        >
+          Оплачено картой
+        </Button>,
+        <Button
+          fullWidth
+          style={{ marginBottom: 15 }}
+          color="success"
+          variant="contained"
+          onClick={handleFinishOrderCash}
+        >
+          Оплачено наличными
+        </Button>,
+      ]}
       {error ? (
         <AlertStyled style={{ marginBottom: 20 }} severity="error">
           {error}
