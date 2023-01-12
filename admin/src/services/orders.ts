@@ -23,9 +23,18 @@ const remove = createAsyncThunk<{}, { id: string }, IErrorResponse>(
   async (order, { rejectWithValue }) => await request(rejectWithValue, "/orders/remove", "POST", order)
 );
 
+const orderPositionFinish = createAsyncThunk<{}, { orderPositionId: number }, IErrorResponse>(
+  "orders/orderPositionFinish",
+  async (r, { rejectWithValue }) =>
+    await request(rejectWithValue, "/orders/order-position-finish", "POST", {
+      orderPositionId: r.orderPositionId,
+    })
+);
+
 export const ordersService = {
   search,
   create,
   update,
   remove,
+  orderPositionFinish,
 };

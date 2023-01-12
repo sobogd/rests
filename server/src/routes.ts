@@ -57,6 +57,7 @@ const models: TsoaRoute.Models = {
             "readyTime": {"dataType":"string"},
             "finishTime": {"dataType":"string"},
             "comment": {"dataType":"string"},
+            "status": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -64,10 +65,11 @@ const models: TsoaRoute.Models = {
     "IOrderCreateRequest": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double"},
+            "orderId": {"dataType":"double"},
             "tableId": {"dataType":"double","required":true},
-            "positions": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string","required":true},"additional":{"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"id":{"dataType":"double","required":true}}},"required":true},"positionId":{"dataType":"double","required":true}}},"required":true},
-            "comment": {"dataType":"string","required":true},
+            "createTime": {"dataType":"string"},
+            "positions": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string"},"additional":{"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"count":{"dataType":"double","required":true},"id":{"dataType":"double","required":true}}}},"positionId":{"dataType":"double","required":true},"id":{"dataType":"double"}}},"required":true},
+            "comment": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -445,7 +447,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function OrdersController_update(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"ref":"IOrder"},
+                    request: {"in":"body","name":"request","required":true,"ref":"IOrderCreateRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -484,6 +486,32 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.remove.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/orders/order-position-finish',
+            authenticateMiddleware([{"Bearer":["AuthService"]}]),
+            ...(fetchMiddlewares<RequestHandler>(OrdersController)),
+            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.orderPositionFinish)),
+
+            function OrdersController_orderPositionFinish(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"orderPositionId":{"dataType":"double","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new OrdersController();
+
+
+              const promise = controller.orderPositionFinish.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

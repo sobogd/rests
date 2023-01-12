@@ -63,6 +63,7 @@ export const PositionsForm: React.FC = () => {
     error,
     isOpenYouSure,
     items: allPositions,
+    isLoading,
   } = useAppSelector((s) => s.positions);
   const { items: elements } = useAppSelector((s) => s.elements);
   const { items: allCategories } = useAppSelector((s) => s.categories);
@@ -82,11 +83,11 @@ export const PositionsForm: React.FC = () => {
       values
     ).reduce((acc, key) => {
       switch (key) {
-        case "price":
-          return {
-            ...acc,
-            [key]: { value: values[key].value, error: validatePrice(values[key].value, 1, 1000) },
-          };
+        // case "price":
+        //   return {
+        //     ...acc,
+        //     [key]: { value: values[key].value, error: validatePrice(values[key].value, -1, 1000) },
+        //   };
         case "name":
           return {
             ...acc,
@@ -228,7 +229,7 @@ export const PositionsForm: React.FC = () => {
       <YouSure
         onClickYes={handleDeleteItem}
         onClickNo={() => dispatch(positionsSlice.actions.toggleIsOpenYouSure())}
-        isOpen={isOpenYouSure}
+        isOpen={isOpenYouSure && !isLoading}
       />
       <MyForm onSubmit={handleClickEnter}>
         {error ? (

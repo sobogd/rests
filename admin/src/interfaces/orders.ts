@@ -2,9 +2,24 @@ import { EOrderSteps, EPositionFormSteps } from "../enums/orders";
 import { ITable } from "./tables";
 
 export interface IOrder {
+  createTime: string;
+  finishTime: string;
+  readyTime: string;
   id: string;
   tableId: string;
   statusId: string;
+  ordersPositions?: IOrderPosition[];
+  comment?: string;
+}
+
+export interface IOrderPosition {
+  additional?: string;
+  comment?: string;
+  finishTime?: string;
+  id?: number;
+  orderId?: string;
+  positionId?: string;
+  startTime?: string;
 }
 
 export interface IPositionInOrder {
@@ -14,6 +29,7 @@ export interface IPositionInOrder {
 }
 
 export interface IOrderStatePositionForm {
+  id?: number;
   editIndex?: number;
   isOpened?: boolean;
   categoryId?: string;
@@ -27,8 +43,8 @@ export interface IOrderStatePositionForm {
 }
 
 export interface IOrderState {
+  orderId?: number;
   items: IOrder[];
-  form: { [Key in keyof IOrder]: { value: string; error: string } };
   isLoading: boolean;
   isOpenForm: boolean;
   isOpenYouSure: boolean;

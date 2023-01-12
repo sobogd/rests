@@ -7,7 +7,7 @@ const defaultField = { value: "", error: "" };
 
 const initialState: IOrderState = {
   items: [],
-  form: { id: defaultField, tableId: defaultField, statusId: defaultField },
+  orderId: undefined,
   isLoading: false,
   isOpenForm: false,
   isOpenYouSure: false,
@@ -30,21 +30,19 @@ export const ordersSlice = createSlice({
   initialState,
   reducers: {
     toggleIsOpenForm: (state) => {
-      if (state.isOpenForm && state.form.id.value) {
-        state.form = initialState.form;
-        state.positionsForm = initialState.positionsForm;
-        state.selectedPositions = initialState.selectedPositions;
-        state.selectedTable = initialState.selectedTable;
-      }
       if (!state.isOpenForm) {
-        state.form = initialState.form;
-        state.positionsForm = initialState.positionsForm;
+        state.isLoading = initialState.isLoading;
+        state.isOpenForm = initialState.isOpenForm;
+        state.isOpenYouSure = initialState.isOpenYouSure;
+        state.activeStep = initialState.activeStep;
+        state.orderId = initialState.orderId;
         state.selectedPositions = initialState.selectedPositions;
         state.selectedTable = initialState.selectedTable;
-        state.activeStep = initialState.activeStep;
+        state.positionsForm = initialState.positionsForm;
+        state.comment = initialState.comment;
       }
       state.isOpenForm = !state.isOpenForm;
-      state.error = "";
+      state.error = initialState.error;
     },
     toggleIsOpenPositionForm: (state) => {
       if (state.positionsForm.isOpened) {
@@ -160,18 +158,22 @@ export const ordersSlice = createSlice({
     },
     startEditItem: (state, { payload }) => {
       state.activeStep = EOrderSteps.FILLING;
-      state.selectedPositions = [];
+      state.selectedPositions = payload.ordersPositions.map((p: any) => ({
+        id: p.id,
+        positionId: Number(p.positionId),
+        comment: p.comment,
+        additional: p.additional?.split("/").map((a: any) => {
+          const splitted = a.split("-");
+          return {
+            id: Number(splitted[1]),
+            count: Number(splitted[0]),
+          };
+        }),
+      }));
+      state.orderId = payload.id;
+      state.selectedTable = payload.selectedTable;
+      state.comment = payload.comment;
       state.isOpenForm = true;
-    },
-    setFormValue: (state, { payload: { name, value } }) => {
-      state.form = {
-        ...state.form,
-        [name]: { value, error: "" },
-      };
-      state.error = "";
-    },
-    setFormData: (state, { payload }) => {
-      state.form = payload;
     },
   },
   extraReducers(builder) {
@@ -194,10 +196,16 @@ export const ordersSlice = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(ordersService.create.fulfilled, (state) => {
-      state.isLoading = false;
-      state.form = initialState.form;
-      state.isOpenForm = false;
-      state.error = "";
+      state.isLoading = initialState.isLoading;
+      state.isOpenForm = initialState.isOpenForm;
+      state.isOpenYouSure = initialState.isOpenYouSure;
+      state.error = initialState.error;
+      state.activeStep = initialState.activeStep;
+      state.orderId = initialState.orderId;
+      state.selectedPositions = initialState.selectedPositions;
+      state.selectedTable = initialState.selectedTable;
+      state.positionsForm = initialState.positionsForm;
+      state.comment = initialState.comment;
     });
     builder.addCase(ordersService.update.pending, (state) => {
       state.isLoading = true;
@@ -207,21 +215,25 @@ export const ordersSlice = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(ordersService.update.fulfilled, (state) => {
-      state.form = initialState.form;
-      state.isOpenForm = false;
-      state.isLoading = false;
+      state.isLoading = initialState.isLoading;
+      state.isOpenForm = initialState.isOpenForm;
+      state.isOpenYouSure = initialState.isOpenYouSure;
+      state.error = initialState.error;
+      state.activeStep = initialState.activeStep;
+      state.orderId = initialState.orderId;
+      state.selectedPositions = initialState.selectedPositions;
+      state.selectedTable = initialState.selectedTable;
+      state.positionsForm = initialState.positionsForm;
+      state.comment = initialState.comment;
     });
-    builder.addCase(ordersService.remove.pending, (state) => {
+    builder.addCase(ordersService.orderPositionFinish.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(ordersService.remove.rejected, (state) => {
+    builder.addCase(ordersService.orderPositionFinish.rejected, (state) => {
       state.isLoading = false;
       state.error = "Error with request";
     });
-    builder.addCase(ordersService.remove.fulfilled, (state) => {
-      state.form = initialState.form;
-      state.isOpenForm = false;
-      state.isOpenYouSure = false;
+    builder.addCase(ordersService.orderPositionFinish.fulfilled, (state) => {
       state.isLoading = false;
     });
   },

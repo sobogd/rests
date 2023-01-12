@@ -7,4 +7,5 @@ export enum EPages {
   ADDING_MENU = "ADDING_MENU",
   ELEMENTS = "ELEMENTS",
   CATEGORIES = "CATEGORIES",
+  KITCHEN = "KITCHEN",
 }

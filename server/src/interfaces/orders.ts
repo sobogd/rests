@@ -5,15 +5,18 @@ export interface IOrder {
   readyTime?: string;
   finishTime?: string;
   comment?: string;
+  status?: string;
 }
 
 export interface IOrderCreateRequest {
-  id?: number;
+  orderId?: number;
   tableId: number;
+  createTime?: string;
   positions: {
+    id?: number;
     positionId: number;
-    additional: { id: number; count: number }[];
-    comment: string;
+    additional?: { id: number; count: number }[];
+    comment?: string;
   }[];
-  comment: string;
+  comment?: string;
 }

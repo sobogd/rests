@@ -14,6 +14,7 @@ import { CPageIcons } from "../consts/pages";
 import { Elements } from "./elements";
 import { Positions } from "./positions";
 import { Categories } from "./categories";
+import { Kitchen } from "./kitchen";
 
 export const Layout: React.FC<{ children?: any }> = ({ children }) => {
   const isAuthorizatedUser = !!sessionStorage.getItem("token");
@@ -44,6 +45,8 @@ export const Layout: React.FC<{ children?: any }> = ({ children }) => {
           return <Elements />;
         case EPages.CATEGORIES:
           return <Categories />;
+        case EPages.KITCHEN:
+          return <Kitchen />;
         default:
           return <Account />;
       }
@@ -73,6 +76,10 @@ export const Layout: React.FC<{ children?: any }> = ({ children }) => {
           <BottomNavigationAction
             value={EPages.ORDERS}
             icon={CPageIcons[EPages.ORDERS]}
+          ></BottomNavigationAction>
+          <BottomNavigationAction
+            value={EPages.KITCHEN}
+            icon={CPageIcons[EPages.KITCHEN]}
           ></BottomNavigationAction>
           <BottomNavigationAction
             value={EPages.CATEGORIES}

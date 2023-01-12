@@ -71,6 +71,9 @@
 					},
 					"comment": {
 						"type": "string"
+					},
+					"status": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -78,13 +81,16 @@
 			},
 			"IOrderCreateRequest": {
 				"properties": {
-					"id": {
+					"orderId": {
 						"type": "number",
 						"format": "double"
 					},
 					"tableId": {
 						"type": "number",
 						"format": "double"
+					},
+					"createTime": {
+						"type": "string"
 					},
 					"positions": {
 						"items": {
@@ -115,11 +121,13 @@
 								"positionId": {
 									"type": "number",
 									"format": "double"
+								},
+								"id": {
+									"type": "number",
+									"format": "double"
 								}
 							},
 							"required": [
-								"comment",
-								"additional",
 								"positionId"
 							],
 							"type": "object"
@@ -132,8 +140,7 @@
 				},
 				"required": [
 					"tableId",
-					"positions",
-					"comment"
+					"positions"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -699,8 +706,16 @@
 			"post": {
 				"operationId": "Create",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {},
+									"type": "object"
+								}
+							}
+						}
 					}
 				},
 				"tags": [
@@ -735,7 +750,8 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IOrder"
+									"properties": {},
+									"type": "object"
 								}
 							}
 						}
@@ -757,7 +773,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IOrder"
+								"$ref": "#/components/schemas/IOrderCreateRequest"
 							}
 						}
 					}
@@ -804,6 +820,54 @@
 								},
 								"required": [
 									"id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/order-position-finish": {
+			"post": {
+				"operationId": "OrerPositionFinish",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {},
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"orderPositionId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"orderPositionId"
 								],
 								"type": "object"
 							}

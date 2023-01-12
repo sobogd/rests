@@ -9,6 +9,7 @@ const props = [
   { name: "readyTime", dbName: "ready_time" },
   { name: "finishTime", dbName: "finish_time" },
   { name: "comment", dbName: "comment" },
+  { name: "status", dbName: "status" },
 ];
 
 const tableName = "orders";
@@ -16,6 +17,19 @@ const tableName = "orders";
 const findAll = async () => {
   const client = await pool.connect();
   const foundedRows = await queryBuilder.selectAll(client, tableName);
+  client.release();
+
+  return queryBuilder.mapFromDb(foundedRows, props);
+};
+
+const findAllActive = async () => {
+  const client = await pool.connect();
+  const foundedRows = await queryBuilder.selectBySpec(
+    client,
+    tableName,
+    { status: "active" },
+    { field: "create_time", direction: "DESC" }
+  );
   client.release();
 
   return queryBuilder.mapFromDb(foundedRows, props);
@@ -69,4 +83,5 @@ export default {
   create,
   updateById,
   removeById,
+  findAllActive,
 };

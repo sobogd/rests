@@ -48,11 +48,21 @@ const getUpdateFields = (payload: any, startIndex: number) => {
     .join(",");
 };
 
-const selectBySpec = async (client: any, tableName: string, payload: any) => {
+const selectBySpec = async (
+  client: any,
+  tableName: string,
+  payload: any,
+  order?: { field: string; direction: string }
+) => {
   const whereFilters = getWhereFilters(payload);
   const values = getValues(payload);
 
-  const { rows } = await client.query(`SELECT * from ${tableName} WHERE ${whereFilters}`, values);
+  const { rows } = await client.query(
+    `SELECT * from ${tableName} WHERE ${whereFilters} ${
+      order ? `ORDER BY ${order.field} ${order.direction}` : ""
+    }`,
+    values
+  );
 
   return rows;
 };

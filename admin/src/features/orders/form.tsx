@@ -47,36 +47,45 @@ const TableSetBlock = styled.div`
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { form, error, comment, activeStep, selectedTable, selectedPositions } = useAppSelector(
+  const { error, comment, activeStep, selectedTable, selectedPositions, orderId } = useAppSelector(
     (s) => s.orders
   );
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
   const { items: positions } = useAppSelector((s) => s.positions);
-  // const { id, name, description } = form;
-
-  React.useEffect(() => {
-    dispatch(tablesService.findImage());
-    dispatch(tablesService.search());
-    dispatch(positionsService.search());
-    dispatch(categoriesService.search());
-  }, []);
 
   const handleSelectTable = (t: ITable) => () => {
     dispatch(ordersSlice.actions.setSelectedTable(t));
   };
 
   const handleSendOrder = () => {
-    dispatch(
-      ordersService.create({
-        positions: selectedPositions.map((p) => ({
-          positionId: p.positionId,
-          additional: p.additional,
-          comment: p.comment,
-        })),
-        tableId: selectedTable?.id,
-        comment,
-      })
-    );
+    if (orderId) {
+      dispatch(
+        ordersService.update({
+          positions: selectedPositions.map((p) => ({
+            id: p.id,
+            positionId: p.positionId,
+            additional: p.additional || [],
+            comment: p.comment || "",
+          })),
+          tableId: selectedTable?.id,
+          comment: comment || "",
+          orderId,
+        })
+      );
+    } else {
+      dispatch(
+        ordersService.create({
+          positions: selectedPositions.map((p) => ({
+            positionId: p.positionId,
+            additional: p.additional || [],
+            comment: p.comment || "",
+          })),
+          tableId: selectedTable?.id,
+          comment: comment || "",
+          createTime: new Date().toISOString(),
+        })
+      );
+    }
   };
 
   const accordions = [
@@ -206,7 +215,7 @@ export const OrdersForm: React.FC = () => {
             style={{ marginTop: 15, marginBottom: 0 }}
           />
           <Button fullWidth style={{ marginTop: 15 }} variant="contained" onClick={handleSendOrder}>
-            Отправить заказ на кухню
+            {orderId ? "Сохранить изменения" : "Отправить заказ на кухню"}
           </Button>
         </>
       ),
