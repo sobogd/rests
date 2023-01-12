@@ -88,6 +88,18 @@ export const OrdersForm: React.FC = () => {
     }
   };
 
+  const handleFinishOrder = () => {
+    if (orderId) {
+      dispatch(
+        ordersService.finish({
+          id: orderId,
+        })
+      ).then(() => {
+        dispatch(ordersService.search());
+      });
+    }
+  };
+
   const accordions = [
     {
       title: "Выберите столик",
@@ -217,6 +229,11 @@ export const OrdersForm: React.FC = () => {
           <Button fullWidth style={{ marginTop: 15 }} variant="contained" onClick={handleSendOrder}>
             {orderId ? "Сохранить изменения" : "Отправить заказ на кухню"}
           </Button>
+          {!!orderId && (
+            <Button fullWidth style={{ marginTop: 15 }} variant="outlined" onClick={handleFinishOrder}>
+              Завершить заказ
+            </Button>
+          )}
         </>
       ),
     },

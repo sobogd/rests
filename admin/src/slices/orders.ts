@@ -236,5 +236,15 @@ export const ordersSlice = createSlice({
     builder.addCase(ordersService.orderPositionFinish.fulfilled, (state) => {
       state.isLoading = false;
     });
+    builder.addCase(ordersService.finish.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(ordersService.finish.rejected, (state) => {
+      state.isLoading = false;
+      state.error = "Error with request";
+    });
+    builder.addCase(ordersService.finish.fulfilled, (state) => {
+      state.isLoading = false;
+    });
   },
 });

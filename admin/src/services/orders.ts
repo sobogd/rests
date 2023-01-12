@@ -31,10 +31,19 @@ const orderPositionFinish = createAsyncThunk<{}, { orderPositionId: number }, IE
     })
 );
 
+const finish = createAsyncThunk<{}, { id: number }, IErrorResponse>(
+  "orders/finish",
+  async (r, { rejectWithValue }) =>
+    await request(rejectWithValue, "/orders/finish", "POST", {
+      id: r.id,
+    })
+);
+
 export const ordersService = {
   search,
   create,
   update,
   remove,
   orderPositionFinish,
+  finish,
 };

@@ -41,4 +41,11 @@ export class OrdersController {
   public async orderPositionFinish(@Body() request: { orderPositionId: number }): Promise<{}> {
     return await ordersServices.orderPositionFinish(request.orderPositionId);
   }
+  @Tags("OrdersService")
+  @OperationId("Finish")
+  @Security("Bearer", ["AuthService"])
+  @Post("finish")
+  public async finish(@Body() request: { id: number }): Promise<{}> {
+    return await ordersServices.finish(request.id);
+  }
 }

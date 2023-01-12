@@ -92,7 +92,6 @@ const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
   if (!unFinishedPositions?.length) {
     await ordersRepository.updateById(
       {
-        status: "finished",
         finishTime: new Date().toISOString(),
       },
       Number(updatedOrderPosition.orderId)
@@ -102,4 +101,15 @@ const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
   return {};
 };
 
-export default { search, create, update, remove, orderPositionFinish };
+const finish = async (id: number): Promise<{}> => {
+  await ordersRepository.updateById(
+    {
+      status: "finished",
+    },
+    Number(id)
+  );
+
+  return {};
+};
+
+export default { search, create, update, remove, orderPositionFinish, finish };
