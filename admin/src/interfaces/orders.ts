@@ -54,4 +54,14 @@ export interface IOrderState {
   selectedPositions: IOrderStatePositionForm[];
   comment: string;
   error: string;
+  ordersForToday?: IOrderForToday[];
+}
+
+export interface IOrderForToday {
+  id: number;
+  time: string;
+  date: string;
+  discount: number;
+  total: number;
+  positions: string[];
 }

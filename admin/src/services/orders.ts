@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IErrorResponse } from "../interfaces/common";
-import { IOrder } from "../interfaces/orders";
+import { IOrder, IOrderForToday } from "../interfaces/orders";
 import { request } from "../utils/request";
 
 const search = createAsyncThunk<IOrder[], void, IErrorResponse>(
@@ -40,6 +40,11 @@ const finish = createAsyncThunk<{}, { id: number; type: string }, IErrorResponse
     })
 );
 
+const getDayReport = createAsyncThunk<IOrderForToday[], {}, IErrorResponse>(
+  "orders/getDayReport",
+  async (_, { rejectWithValue }) => await request(rejectWithValue, "/orders/get-day-report", "POST", {})
+);
+
 export const ordersService = {
   search,
   create,
@@ -47,4 +52,5 @@ export const ordersService = {
   remove,
   orderPositionFinish,
   finish,
+  getDayReport,
 };

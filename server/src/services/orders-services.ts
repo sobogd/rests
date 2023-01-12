@@ -1,6 +1,8 @@
-import { IOrder, IOrderCreateRequest } from "../interfaces/orders";
+import { IDayReportResponse, IOrder, IOrderCreateRequest } from "../interfaces/orders";
 import ordersPositionsRepository from "../repositories/orders-positions-repository";
 import ordersRepository from "../repositories/orders-repository";
+import { DateTime } from "luxon";
+import positionsRepository from "../repositories/positions-repository";
 
 const search = async (): Promise<IOrder[]> => {
   const orders = await ordersRepository.findAllActive();
@@ -22,7 +24,7 @@ const create = async (order: IOrderCreateRequest): Promise<void> => {
   const createdOrder = await ordersRepository.create({
     tableId: order.tableId,
     comment: order.comment,
-    createTime: order.createTime,
+    createTime: DateTime.now().toUTC().toSQL(),
     status: "active",
   });
 
@@ -32,7 +34,7 @@ const create = async (order: IOrderCreateRequest): Promise<void> => {
       positionId: position.positionId,
       additional: position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "",
       comment: position.comment,
-      startTime: new Date().toISOString(),
+      startTime: DateTime.now().toUTC().toSQL(),
     });
   }
 };
@@ -64,7 +66,7 @@ const update = async (order: IOrderCreateRequest): Promise<void> => {
         positionId: position.positionId,
         additional: position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "",
         comment: position.comment,
-        startTime: new Date().toISOString(),
+        startTime: DateTime.now().toUTC().toSQL(),
       });
     }
   }
@@ -78,7 +80,7 @@ const remove = async (category: { id: number }): Promise<{}> => {
 const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
   const updatedOrderPosition = await ordersPositionsRepository.updateById(
     {
-      finishTime: new Date().toISOString(),
+      finishTime: DateTime.now().toUTC().toSQL(),
     },
     orderPositionId
   );
@@ -92,7 +94,7 @@ const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
   if (!unFinishedPositions?.length) {
     await ordersRepository.updateById(
       {
-        finishTime: new Date().toISOString(),
+        finishTime: DateTime.now().toUTC().toSQL(),
       },
       Number(updatedOrderPosition.orderId)
     );
@@ -113,4 +115,52 @@ const finish = async (id: number, type: string): Promise<{}> => {
   return {};
 };
 
-export default { search, create, update, remove, orderPositionFinish, finish };
+const getDayReport = async (): Promise<IDayReportResponse> => {
+  const orders = await ordersRepository.findByDate(DateTime.now().toSQLDate());
+  const positions = await positionsRepository.findAll();
+
+  let resultOrders: any = [];
+
+  for (const o of orders) {
+    const finistDate = DateTime.fromJSDate(o.finishTime);
+    const startDate = DateTime.fromJSDate(o.createTime);
+    const diff = finistDate.diff(startDate, ["minutes"]);
+    let total = 0;
+    const resultPositions: string[] = [];
+
+    const orderPositions = await ordersPositionsRepository.findAllByOrderId(o.id);
+
+    for (const op of orderPositions) {
+      const primaryPosition = positions.find((p) => Number(p.id) === Number(op.positionId));
+
+      resultPositions.push(primaryPosition.name);
+      total = total + Number(primaryPosition.price);
+
+      if (op.additional?.length) {
+        const additionalPositions = op.additional.split("/");
+        additionalPositions.forEach((op: any) => {
+          const splitted = op.split("-");
+          const additionalPosition = positions.find((p) => Number(p.id) === Number(splitted[1]));
+
+          if (additionalPosition?.price) {
+            resultPositions.push(additionalPosition.name);
+            total = total + Number(additionalPosition.price) * Number(splitted[0]);
+          }
+        });
+      }
+    }
+
+    resultOrders.push({
+      id: o.id,
+      time: Math.round(Number(diff.toObject().minutes)),
+      date: o.createTime,
+      discount: Number(o.discount),
+      total,
+      positions: resultPositions,
+    });
+  }
+
+  return resultOrders;
+};
+
+export default { search, create, update, remove, orderPositionFinish, finish, getDayReport };

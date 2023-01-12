@@ -10,19 +10,58 @@ import { formatInTimeZone } from "date-fns-tz";
 import { format } from "date-fns";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { grey } from "@mui/material/colors";
-import { Button } from "@mui/material";
+import { Button, List, ListItem, ListItemText } from "@mui/material";
 
 export const Day: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading: isLoadingOrders, items } = useAppSelector((s) => s.orders);
+  const { isLoading: isLoadingOrders, ordersForToday } = useAppSelector((s) => s.orders);
 
   React.useEffect(() => {
-    // dispatch(ordersService.searchForToday());
+    dispatch(ordersService.getDayReport({}));
   }, []);
+
+  const dayTotal = React.useMemo(() => {
+    if (ordersForToday?.length) {
+      return ordersForToday.reduce((acc, oft) => {
+        acc = acc + (oft.discount ? Number(oft.total) * (Number(oft.discount) / 100) : Number(oft.total));
+        return acc;
+      }, 0);
+    }
+
+    return null;
+  }, [ordersForToday]);
 
   return (
     <>
       <Loading isLoading={isLoadingOrders} />
+      <Button fullWidth style={{ marginBottom: 25 }} variant="contained">
+        Day total: {dayTotal}
+      </Button>
+      <List disablePadding>
+        {ordersForToday?.map((ot) => (
+          <ListItem divider disablePadding>
+            <ListItemText
+              primary={
+                <>
+                  Number: #{ot.id}
+                  <br></br>
+                  Time: {format(Date.parse(ot.date), "dd.MM.yyyy HH:mm")}
+                  <br></br>
+                  Total: {ot.discount ? Number(ot.total) * (Number(ot.discount) / 100) : ot.total}
+                  <br></br>
+                  Discount: {ot.discount}%
+                </>
+              }
+              secondary={ot.positions.map((p) => (
+                <>
+                  {p}
+                  <br></br>
+                </>
+              ))}
+            />
+          </ListItem>
+        ))}
+      </List>
     </>
   );
 };

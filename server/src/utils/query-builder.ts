@@ -67,6 +67,12 @@ const selectBySpec = async (
   return rows;
 };
 
+const selectByCustomQuery = async (client: any, query: string) => {
+  const { rows } = await client.query(query);
+
+  return rows;
+};
+
 const selectAll = async (client: any, tableName: string) => {
   const { rows } = await client.query(`SELECT * from ${tableName}`);
 
@@ -117,4 +123,5 @@ export default {
   removeOneBySpec,
   mapFromDb,
   mapToDb,
+  selectByCustomQuery,
 };

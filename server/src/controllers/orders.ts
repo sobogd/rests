@@ -1,5 +1,5 @@
 import { Body, OperationId, Post, Route, Security, Tags } from "tsoa";
-import { IOrder, IOrderCreateRequest } from "../interfaces/orders";
+import { IDayReportResponse, IOrder, IOrderCreateRequest } from "../interfaces/orders";
 import ordersServices from "../services/orders-services";
 
 @Route("orders")
@@ -47,5 +47,12 @@ export class OrdersController {
   @Post("finish")
   public async finish(@Body() request: { id: number; type: string }): Promise<{}> {
     return await ordersServices.finish(request.id, request.type);
+  }
+  @Tags("OrdersService")
+  @OperationId("GetDayReport")
+  @Security("Bearer", ["AuthService"])
+  @Post("get-day-report")
+  public async getDayReport(): Promise<IDayReportResponse> {
+    return await ordersServices.getDayReport();
   }
 }

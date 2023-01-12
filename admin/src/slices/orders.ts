@@ -3,8 +3,6 @@ import { EOrderSteps, EPositionFormSteps } from "../enums/orders";
 import { IOrderState } from "../interfaces/orders";
 import { ordersService } from "../services/orders";
 
-const defaultField = { value: "", error: "" };
-
 const initialState: IOrderState = {
   items: [],
   orderId: undefined,
@@ -254,6 +252,17 @@ export const ordersSlice = createSlice({
       state.selectedTable = initialState.selectedTable;
       state.positionsForm = initialState.positionsForm;
       state.comment = initialState.comment;
+    });
+    builder.addCase(ordersService.getDayReport.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(ordersService.getDayReport.rejected, (state) => {
+      state.isLoading = false;
+      state.error = "Error with request";
+    });
+    builder.addCase(ordersService.getDayReport.fulfilled, (state, { payload }) => {
+      state.isLoading = false;
+      state.ordersForToday = payload;
     });
   },
 });

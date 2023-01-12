@@ -21,3 +21,12 @@ export interface IOrderCreateRequest {
   }[];
   comment?: string;
 }
+
+export interface IDayReportResponse {
+  id: number;
+  time: string;
+  date: string;
+  discount: number;
+  total: number;
+  positions: string[];
+}

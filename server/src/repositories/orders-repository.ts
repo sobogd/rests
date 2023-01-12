@@ -44,6 +44,17 @@ const findById = async (id: number) => {
   return queryBuilder.mapFromDb(foundedRows, props)[0];
 };
 
+const findByDate = async (date: string) => {
+  const client = await pool.connect();
+  const foundedRows = await queryBuilder.selectByCustomQuery(
+    client,
+    `SELECT * FROM orders where finish_time::date = '${date}'`
+  );
+  client.release();
+
+  return queryBuilder.mapFromDb(foundedRows, props);
+};
+
 const create = async (order: IOrder) => {
   const client = await pool.connect();
 
@@ -81,6 +92,7 @@ const removeById = async (id: number) => {
 export default {
   findAll,
   findById,
+  findByDate,
   create,
   updateById,
   removeById,

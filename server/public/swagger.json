@@ -148,6 +148,44 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IDayReportResponse": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"time": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"discount": {
+						"type": "number",
+						"format": "double"
+					},
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"positions": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"time",
+					"date",
+					"discount",
+					"total",
+					"positions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ICreatePositionRequest": {
 				"properties": {
 					"id": {
@@ -929,6 +967,34 @@
 						}
 					}
 				}
+			}
+		},
+		"/orders/get-day-report": {
+			"post": {
+				"operationId": "GetDayReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IDayReportResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/positions/search": {
