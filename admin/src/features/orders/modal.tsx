@@ -111,22 +111,12 @@ export const AddPositionModal: React.FC = () => {
     return (
       <ModalScrollableBlock>
         {additionals.map((p) => {
-          // const foundedAdditionalInForm = positionsForm.additional?.find((a) => a.id === p.id);
+          const foundedAdditionalInForm = positionsForm.additional?.find((a) => a.id === p.id);
 
           return (
             <AdditionalSelectBlock>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={() => {
-                  dispatch(ordersSlice.actions.additionalPlus(p.id));
-                  dispatch(ordersSlice.actions.setPositionFormStep(EPositionFormSteps.COMMENT));
-                }}
-              >
-                {p.name}
-              </Button>
-
-              {/* <p>
+              {p.name}
+              <p>
                 <Button
                   variant="contained"
                   onClick={() => dispatch(ordersSlice.actions.additionalMinus(p.id))}
@@ -140,7 +130,7 @@ export const AddPositionModal: React.FC = () => {
                 >
                   +
                 </Button>
-              </p> */}
+              </p>
             </AdditionalSelectBlock>
           );
         })}
