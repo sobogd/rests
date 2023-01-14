@@ -25,7 +25,7 @@ export class MenuController {
       const result = {
         id: c.id,
         name: c.name,
-        description: c.description.replaceAll(" ", "") !== "" ? c.description : undefined,
+        description: c.description?.replaceAll(" ", "") !== "" ? c.description : undefined,
         positions: [],
       };
 
@@ -45,14 +45,14 @@ export class MenuController {
             id: po.id,
             name: po.name,
             price: po.price,
-            description: po.description.replaceAll(" ", "") !== "" ? po.description : undefined,
+            description: po.description?.replaceAll(" ", "") !== "" ? po.description : undefined,
           }));
 
         acc.push({
           id: p.id,
           name: p.name,
           price: p.price,
-          description: p.description.replaceAll(" ", "") !== "" ? p.description : undefined,
+          description: p.description?.replaceAll(" ", "") !== "" ? p.description : undefined,
           additional,
         });
 
