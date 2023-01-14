@@ -22,6 +22,7 @@ import { categoriesService } from "../../services/categories";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ordersService } from "../../services/orders";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 const TableSetBlock = styled.div`
   position: relative;
@@ -170,6 +171,13 @@ export const OrdersForm: React.FC = () => {
                       <>
                         <IconButton
                           edge="end"
+                          style={{ marginRight: 5 }}
+                          onClick={() => dispatch(ordersSlice.actions.copyPosition(index))}
+                        >
+                          <ContentCopyIcon />
+                        </IconButton>
+                        <IconButton
+                          edge="end"
                           onClick={() => dispatch(ordersSlice.actions.deletePosition(index))}
                         >
                           <DeleteIcon />
@@ -178,6 +186,7 @@ export const OrdersForm: React.FC = () => {
                     }
                   >
                     <ListItemText
+                      style={{ paddingRight: 100 }}
                       primary={positionData?.name}
                       secondary={
                         <>

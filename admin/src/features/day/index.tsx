@@ -23,7 +23,9 @@ export const Day: React.FC = () => {
   const dayTotal = React.useMemo(() => {
     if (ordersForToday?.length) {
       return ordersForToday.reduce((acc, oft) => {
-        acc = acc + (oft.discount ? Number(oft.total) * (Number(oft.discount) / 100) : Number(oft.total));
+        console.log(Number(oft.discount) / 100);
+
+        acc = acc + (oft.discount ? Number(oft.total) * (1 - Number(oft.discount) / 100) : Number(oft.total));
         return acc;
       }, 0);
     }
@@ -47,7 +49,7 @@ export const Day: React.FC = () => {
                   <br></br>
                   Time: {format(Date.parse(ot.date), "dd.MM.yyyy HH:mm")}
                   <br></br>
-                  Total: {ot.discount ? Number(ot.total) * (Number(ot.discount) / 100) : ot.total}
+                  Total: {ot.discount ? Number(ot.total) * (1 - Number(ot.discount) / 100) : ot.total}
                   <br></br>
                   Discount: {ot.discount}%
                 </>

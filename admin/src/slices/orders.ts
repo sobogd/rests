@@ -143,6 +143,16 @@ export const ordersSlice = createSlice({
     deletePosition: (state, { payload: deleteIndex }) => {
       state.selectedPositions = state.selectedPositions.filter((_, index) => index !== deleteIndex);
     },
+    copyPosition: (state, { payload: copyIndex }) => {
+      state.selectedPositions = state.selectedPositions.reduce((acc: any, p, index) => {
+        acc.push(p);
+        if (index === copyIndex) {
+          acc.push({ ...p, id: undefined });
+        }
+
+        return acc;
+      }, []);
+    },
     setActiveStep: (state, { payload }) => {
       state.activeStep = payload;
     },
