@@ -53,6 +53,19 @@ const OrderTable = styled.table`
   }
 `;
 
+const ScrollableBox = styled(Box)`
+  height: 100%;
+  max-height: calc(100% - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  padding: 0 30px;
+  background: none;
+`;
+
 export const OrdersList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { items, isLoading } = useAppSelector((s) => s.orders);
@@ -257,12 +270,12 @@ export const OrdersList: React.FC = () => {
           setDiscount(null);
         }}
       >
-        <Box>
+        <ScrollableBox>
           <Typography variant="h6" marginBottom={2}>
             Bill creating
           </Typography>
           {billOrderView}
-        </Box>
+        </ScrollableBox>
       </Modal>
       <List disablePadding>
         {items?.map((i) => {
@@ -271,10 +284,10 @@ export const OrdersList: React.FC = () => {
           return (
             <ListItem disablePadding style={{ marginBottom: 10 }}>
               <ListItemText
-                primary={`Order №${i.id} / Table №${table?.number}`}
+                primary={table?.name}
                 secondary={
                   <React.Fragment>
-                    <Box marginBottom={1}>{table?.name}</Box>
+                    <Box marginBottom={1}>{`Order №${i.id} / Table №${table?.number}`}</Box>
                     {i.comment && <Box marginBottom={1}>{i.comment}</Box>}
                     <Grid container spacing={1}>
                       <Grid item xs={6}>
