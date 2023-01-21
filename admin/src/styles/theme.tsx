@@ -1,48 +1,20 @@
 import { createTheme } from "@mui/material";
 import { teal, grey } from "@mui/material/colors";
+import type {} from "@mui/x-date-pickers/themeAugmentation";
 
 export const backgroundDefault = grey[900];
 export const textDefaultColor = grey[100];
+export const greenDefault = teal[800];
 
 export const theme = createTheme({
-  palette: {
-    secondary: {
-      main: teal[600],
-      contrastText: textDefaultColor,
-    },
-    primary: {
-      main: teal[600],
-      contrastText: textDefaultColor,
-    },
-    background: {
-      default: grey["A700"],
-    },
-    text: {
-      primary: textDefaultColor,
-      secondary: textDefaultColor,
-    },
-  },
-  typography: {
-    h1: {
-      color: textDefaultColor,
-      fontWeight: 400,
-      fontSize: 24,
-      padding: 0,
-      margin: 0,
-    },
-    h2: { color: textDefaultColor, fontWeight: 100 },
-    h3: { color: textDefaultColor, fontWeight: 100 },
-    h4: { color: textDefaultColor, fontWeight: 100 },
-    h5: { color: textDefaultColor, fontWeight: 100 },
-    h6: { color: textDefaultColor, fontWeight: 100 },
-    subtitle1: { color: textDefaultColor, fontWeight: 100 },
-    subtitle2: { color: textDefaultColor, fontWeight: 100 },
-    body1: { color: textDefaultColor, fontWeight: 100 },
-    body2: { color: textDefaultColor, fontWeight: 100 },
-    caption: { color: textDefaultColor, fontWeight: 100 },
-    button: { fontWeight: 100, color: textDefaultColor },
-  },
   components: {
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          backgroundColor: backgroundDefault,
+        },
+      },
+    },
     MuiList: {
       styleOverrides: {
         root: {
@@ -119,5 +91,57 @@ export const theme = createTheme({
         },
       },
     },
+    MuiModal: {
+      styleOverrides: {
+        root: {
+          margin: "30px auto",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          width: "calc(100% - 60px)",
+          maxWidth: "500px",
+          padding: "30px",
+          maxHeight: "calc(100% - 60px)",
+        },
+      },
+    },
+  },
+  palette: {
+    secondary: {
+      main: teal[600],
+      contrastText: textDefaultColor,
+    },
+    primary: {
+      main: teal[600],
+      contrastText: textDefaultColor,
+    },
+    background: {
+      default: grey["A700"],
+    },
+    text: {
+      primary: textDefaultColor,
+      secondary: textDefaultColor,
+    },
+  },
+  typography: {
+    h1: {
+      color: textDefaultColor,
+      fontWeight: 400,
+      fontSize: 24,
+      padding: 0,
+      margin: 0,
+    },
+    h2: { color: textDefaultColor, fontWeight: 100 },
+    h3: { color: textDefaultColor, fontWeight: 100 },
+    h4: { color: textDefaultColor, fontWeight: 100 },
+    h5: { color: textDefaultColor, fontWeight: 100 },
+    h6: { color: textDefaultColor, fontWeight: 100 },
+    subtitle1: { color: textDefaultColor, fontWeight: 100 },
+    subtitle2: { color: textDefaultColor, fontWeight: 100 },
+    body1: { color: textDefaultColor, fontWeight: 100 },
+    body2: { color: textDefaultColor, fontWeight: 100 },
+    caption: { color: textDefaultColor, fontWeight: 100 },
+    button: { fontWeight: 100, color: textDefaultColor },
   },
 });

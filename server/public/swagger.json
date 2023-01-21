@@ -950,16 +950,16 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"type": {
-										"type": "string"
-									},
-									"id": {
+									"discount": {
 										"type": "number",
 										"format": "double"
+									},
+									"id": {
+										"type": "string"
 									}
 								},
 								"required": [
-									"type",
+									"discount",
 									"id"
 								],
 								"type": "object"
@@ -994,7 +994,26 @@
 						]
 					}
 				],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"date": {
+										"type": "string",
+										"format": "date-time"
+									}
+								},
+								"required": [
+									"date"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/positions/search": {

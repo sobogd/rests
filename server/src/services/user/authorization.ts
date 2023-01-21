@@ -34,7 +34,7 @@ const authorization = async (request: AuthorizationRequest): Promise<Authorizati
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("2h")
+    .setExpirationTime("12h")
     .sign(secretKey);
 
   return { id: foundedUser.id, name: foundedUser.name, type: foundedUser.type, token };

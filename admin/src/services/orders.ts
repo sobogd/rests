@@ -31,18 +31,19 @@ const orderPositionFinish = createAsyncThunk<{}, { orderPositionId: number }, IE
     })
 );
 
-const finish = createAsyncThunk<{}, { id: number; type: string }, IErrorResponse>(
+const finish = createAsyncThunk<{}, { id: string; discount: number }, IErrorResponse>(
   "orders/finish",
   async (r, { rejectWithValue }) =>
     await request(rejectWithValue, "/orders/finish", "POST", {
-      id: r.id,
-      type: r.type,
+      id: r.id.toString(),
+      discount: r.discount,
     })
 );
 
-const getDayReport = createAsyncThunk<IOrderForToday[], {}, IErrorResponse>(
+const getDayReport = createAsyncThunk<IOrderForToday[], string, IErrorResponse>(
   "orders/getDayReport",
-  async (_, { rejectWithValue }) => await request(rejectWithValue, "/orders/get-day-report", "POST", {})
+  async (date, { rejectWithValue }) =>
+    await request(rejectWithValue, "/orders/get-day-report", "POST", { date })
 );
 
 export const ordersService = {

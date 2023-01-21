@@ -45,14 +45,14 @@ export class OrdersController {
   @OperationId("Finish")
   @Security("Bearer", ["AuthService"])
   @Post("finish")
-  public async finish(@Body() request: { id: number; type: string }): Promise<{}> {
-    return await ordersServices.finish(request.id, request.type);
+  public async finish(@Body() request: { id: string; discount: number }): Promise<{}> {
+    return await ordersServices.finish(request.id, request.discount);
   }
   @Tags("OrdersService")
   @OperationId("GetDayReport")
   @Security("Bearer", ["AuthService"])
   @Post("get-day-report")
-  public async getDayReport(): Promise<IDayReportResponse> {
-    return await ordersServices.getDayReport();
+  public async getDayReport(@Body() request: { date: Date }): Promise<IDayReportResponse> {
+    return await ordersServices.getDayReport(request.date);
   }
 }

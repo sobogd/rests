@@ -539,7 +539,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function OrdersController_finish(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"type":{"dataType":"string","required":true},"id":{"dataType":"double","required":true}}},
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"discount":{"dataType":"double","required":true},"id":{"dataType":"string","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -565,6 +565,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function OrdersController_getDayReport(request: any, response: any, next: any) {
             const args = {
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"date":{"dataType":"datetime","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

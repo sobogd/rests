@@ -89,32 +89,6 @@ export const OrdersForm: React.FC = () => {
     }
   };
 
-  const handleFinishOrderCard = () => {
-    if (orderId) {
-      dispatch(
-        ordersService.finish({
-          id: orderId,
-          type: "card",
-        })
-      ).then(() => {
-        dispatch(ordersService.search());
-      });
-    }
-  };
-
-  const handleFinishOrderCash = () => {
-    if (orderId) {
-      dispatch(
-        ordersService.finish({
-          id: orderId,
-          type: "cash",
-        })
-      ).then(() => {
-        dispatch(ordersService.search());
-      });
-    }
-  };
-
   const accordions = [
     {
       title: "Выберите столик",
@@ -263,26 +237,6 @@ export const OrdersForm: React.FC = () => {
         title={orderId ? "Редактирование заказа" : "Новый заказ"}
         onClickBack={() => dispatch(ordersSlice.actions.toggleIsOpenForm())}
       />
-      {!!orderId && [
-        <Button
-          fullWidth
-          style={{ marginBottom: 15 }}
-          color="warning"
-          variant="contained"
-          onClick={handleFinishOrderCard}
-        >
-          Оплачено картой
-        </Button>,
-        <Button
-          fullWidth
-          style={{ marginBottom: 15 }}
-          color="success"
-          variant="contained"
-          onClick={handleFinishOrderCash}
-        >
-          Оплачено наличными
-        </Button>,
-      ]}
       {error ? (
         <AlertStyled style={{ marginBottom: 20 }} severity="error">
           {error}

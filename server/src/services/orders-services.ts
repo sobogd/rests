@@ -103,11 +103,11 @@ const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
   return {};
 };
 
-const finish = async (id: number, type: string): Promise<{}> => {
+const finish = async (id: string, discount: number): Promise<{}> => {
   await ordersRepository.updateById(
     {
       status: "finished",
-      discount: type === "cash" ? "10" : "0",
+      discount: discount.toString(),
     },
     Number(id)
   );
@@ -115,8 +115,10 @@ const finish = async (id: number, type: string): Promise<{}> => {
   return {};
 };
 
-const getDayReport = async (): Promise<IDayReportResponse> => {
-  const orders = await ordersRepository.findByDate(DateTime.now().toSQLDate());
+const getDayReport = async (date: Date): Promise<IDayReportResponse> => {
+  const orders = await ordersRepository.findByDate(
+    DateTime.fromJSDate(date).toSQLDate() || DateTime.now().toSQLDate()
+  );
   const positions = await positionsRepository.findAll();
 
   let resultOrders: any = [];
@@ -133,20 +135,22 @@ const getDayReport = async (): Promise<IDayReportResponse> => {
     for (const op of orderPositions) {
       const primaryPosition = positions.find((p) => Number(p.id) === Number(op.positionId));
 
-      resultPositions.push(primaryPosition.name);
-      total = total + Number(primaryPosition.price);
+      if (primaryPosition?.name && primaryPosition?.price) {
+        resultPositions.push(primaryPosition.name);
+        total = total + Number(primaryPosition.price);
 
-      if (op.additional?.length) {
-        const additionalPositions = op.additional.split("/");
-        additionalPositions.forEach((op: any) => {
-          const splitted = op.split("-");
-          const additionalPosition = positions.find((p) => Number(p.id) === Number(splitted[1]));
+        if (op.additional?.length) {
+          const additionalPositions = op.additional.split("/");
+          additionalPositions.forEach((op: any) => {
+            const splitted = op.split("-");
+            const additionalPosition = positions.find((p) => Number(p.id) === Number(splitted[1]));
 
-          if (additionalPosition?.price) {
-            resultPositions.push(additionalPosition.name);
-            total = total + Number(additionalPosition.price) * Number(splitted[0]);
-          }
-        });
+            if (additionalPosition?.price) {
+              resultPositions.push(additionalPosition.name);
+              total = total + Number(additionalPosition.price) * Number(splitted[0]);
+            }
+          });
+        }
       }
     }
 
