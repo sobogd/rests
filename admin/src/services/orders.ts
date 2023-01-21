@@ -2,6 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IErrorResponse } from "../interfaces/common";
 import { IOrder, IOrderForToday } from "../interfaces/orders";
 import { request } from "../utils/request";
+import { parseISO, parse } from "date-fns";
+import { formatInTimeZone, format } from "date-fns-tz";
 
 const search = createAsyncThunk<IOrder[], void, IErrorResponse>(
   "orders/search",
@@ -42,8 +44,11 @@ const finish = createAsyncThunk<{}, { id: string; discount: number }, IErrorResp
 
 const getDayReport = createAsyncThunk<IOrderForToday[], string, IErrorResponse>(
   "orders/getDayReport",
-  async (date, { rejectWithValue }) =>
-    await request(rejectWithValue, "/orders/get-day-report", "POST", { date })
+  async (date, { rejectWithValue }) => {
+    return await request(rejectWithValue, "/orders/get-day-report", "POST", {
+      date: format(new Date(date), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: "UTC" }),
+    });
+  }
 );
 
 export const ordersService = {

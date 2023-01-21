@@ -1,10 +1,11 @@
 import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 
 export const getTimeInFormat = (inputDate: any) => {
-  const createDate = Date.parse(inputDate);
-  const offset = new Date().getTimezoneOffset();
-  const dateWithTimeZone = createDate - offset * 60000;
-  const date = format(dateWithTimeZone, "HH:mm");
+  const date1 = new Date(inputDate);
+  const timeZone = "Europe/Moscow";
+  const zonedDate = utcToZonedTime(date1, timeZone);
+  const date = format(zonedDate, "HH:mm");
 
   return date;
 };
