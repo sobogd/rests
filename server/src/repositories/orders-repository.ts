@@ -48,7 +48,7 @@ const findByDate = async (date: string) => {
   const client = await pool.connect();
   const foundedRows = await queryBuilder.selectByCustomQuery(
     client,
-    `SELECT * FROM orders where finish_time::date = '${date}'`
+    `SELECT * FROM orders where finish_time::date = '${date}' order by id asc`
   );
   client.release();
 
