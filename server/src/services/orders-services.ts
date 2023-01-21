@@ -124,8 +124,8 @@ const getDayReport = async (date: Date): Promise<IDayReportResponse> => {
   let resultOrders: any = [];
 
   for (const o of orders) {
-    const finistDate = DateTime.fromJSDate(o.finishTime);
-    const startDate = DateTime.fromJSDate(o.createTime);
+    const finistDate = DateTime.fromSQL(o.finishTime);
+    const startDate = DateTime.fromSQL(o.createTime);
     const diff = finistDate.diff(startDate, ["minutes"]);
     let total = 0;
     const resultPositions: string[] = [];
