@@ -91,7 +91,7 @@ export const Layout: React.FC<{ children?: any }> = ({ children }) => {
               icon={CPageIcons[EPages.ORDERS]}
             ></BottomNavigationAction>
           )}
-          {["kitchen", "admin"].includes(data?.type || "") && (
+          {["kitchen", "admin", "personal"].includes(data?.type || "") && (
             <BottomNavigationAction
               value={EPages.KITCHEN}
               icon={CPageIcons[EPages.KITCHEN]}

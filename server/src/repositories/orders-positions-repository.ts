@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import pool from "../db";
 import { IOrderPosition } from "../interfaces/orders-positions";
 import queryBuilder from "../utils/query-builder";
@@ -64,6 +65,24 @@ const updateById = async (orderPosition: IOrderPosition, id: number) => {
   return queryBuilder.mapFromDb(updatdRows, props)[0];
 };
 
+const removeFinishTimeById = async (id: number) => {
+  const client = await pool.connect();
+  const { rows } = await client.query(
+    `UPDATE orders_positions SET finish_time = $2 WHERE id = $1 RETURNING *;`,
+    [id, null]
+  );
+  return queryBuilder.mapFromDb(rows, props)[0];
+};
+
+const finishOrderPositionById = async (id: number) => {
+  const client = await pool.connect();
+  const { rows } = await client.query(
+    `UPDATE orders_positions SET finish_time = $2 WHERE id = $1 RETURNING *;`,
+    [id, DateTime.now().toUTC().toSQL()]
+  );
+  return queryBuilder.mapFromDb(rows, props)[0];
+};
+
 const removeById = async (id: number) => {
   const client = await pool.connect();
   const removedRows = await queryBuilder.removeOneBySpec(client, tableName, { id });
@@ -79,4 +98,6 @@ export default {
   create,
   updateById,
   removeById,
+  removeFinishTimeById,
+  finishOrderPositionById,
 };

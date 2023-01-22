@@ -1,125 +1,55 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { categoriesService } from "../../services/categories";
 import { ordersService } from "../../services/orders";
 import { positionsService } from "../../services/positions";
 import { tablesService } from "../../services/tables";
 import Loading from "../../shared/loading";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { formatInTimeZone } from "date-fns-tz";
 import { format } from "date-fns";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { grey } from "@mui/material/colors";
-// import { OrdersForm } from "./form";
-// import { OrdersList } from "./list";
-
-const KitchenContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 60px);
-  padding: 20px 15px;
-  overflow-y: scroll;
-`;
+import { IOrderPosition } from "../../interfaces/orders";
+import { Typography } from "@mui/material";
 
 const KitchenWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  flex-wrap: wrap;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  margin: -15px;
+
+  @media (max-width: 550px) {
+    flex-direction: column;
+    margin: 0;
+    width: 100%;
+  }
 `;
 
 const KitchenBlock = styled.div`
   position: relative;
-  background: #4f4f4f;
-  width: calc(33.333% - 30px);
-  margin: 15px;
-  padding: 20px;
+  margin: 5px;
   display: flex;
   flex-direction: column;
-  color: white;
   overflow: hidden;
-  font-size: 14px;
+
+  @media (max-width: 550px) {
+    margin: 0 0 5px;
+    width: 100%;
+  }
 `;
 
 const KitchenBlockHeader = styled.div`
-  width: calc(100% + 40px);
-  background: #01695c;
-  margin: -20px -20px 20px;
-  position: relative;
-  height: 70px;
-  display: flex;
-  flex-direction: column;
-  padding: 0 20px 0 90px;
-  justify-content: center;
-
-  span {
-    white-space: nowrap;
-    font-size: 14px;
-    b {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 70px;
-      height: 70px;
-      background: #179888;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      font-weight: 600;
-    }
-  }
-  p {
-    white-space: nowrap;
-    font-size: 14px;
-    margin: 0;
-  }
-`;
-
-const KitchenBlockComment = styled.div`
-  position: relative;
   width: 100%;
-  font-size: 14px;
-  margin-bottom: 13px;
+  background: #01695c;
+  padding: 10px 15px;
 `;
 
 const KitchenBlockPosition = styled.div<{ isFinished: boolean }>`
   width: 100%;
-  margin-bottom: 13px;
-  background: #676767;
-  padding: 15px 55px 15px 15px;
-  position: relative;
-  opacity: ${({ isFinished }) => (!!isFinished ? "0.2" : "1")};
-`;
-
-const KitchenBlockPositionEndButton = styled.div`
-  background: #01695c;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-`;
-
-const KitchenBlockPositionComment = styled.div`
-  width: 100%;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #8f8f8f;
-  padding-bottom: 10px;
-  font-size: 14px;
-`;
-
-const KitchenBlockPositionAdditional = styled.div`
-  padding-top: 10px;
-  margin-top: 10px;
-  border-top: 1px solid #8f8f8f;
+  background: ${({ isFinished }) => (!!isFinished ? grey[800] : grey[600])};
+  padding: 10px 15px;
+  border-bottom: 1px solid ${({ isFinished }) => (!!isFinished ? grey[600] : grey[800])};
+  :last-child {
+    border: 0;
+  }
 `;
 
 export const Kitchen: React.FC = () => {
@@ -146,8 +76,9 @@ export const Kitchen: React.FC = () => {
     dispatch(positionsService.search());
   }, []);
 
-  const handleEndCook = (orderPositionId: number) => () => {
-    dispatch(ordersService.orderPositionFinish({ orderPositionId })).then(() => {
+  const handleClickFood = (orderPosition: IOrderPosition) => () => {
+    console.log({ orderPosition });
+    dispatch(ordersService.orderPositionFinish({ orderPositionId: orderPosition.id || 0 })).then(() => {
       dispatch(ordersService.search());
     });
   };
@@ -165,41 +96,50 @@ export const Kitchen: React.FC = () => {
         return (
           <KitchenBlock>
             <KitchenBlockHeader>
-              <span>
-                <b>{tableForOrder?.number}</b> {tableForOrder?.name}
-              </span>
-              <p>Создан: {date}</p>
+              <Typography variant="body2" fontWeight={600}>
+                {tableForOrder?.number} table from {date}
+              </Typography>
+              {o?.comment ||
+                (tableForOrder?.name && (
+                  <Typography variant="body2">
+                    {o?.comment ? <p>{o?.comment}</p> : <p>{tableForOrder?.name}</p>}
+                  </Typography>
+                ))}
             </KitchenBlockHeader>
-            {!!o.comment && <KitchenBlockComment>{o.comment}</KitchenBlockComment>}
 
             {o.ordersPositions?.map((op) => {
               const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
 
               return (
-                <KitchenBlockPosition isFinished={!!op.finishTime}>
-                  {!!op.comment && <KitchenBlockPositionComment>{op.comment}</KitchenBlockPositionComment>}
-                  {position?.name}
-                  {!!op.additional?.length && (
-                    <KitchenBlockPositionAdditional>
-                      {op.additional?.split("/").map((opa) => {
-                        const splittedValue = opa.split("-");
-                        const additional = positionItems.find(
-                          (p) => Number(p.id) === Number(splittedValue[1])
-                        );
+                <KitchenBlockPosition isFinished={!!op.finishTime} onClick={handleClickFood(op)}>
+                  <Typography variant="body2" color={!!op.finishTime ? grey[500] : grey[50]}>
+                    {position?.name}
+                  </Typography>
 
-                        return (
-                          <div>
-                            {additional?.name} - {splittedValue[0]}
-                          </div>
-                        );
-                      })}
-                    </KitchenBlockPositionAdditional>
-                  )}
+                  {!!op.additional?.length &&
+                    op.additional?.split("/").map((opa) => {
+                      const splittedValue = opa.split("-");
+                      const additional = positionItems.find((p) => Number(p.id) === Number(splittedValue[1]));
 
-                  {!op.finishTime && (
-                    <KitchenBlockPositionEndButton onClick={handleEndCook(op.id || 0)}>
-                      <CheckCircleIcon sx={{ color: grey[50] }} />
-                    </KitchenBlockPositionEndButton>
+                      return (
+                        <Typography
+                          variant="body2"
+                          paddingLeft={2}
+                          color={!!op.finishTime ? grey[500] : grey[50]}
+                        >
+                          {additional?.name} - {splittedValue[0]}
+                        </Typography>
+                      );
+                    })}
+
+                  {!!op.comment && (
+                    <Typography
+                      variant="body2"
+                      fontWeight={600}
+                      color={!!op.finishTime ? grey[500] : grey[50]}
+                    >
+                      {op.comment}
+                    </Typography>
                   )}
                 </KitchenBlockPosition>
               );

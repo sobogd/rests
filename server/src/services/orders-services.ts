@@ -78,12 +78,11 @@ const remove = async (category: { id: number }): Promise<{}> => {
 };
 
 const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
-  const updatedOrderPosition = await ordersPositionsRepository.updateById(
-    {
-      finishTime: DateTime.now().toUTC().toSQL(),
-    },
-    orderPositionId
-  );
+  const orderPosition = await ordersPositionsRepository.findById(orderPositionId);
+
+  const updatedOrderPosition = !!orderPosition.finishTime
+    ? await ordersPositionsRepository.removeFinishTimeById(orderPositionId)
+    : await ordersPositionsRepository.finishOrderPositionById(orderPositionId);
 
   const allPositionInOrder = await ordersPositionsRepository.findAllByOrderId(
     Number(updatedOrderPosition.orderId)
@@ -127,6 +126,7 @@ const getDayReport = async (date: Date): Promise<IDayReportResponse> => {
     const finistDate = DateTime.fromSQL(o.finishTime);
     const startDate = DateTime.fromSQL(o.createTime);
     const diff = finistDate.diff(startDate, ["minutes"]);
+    console.log(finistDate, startDate, diff);
     let total = 0;
     const resultPositions: string[] = [];
 

@@ -97,6 +97,7 @@ const updateOneBySpec = async (client: any, tableName: string, payload: any, con
   const whereValues = getValues(conditionsPayload);
   const updateFields = getUpdateFields(payload, whereValues.length);
   const updateValues = getValues(payload);
+  console.log(`UPDATE ${tableName} SET ${updateFields} WHERE ${whereFilters} RETURNING *;`);
 
   const { rows } = await client.query(
     `UPDATE ${tableName} SET ${updateFields} WHERE ${whereFilters} RETURNING *;`,
