@@ -65,7 +65,7 @@ export const Kitchen: React.FC = () => {
 
     const interval = setInterval(() => {
       dispatch(ordersService.search());
-    }, 10000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, []);
