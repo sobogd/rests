@@ -71,6 +71,8 @@ const removeFinishTimeById = async (id: number) => {
     `UPDATE orders_positions SET finish_time = $2 WHERE id = $1 RETURNING *;`,
     [id, null]
   );
+  client.release();
+
   return queryBuilder.mapFromDb(rows, props)[0];
 };
 
@@ -80,6 +82,8 @@ const finishOrderPositionById = async (id: number) => {
     `UPDATE orders_positions SET finish_time = $2 WHERE id = $1 RETURNING *;`,
     [id, DateTime.now().toUTC().toSQL()]
   );
+  client.release();
+
   return queryBuilder.mapFromDb(rows, props)[0];
 };
 
