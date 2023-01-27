@@ -32,15 +32,9 @@ import { IDiscount } from "../../interfaces/discounts";
 import { table } from "console";
 
 const discounts = [
-  { id: "1", name: "Without discount", discount: "0" },
-  { id: "2", name: "Discount for cash", discount: "10" },
-  { id: "3", name: "Chat Fethiyane", discount: "10" },
-];
-
-const methods = [
-  { id: "1", name: "Card", color: "warning" },
-  { id: "2", name: "Cash", color: "success" },
-  { id: "3", name: "IBAN", color: "info" },
+  { id: "1", name: "Без скидки", discount: "0" },
+  { id: "2", name: "Скидка за перевод или наличные", discount: "10" },
+  { id: "3", name: "Скадка для чата Фетхияне", discount: "10" },
 ];
 
 const OrderTable = styled.table`
@@ -155,9 +149,9 @@ export const OrdersList: React.FC = () => {
       });
     }
 
-    if (positionsList?.length) {
-      let summary = 0;
+    let summary = 0;
 
+    if (positionsList?.length) {
       result.push(
         <OrderTable>
           {positionsList?.map((e: any) => {
@@ -239,21 +233,18 @@ export const OrdersList: React.FC = () => {
           ]}
         </OrderTable>
       );
-
-      methods.forEach((m: any) => {
-        result.push(
-          <Button
-            fullWidth
-            color={m.color}
-            variant="contained"
-            style={{ marginTop: 15 }}
-            onClick={handleFinishOrder(billOrder.id, Number(discount?.discount))}
-          >
-            {m.name}
-          </Button>
-        );
-      });
     }
+
+    result.push(
+      <Button
+        fullWidth
+        variant="contained"
+        style={{ marginTop: 15 }}
+        onClick={handleFinishOrder(billOrder.id, Number(discount?.discount))}
+      >
+        Оплатить {roundFive(summary - summary * (Number(discount.discount) / 100))} TL
+      </Button>
+    );
 
     return result;
   }, [billOrder, discount]);
