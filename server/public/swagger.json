@@ -1016,6 +1016,47 @@
 				}
 			}
 		},
+		"/orders/day-report": {
+			"post": {
+				"operationId": "DayReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {},
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"stringDate": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"stringDate"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/positions/search": {
 			"post": {
 				"operationId": "Search",

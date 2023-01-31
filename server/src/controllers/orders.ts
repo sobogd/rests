@@ -55,4 +55,11 @@ export class OrdersController {
   public async getDayReport(@Body() request: { date: Date }): Promise<IDayReportResponse> {
     return await ordersServices.getDayReport(request.date);
   }
+  @Tags("OrdersService")
+  @OperationId("DayReport")
+  // @Security("Bearer", ["AuthService"])
+  @Post("day-report")
+  public async dayReport(@Body() request: { stringDate: string }): Promise<{}> {
+    return await ordersServices.dayReport(request.stringDate);
+  }
 }
