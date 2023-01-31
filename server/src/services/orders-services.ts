@@ -175,6 +175,13 @@ const dayReport = async (stringDate: string): Promise<{}> => {
   const orders = await ordersRepository.findByDate(stringDate);
   const positions = await positionsRepository.findAll();
 
+  const isHaveReportedPositions = (await reportPositionsRepository.findBySpec("create_date", stringDate))
+    ?.length;
+
+  if (isHaveReportedPositions) {
+    throw new Error("this date is reported");
+  }
+
   let allPositions: any = {};
 
   for (const o of orders) {
@@ -235,10 +242,10 @@ const dayReport = async (stringDate: string): Promise<{}> => {
     const { price, title, times, amount, isAdditional } = allPositions[key];
 
     const averageTime = times?.length
-      ? Math.round(times?.reduce((a: any, b: any) => a + b, 0) / times?.length)
+      ? Math.round(times.reduce((a: any, b: any) => a + b, 0) / times.length)
       : undefined;
-    const minTime = times?.length ? Math.min(times) : undefined;
-    const maxTime = times?.length ? Math.max(times) : undefined;
+    const minTime = times?.length ? Math.min(...times) : undefined;
+    const maxTime = times?.length ? Math.max(...times) : undefined;
 
     await reportPositionsRepository.create({
       createDate: stringDate,

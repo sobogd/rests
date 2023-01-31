@@ -43,6 +43,14 @@ const findById = async (id: number) => {
   return queryBuilder.mapFromDb(foundedRows, props)[0];
 };
 
+const findBySpec = async (field: string, value: string) => {
+  const client = await pool.connect();
+  const foundedRows = await queryBuilder.selectBySpec(client, tableName, { [field]: value });
+  client.release();
+
+  return queryBuilder.mapFromDb(foundedRows, props);
+};
+
 const create = async (payload: IReportPosition) => {
   const client = await pool.connect();
   const createdRows = await queryBuilder.insertOne(client, tableName, queryBuilder.mapToDb(payload, props));
@@ -75,6 +83,7 @@ const removeById = async (id: number) => {
 export default {
   findAll,
   findById,
+  findBySpec,
   create,
   updateById,
   removeById,
