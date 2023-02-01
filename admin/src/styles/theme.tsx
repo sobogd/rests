@@ -105,6 +105,15 @@ export const theme = createTheme({
         },
       },
     },
+    MuiListItemSecondaryAction: {
+      styleOverrides: {
+        root: {
+          right: "0",
+          display: "flex",
+          alignItems: "center",
+        },
+      },
+    },
   },
   palette: {
     secondary: {

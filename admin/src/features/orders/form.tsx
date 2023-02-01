@@ -11,7 +11,18 @@ import {
 import { ordersSlice } from "../../slices/orders";
 import { tablesService } from "../../services/tables";
 import { EOrderSteps } from "../../enums/orders";
-import { Button, IconButton, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import styled from "@emotion/styled";
 import { backUrl } from "../..";
@@ -23,27 +34,20 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ordersService } from "../../services/orders";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import TableBarIcon from "@mui/icons-material/TableBar";
+import { grey, teal } from "@mui/material/colors";
 
 const TableSetBlock = styled.div`
-  position: relative;
-  width: 100%;
-  margin-top: 7px;
-
-  img {
-    width: 100%;
-    height: 100%;
-  }
-
-  span {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    margin: -30px;
-    cursor: pointer;
-    background: #01695c;
-    border-radius: 60px;
-    border: 6px solid #fff;
-  }
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  margin: -13px;
+  cursor: pointer;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid ${grey[800]};
 `;
 
 export const OrdersForm: React.FC = () => {
@@ -89,148 +93,6 @@ export const OrdersForm: React.FC = () => {
     }
   };
 
-  const accordions = [
-    {
-      title: "Выберите столик",
-      subtitle: !!selectedTable ? `№${selectedTable.number}: ${selectedTable.name}` : undefined,
-      step: EOrderSteps.TABLE,
-      disabled: false,
-      content: (
-        <>
-          <TableSetBlock>
-            <img
-              src={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format`}
-              srcSet={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              width="300"
-              height="300"
-              alt={"234324"}
-              loading="lazy"
-            />
-            {tables?.map((t) => (
-              <span
-                style={{ bottom: `${t.positionY}%`, left: `${t.positionX}%` }}
-                onClick={handleSelectTable(t)}
-              />
-            ))}
-          </TableSetBlock>
-          {!!selectedTable && (
-            <Button
-              fullWidth
-              style={{ marginTop: 15 }}
-              variant="outlined"
-              onClick={() => dispatch(ordersSlice.actions.setActiveStep(EOrderSteps.FILLING))}
-            >
-              Далее
-            </Button>
-          )}
-        </>
-      ),
-    },
-    {
-      title: "Заполните позиции",
-      // subtitle: !!selectedTable ? `№${selectedTable.number}: ${selectedTable.name}` : undefined,
-      step: EOrderSteps.FILLING,
-      disabled: !selectedTable,
-      content: (
-        <>
-          <AddPositionModal />
-          <List>
-            {!!selectedPositions?.length &&
-              selectedPositions.map((p, index) => {
-                const positionData = positions.find((pos) => pos.id === p.positionId);
-
-                return (
-                  <ListItem
-                    secondaryAction={
-                      <>
-                        <IconButton
-                          edge="end"
-                          style={{ marginRight: 5 }}
-                          onClick={() => dispatch(ordersSlice.actions.copyPosition(index))}
-                        >
-                          <ContentCopyIcon />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          onClick={() => dispatch(ordersSlice.actions.deletePosition(index))}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </>
-                    }
-                  >
-                    <ListItemText
-                      style={{ paddingRight: 100 }}
-                      primary={positionData?.name}
-                      secondary={
-                        <>
-                          {p.additional?.map((a) => {
-                            const foundedAdditional = positions.find((add: any) => add.id === a.id);
-                            return (
-                              <>
-                                {a.count}x {foundedAdditional?.name}
-                                <br />
-                              </>
-                            );
-                          })}
-                          {p.comment}
-                        </>
-                      }
-                    />
-                  </ListItem>
-                );
-              })}
-          </List>
-          <Button
-            fullWidth
-            style={{ marginTop: 15 }}
-            variant="outlined"
-            onClick={() => dispatch(ordersSlice.actions.toggleIsOpenPositionForm())}
-          >
-            Добавить позицию
-          </Button>
-          {!!selectedPositions.length && (
-            <Button
-              fullWidth
-              style={{ marginTop: 15 }}
-              variant="contained"
-              onClick={() => dispatch(ordersSlice.actions.setActiveStep(EOrderSteps.ADDITIONAL))}
-            >
-              Далее
-            </Button>
-          )}
-        </>
-      ),
-    },
-    {
-      title: "Дополнительная информация",
-      // subtitle: !!selectedTable ? `№${selectedTable.number}: ${selectedTable.name}` : undefined,
-      step: EOrderSteps.ADDITIONAL,
-      disabled: !selectedPositions.length,
-      content: (
-        <>
-          <TextField
-            inputProps={{ form: { autocomplete: "off" } }}
-            label={"Комментарий к позиции"}
-            multiline
-            maxRows={15}
-            minRows={15}
-            variant="outlined"
-            required
-            name="description"
-            value={comment}
-            fullWidth
-            onChange={(e) => dispatch(ordersSlice.actions.setComment(e.target.value))}
-            style={{ marginTop: 15, marginBottom: 0 }}
-          />
-          <Button fullWidth style={{ marginTop: 15 }} variant="contained" onClick={handleSendOrder}>
-            {orderId ? "Сохранить изменения" : "Отправить заказ на кухню"}
-          </Button>
-        </>
-      ),
-    },
-  ];
-
   return (
     <>
       <Header
@@ -242,23 +104,120 @@ export const OrdersForm: React.FC = () => {
           {error}
         </AlertStyled>
       ) : null}
-      {accordions?.map((a) => (
-        <AccordionStyled
-          expanded={activeStep === a.step}
-          onChange={() => dispatch(ordersSlice.actions.setActiveStep(a.step))}
-          disabled={a.disabled}
-        >
-          <AccordionSummaryStyled
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls={a.step + "_content"}
-            id={a.step + "_header"}
+      <Typography variant="h5" marginBottom={1}>
+        Выбор столика
+      </Typography>
+      <Typography variant="body1" marginBottom={2}>
+        {selectedTable?.id
+          ? `Выбран столик №${selectedTable?.number} (${selectedTable?.name})`
+          : "Пожалуйста, выберете столик для заказа:"}
+      </Typography>
+      <Box position={"relative"} marginBottom={2}>
+        <img
+          src={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format`}
+          srcSet={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
+          alt={"Tables with orders"}
+        />
+        {tables?.map((t) => (
+          <TableSetBlock
+            style={{
+              bottom: `${t.positionY}%`,
+              left: `${t.positionX}%`,
+              background: t.id !== selectedTable?.id ? grey[500] : teal[800],
+            }}
+            onClick={() => dispatch(ordersSlice.actions.setSelectedTable(t))}
           >
-            <Typography variant="body1">{a.title}</Typography>
-            {!!a.subtitle && <Typography variant="body2">{a.subtitle}</Typography>}
-          </AccordionSummaryStyled>
-          <AccordionDetailsStyled>{a.content}</AccordionDetailsStyled>
-        </AccordionStyled>
-      ))}
+            <TableBarIcon />
+          </TableSetBlock>
+        ))}
+      </Box>
+      <Typography variant="h5" marginBottom={1} marginTop={4}>
+        Заполнение позиций
+      </Typography>
+      {!selectedPositions?.length && (
+        <Typography variant="body1" marginBottom={2}>
+          Пожалуйста, заполните позиции:
+        </Typography>
+      )}
+      <AddPositionModal />
+      <List disablePadding style={{ marginBottom: 15 }}>
+        {!!selectedPositions?.length &&
+          selectedPositions.map((p, index: number) => {
+            const positionData = positions.find((pos) => pos.id === p.positionId);
+
+            return (
+              <ListItem
+                disablePadding
+                divider={index !== selectedPositions?.length - 1}
+                style={{ paddingTop: 5, paddingBottom: 5 }}
+                secondaryAction={[
+                  <ContentCopyIcon
+                    style={{ marginLeft: 7 }}
+                    onClick={() => dispatch(ordersSlice.actions.copyPosition(index))}
+                  />,
+                  <DeleteIcon
+                    style={{ marginLeft: 7 }}
+                    onClick={() => dispatch(ordersSlice.actions.deletePosition(index))}
+                  />,
+                ]}
+              >
+                <ListItemText
+                  style={{ paddingRight: 100 }}
+                  primary={positionData?.name}
+                  secondary={
+                    <>
+                      {p.additional?.map((a) => {
+                        const foundedAdditional = positions.find((add: any) => add.id === a.id);
+                        return (
+                          <>
+                            {a.count}x {foundedAdditional?.name}
+                            <br />
+                          </>
+                        );
+                      })}
+                      {p.comment}
+                    </>
+                  }
+                />
+              </ListItem>
+            );
+          })}
+      </List>
+      <Button
+        fullWidth
+        style={{ marginBottom: 25 }}
+        variant="contained"
+        onClick={() => dispatch(ordersSlice.actions.toggleIsOpenPositionForm())}
+      >
+        Добавить позицию
+      </Button>
+      <Typography variant="h5" marginBottom={1} marginTop={1}>
+        Комментарий к заказу
+      </Typography>
+      <Typography variant="body1" marginBottom={2}>
+        Введите пожелания к заказу или комментарий для раздельной оплаты.
+      </Typography>
+      <TextField
+        inputProps={{ form: { autocomplete: "off" } }}
+        multiline
+        maxRows={15}
+        minRows={5}
+        variant="outlined"
+        required
+        name="description"
+        value={comment}
+        fullWidth
+        onChange={(e) => dispatch(ordersSlice.actions.setComment(e.target.value))}
+      />
+      {!!selectedPositions?.length && selectedTable?.id ? (
+        <Button fullWidth style={{ marginTop: 15 }} variant="contained" onClick={handleSendOrder}>
+          {orderId ? "Сохранить изменения" : "Отправить заказ на кухню"}
+        </Button>
+      ) : (
+        <Alert severity="error" icon={false}>
+          Для создания заказа необходимо выбрать столик и заполнить хотя бы одну позицию!
+        </Alert>
+      )}
     </>
   );
 };

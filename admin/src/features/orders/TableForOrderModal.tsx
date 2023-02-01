@@ -1,8 +1,6 @@
-import { Button, Grid, IconButton, List, ListItem, ListItemText, Modal } from "@mui/material";
+import { Button, Grid, List, ListItem, ListItemText, Modal } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
-import { IDiscount } from "../../interfaces/discounts";
-import { IOrder } from "../../interfaces/orders";
 import Header from "../../shared/header";
 import { ordersSlice } from "../../slices/orders";
 import { useAppDispatch, useAppSelector } from "../../store";
@@ -14,10 +12,6 @@ export const TableForOrderModal: React.FC = () => {
 
   const { items: orders, isLoading: isLoadingOrders, tableForModal } = useAppSelector((s) => s.orders);
   const { items: tables, isLoading: isLoadingTables } = useAppSelector((s) => s.tables);
-  const { items: positions, isLoading: isLoadingPositions } = useAppSelector((s) => s.positions);
-
-  const [billOrder, setBillOrder] = React.useState<IOrder | null>(null);
-  const [discount, setDiscount] = React.useState<IDiscount | null>(null);
 
   const orderForTable = React.useMemo(() => {
     return orders.filter((o) => Number(o.tableId) === Number(tableForModal?.id));
@@ -26,7 +20,7 @@ export const TableForOrderModal: React.FC = () => {
   return (
     <Modal
       style={{ background: backgroundDefault }}
-      open={!!tableForModal && !isLoadingOrders && !isLoadingTables && !isLoadingPositions}
+      open={!!tableForModal && !isLoadingOrders && !isLoadingTables}
     >
       <>
         <Header
@@ -34,18 +28,6 @@ export const TableForOrderModal: React.FC = () => {
           onClickBack={() => dispatch(ordersSlice.actions.setTableForModal(undefined))}
         />
         <ModalScrollable>
-          {/* <List disablePadding>
-            {!!orderForTable.length &&
-              orderForTable.map((o) => (
-                <ListItem
-                  divider
-                  disablePadding
-                  secondaryAction={<IconButton edge="end" style={{ right: -10 }}></IconButton>}
-                >
-                  <ListItemText primary={} secondary={"222"} />
-                </ListItem>
-              ))}
-          </List> */}
           <List disablePadding style={{ background: "none" }}>
             {!!orderForTable.length &&
               orderForTable?.map((i) => {
