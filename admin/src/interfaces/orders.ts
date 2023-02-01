@@ -1,4 +1,5 @@
 import { EOrderSteps, EPositionFormSteps } from "../enums/orders";
+import { IDiscount } from "./discounts";
 import { ITable } from "./tables";
 
 export interface IOrder {
@@ -55,6 +56,9 @@ export interface IOrderState {
   comment: string;
   error: string;
   ordersForToday?: IOrderForToday[];
+  tableForModal?: ITable;
+  orderForBill?: IOrder;
+  discountForBill: number;
 }
 
 export interface IOrderForToday {

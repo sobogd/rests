@@ -262,4 +262,76 @@ const dayReport = async (stringDate: string): Promise<{}> => {
   return {};
 };
 
-export default { search, create, update, remove, orderPositionFinish, finish, getDayReport, dayReport };
+const getDayPositionsStatic = async (stringDate: string): Promise<any> => {
+  const reportedPositions = await reportPositionsRepository.findBySpec("create_date", stringDate);
+
+  const filteredReportedPositions = reportedPositions.filter((p) => !p.isAdditional && !!p.amount);
+
+  const mappedReportedPositions = filteredReportedPositions.map((p) => ({
+    title: p.title,
+    amount: p.amount,
+  }));
+
+  const orderedReportedPositions = mappedReportedPositions.sort(function (a: any, b: any) {
+    if (a.amount > b.amount) return -1;
+    if (a.amount < b.amount) return 1;
+    return 0;
+  });
+
+  return orderedReportedPositions;
+};
+
+const getPeriodPositionsStatic = async (startStringDate: string, endStringDate: string): Promise<any> => {
+  const reportedPositions = await reportPositionsRepository.findByPeriod(startStringDate, endStringDate);
+
+  const filteredReportedPositions = reportedPositions.filter((p) => !p.isAdditional && !!p.amount);
+
+  const mappedReportedPositions = filteredReportedPositions.map((p) => ({
+    title: p.title,
+    amount: p.amount,
+  }));
+
+  const objectReportedPositions = mappedReportedPositions.reduce((acc: any, c: any) => {
+    if (!!acc[c.title]?.amount) {
+      acc[c.title] = {
+        ...acc[c.title],
+        amount: acc[c.title].amount + c.amount,
+      };
+    } else {
+      acc[c.title] = {
+        ...c,
+      };
+    }
+
+    return acc;
+  }, {});
+
+  const arrayReportedPositions = [];
+
+  for (const key in objectReportedPositions) {
+    arrayReportedPositions.push({
+      ...objectReportedPositions[key],
+    });
+  }
+
+  const orderedReportedPositions = arrayReportedPositions.sort(function (a: any, b: any) {
+    if (a.amount > b.amount) return -1;
+    if (a.amount < b.amount) return 1;
+    return 0;
+  });
+
+  return orderedReportedPositions;
+};
+
+export default {
+  search,
+  create,
+  update,
+  remove,
+  orderPositionFinish,
+  finish,
+  getDayReport,
+  dayReport,
+  getDayPositionsStatic,
+  getPeriodPositionsStatic,
+};

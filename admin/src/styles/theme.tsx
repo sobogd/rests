@@ -94,15 +94,14 @@ export const theme = createTheme({
     MuiModal: {
       styleOverrides: {
         root: {
-          margin: "30px auto",
+          margin: "0",
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
-          width: "calc(100% - 60px)",
-          maxWidth: "500px",
-          padding: "30px",
-          maxHeight: "calc(100% - 60px)",
+          width: "100%",
+          padding: "20px",
+          height: "100%",
         },
       },
     },

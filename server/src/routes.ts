@@ -609,6 +609,56 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/orders/get-day-positions-report',
+            ...(fetchMiddlewares<RequestHandler>(OrdersController)),
+            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.getDayPositionsStatic)),
+
+            function OrdersController_getDayPositionsStatic(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"stringDate":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new OrdersController();
+
+
+              const promise = controller.getDayPositionsStatic.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/orders/get-period-positions-report',
+            ...(fetchMiddlewares<RequestHandler>(OrdersController)),
+            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.getPeriodPositionsStatic)),
+
+            function OrdersController_getPeriodPositionsStatic(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"stringEndDate":{"dataType":"string","required":true},"stringStartDate":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new OrdersController();
+
+
+              const promise = controller.getPeriodPositionsStatic.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/positions/search',
             authenticateMiddleware([{"Bearer":["AuthService"]}]),
             ...(fetchMiddlewares<RequestHandler>(PositionsController)),

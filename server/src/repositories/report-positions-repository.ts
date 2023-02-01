@@ -80,6 +80,19 @@ const removeById = async (id: number) => {
   return queryBuilder.mapFromDb(removedRows, props)[0];
 };
 
+const findByPeriod = async (startDate: string, endDate: string) => {
+  const client = await pool.connect();
+
+  const { rows } = await client.query(
+    `SELECT * FROM ${tableName} where create_date >= $1 and create_date <= $2 order by amount desc`,
+    [startDate, endDate]
+  );
+
+  client.release();
+
+  return queryBuilder.mapFromDb(rows, props);
+};
+
 export default {
   findAll,
   findById,
@@ -87,4 +100,5 @@ export default {
   create,
   updateById,
   removeById,
+  findByPeriod,
 };

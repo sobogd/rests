@@ -1057,6 +1057,86 @@
 				}
 			}
 		},
+		"/orders/get-day-positions-report": {
+			"post": {
+				"operationId": "GetDayPositionsStatic",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"stringDate": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"stringDate"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/get-period-positions-report": {
+			"post": {
+				"operationId": "GetPeriodPositionsStatic",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"stringEndDate": {
+										"type": "string"
+									},
+									"stringStartDate": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"stringEndDate",
+									"stringStartDate"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/positions/search": {
 			"post": {
 				"operationId": "Search",

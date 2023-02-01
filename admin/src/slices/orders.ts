@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { EOrderSteps, EPositionFormSteps } from "../enums/orders";
-import { IOrderState } from "../interfaces/orders";
+import { IOrder, IOrderState } from "../interfaces/orders";
+import { ITable } from "../interfaces/tables";
 import { ordersService } from "../services/orders";
 
 const initialState: IOrderState = {
@@ -21,12 +22,26 @@ const initialState: IOrderState = {
   selectedPositions: [],
   comment: "",
   error: "",
+  discountForBill: 0,
 };
 
 export const ordersSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
+    setTableForModal: (state, { payload }: { payload: ITable | undefined }) => {
+      state.tableForModal = payload;
+    },
+    setOrderForBill: (state, { payload }: { payload: IOrder }) => {
+      state.orderForBill = payload;
+    },
+    setDiscountForBill: (state, { payload }: { payload: number }) => {
+      state.discountForBill = payload;
+    },
+    closeBillModal: (state) => {
+      state.orderForBill = undefined;
+      state.discountForBill = 0;
+    },
     toggleIsOpenForm: (state) => {
       if (!state.isOpenForm) {
         state.isLoading = initialState.isLoading;
@@ -214,6 +229,9 @@ export const ordersSlice = createSlice({
       state.selectedTable = initialState.selectedTable;
       state.positionsForm = initialState.positionsForm;
       state.comment = initialState.comment;
+      state.orderForBill = undefined;
+      state.discountForBill = 0;
+      state.tableForModal = undefined;
     });
     builder.addCase(ordersService.update.pending, (state) => {
       state.isLoading = true;
@@ -233,6 +251,9 @@ export const ordersSlice = createSlice({
       state.selectedTable = initialState.selectedTable;
       state.positionsForm = initialState.positionsForm;
       state.comment = initialState.comment;
+      state.orderForBill = undefined;
+      state.discountForBill = 0;
+      state.tableForModal = undefined;
     });
     builder.addCase(ordersService.orderPositionFinish.pending, (state) => {
       state.isLoading = true;
@@ -262,6 +283,9 @@ export const ordersSlice = createSlice({
       state.selectedTable = initialState.selectedTable;
       state.positionsForm = initialState.positionsForm;
       state.comment = initialState.comment;
+      state.orderForBill = undefined;
+      state.discountForBill = 0;
+      state.tableForModal = undefined;
     });
     builder.addCase(ordersService.getDayReport.pending, (state) => {
       state.isLoading = true;

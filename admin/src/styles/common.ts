@@ -5,7 +5,9 @@ import {
   AccordionSummary,
   Alert,
   BottomNavigation,
+  Box,
   Divider,
+  Modal,
   TextField,
   Typography,
 } from "@mui/material";
@@ -147,4 +149,44 @@ export const AccordionStyled = styled(Accordion)`
 
 export const AccordionDetailsStyled = styled(AccordionDetails)`
   border: 1px solid #01695c;
+`;
+
+export const ScrollableBox = styled(Box)`
+  height: 100%;
+  max-height: calc(100% - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  padding: 0 30px;
+  background: none;
+`;
+
+export const ModalStyled = styled(Modal)`
+  width: 100%;
+`;
+
+export const ModalTitle = styled.h2`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  width: calc(100% + 60px);
+  margin: -30px;
+  background: #5e5e5e;
+`;
+
+export const ModalScrollable = styled.div`
+  height: 100%;
+  max-height: calc(100% - 60px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  padding: 0 20px 20px;
+  background: none;
 `;

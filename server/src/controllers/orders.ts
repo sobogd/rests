@@ -62,4 +62,20 @@ export class OrdersController {
   public async dayReport(@Body() request: { stringDate: string }): Promise<{}> {
     return await ordersServices.dayReport(request.stringDate);
   }
+  @Tags("OrdersService")
+  @OperationId("GetDayPositionsStatic")
+  // @Security("Bearer", ["AuthService"])
+  @Post("get-day-positions-report")
+  public async getDayPositionsStatic(@Body() request: { stringDate: string }): Promise<any> {
+    return await ordersServices.getDayPositionsStatic(request.stringDate);
+  }
+  @Tags("OrdersService")
+  @OperationId("GetPeriodPositionsStatic")
+  // @Security("Bearer", ["AuthService"])
+  @Post("get-period-positions-report")
+  public async getPeriodPositionsStatic(
+    @Body() request: { stringStartDate: string; stringEndDate: string }
+  ): Promise<any> {
+    return await ordersServices.getPeriodPositionsStatic(request.stringStartDate, request.stringEndDate);
+  }
 }
