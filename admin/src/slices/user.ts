@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IErrorWithFields } from "../interfaces/common";
 import { IUser, IUserChangeFields, IUserState } from "../interfaces/user";
-import { authorization, whoAmI } from "../services/user";
+import { authorization, getUsersForCompany, whoAmI } from "../services/user";
 import { userState } from "../state/user";
 
 export const userSlice = createSlice({
@@ -18,6 +18,12 @@ export const userSlice = createSlice({
     },
     signOut: (state: IUserState) => {
       state.data = undefined;
+    },
+    setSelectedUser: (state: IUserState, action) => {
+      state.selectedUser = action.payload;
+    },
+    removeSelectedUser: (state: IUserState) => {
+      state.selectedUser = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -84,7 +90,21 @@ export const userSlice = createSlice({
       }
       state.isLoading = false;
     });
+
+    builder.addCase(getUsersForCompany.pending, (state: IUserState) => {
+      state.isLoading = true;
+    });
+
+    builder.addCase(getUsersForCompany.rejected, (state: IUserState) => {
+      state.isLoading = false;
+    });
+
+    builder.addCase(getUsersForCompany.fulfilled, (state: IUserState, action: PayloadAction<IUser[]>) => {
+      const users = action.payload;
+      state.usersForCompany = users;
+      state.isLoading = false;
+    });
   },
 });
 
-export const { setFormValues, signOut } = userSlice.actions;
+export const { setFormValues, signOut, setSelectedUser, removeSelectedUser } = userSlice.actions;

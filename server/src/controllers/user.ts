@@ -1,6 +1,7 @@
 import { Body, Get, Request, OperationId, Post, Response, Route, Security, Tags } from "tsoa";
 import { AuthorizationRequest, AuthorizationResponse, IUser } from "../interfaces/user";
 import authorization from "../services/user/authorization";
+import getUsersForCompany from "../services/user/getUsersForCompany";
 import whoAmI from "../services/user/whoAmI";
 
 export interface ErrorResponse {
@@ -26,5 +27,13 @@ export class UserController {
   @Get("whoami")
   public async whoami(@Request() { user }: { user: { id: string } }): Promise<IUser> {
     return await whoAmI(user.id);
+  }
+
+  @Tags("UserService")
+  @OperationId("GetUsersForCompany")
+  @Response<ErrorResponse>(500, "Response with error")
+  @Get("get-users-for-company")
+  public async getUsersForCompany(): Promise<any> {
+    return await getUsersForCompany();
   }
 }

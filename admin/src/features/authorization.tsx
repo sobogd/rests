@@ -1,19 +1,41 @@
 import React from "react";
-import { Button, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import { AlertStyled, TextFieldStyled } from "../styles/common";
 import { useAppDispatch, useAppSelector } from "../store";
-import { setFormValues } from "../slices/user";
+import { removeSelectedUser, setFormValues, setSelectedUser } from "../slices/user";
 import { AuthorizationForm, AuthorizationContainer } from "../styles/authorization";
-import { authorization } from "../services/user";
+import { authorization, getUsersForCompany } from "../services/user";
 import Loading from "../shared/loading";
+import { Box } from "@mui/system";
+import styled from "@emotion/styled";
+import { grey, teal } from "@mui/material/colors";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+const InputtedLetter = styled.span`
+  display: flex;
+  background: ${grey[100]};
+  border: 2px solid ${teal[800]};
+  width: 100%;
+  height: 70px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Authorization: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { form, isLoading, error } = useAppSelector((s) => s.user);
+  const { form, isLoading, error, usersForCompany, selectedUser } = useAppSelector((s) => s.user);
+
+  React.useEffect(() => {
+    dispatch(getUsersForCompany());
+  }, []);
 
   const handleChangeValues = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setFormValues({ name: e.target.name, value: e.target.value }));
   };
+
+  console.log({ usersForCompany });
+  console.log({ selectedUser });
 
   const handleSubmitForm = () => {
     dispatch(authorization({ login: form.login.value, password: form.password.value }));
@@ -24,39 +46,47 @@ const Authorization: React.FC = () => {
     handleSubmitForm();
   };
 
+  const inputtedPassword = "0873";
+
+  const renderPasswordInput = React.useMemo(() => {
+    return (
+      <Box width={250}>
+        <Grid container spacing={1} width="100%" margin="auto">
+          {[0, 1, 2, 3].map((n) => (
+            <Grid item xs={3}>
+              <InputtedLetter>
+                <Typography color={grey[900]} variant="h6">
+                  {inputtedPassword[n]}
+                </Typography>
+              </InputtedLetter>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    );
+  }, [inputtedPassword]);
+
   return (
     <AuthorizationContainer>
       <AuthorizationForm onSubmit={handleClickEnter}>
         <Loading isLoading={isLoading} />
-        <Typography variant="h5" component="h5">
-          Авторизация
-        </Typography>
         {error ? <AlertStyled severity="error">{error}</AlertStyled> : null}
-        <TextFieldStyled
-          inputProps={{ form: { autocomplete: "off" } }}
-          id="login"
-          label="Логин"
-          variant="standard"
-          name="login"
-          error={!!form.login.error}
-          helperText={form.login.error}
-          value={form.login.value}
-          onChange={handleChangeValues}
-        />
-        <TextFieldStyled
-          id="password"
-          name="password"
-          label="Пароль"
-          variant="standard"
-          type="password"
-          error={!!form.password.error}
-          helperText={form.password.error}
-          value={form.password.value}
-          onChange={handleChangeValues}
-        />
-        <Button variant="contained" onClick={handleSubmitForm}>
-          Вход
-        </Button>
+        <Grid container>
+          <Grid item paddingLeft={1}>
+            <ArrowBackIcon onClick={() => dispatch(removeSelectedUser())} />
+          </Grid>
+          <Grid item paddingLeft={2}>
+            <Typography variant="h5">{selectedUser?.name}</Typography>
+          </Grid>
+        </Grid>
+        {!!selectedUser
+          ? renderPasswordInput
+          : !!usersForCompany?.length &&
+            usersForCompany.map((u) => (
+              <Button variant="contained" onClick={() => dispatch(setSelectedUser(u))}>
+                {u.name}
+              </Button>
+            ))}
       </AuthorizationForm>
     </AuthorizationContainer>
   );

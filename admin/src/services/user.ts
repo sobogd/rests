@@ -17,3 +17,8 @@ export const whoAmI = createAsyncThunk(
   "user/whoami",
   async (_r, { rejectWithValue }) => await request(rejectWithValue, "/user/whoami", "GET")
 );
+
+export const getUsersForCompany = createAsyncThunk(
+  "user/getUsersForCompany",
+  async (_r, { rejectWithValue }) => await request(rejectWithValue, "/user/get-users-for-company", "GET")
+);

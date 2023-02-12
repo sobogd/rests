@@ -8,4 +8,5 @@ export const userState: IUserState = {
   data: undefined,
   error: "",
   isLoading: false,
+  usersForCompany: [],
 };
