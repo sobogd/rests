@@ -869,9 +869,89 @@
 				}
 			}
 		},
-		"/orders/order-position-finish": {
+		"/orders/order-position-start": {
 			"post": {
-				"operationId": "OrerPositionFinish",
+				"operationId": "OrerPositionStart",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"orderPositionId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"orderPositionId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/order-position-ready": {
+			"post": {
+				"operationId": "OrerPositionReady",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"orderPositionId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"orderPositionId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/order-position-given": {
+			"post": {
+				"operationId": "OrerPositionGiven",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -883,6 +963,46 @@
 								}
 							}
 						}
+					}
+				},
+				"tags": [
+					"OrdersService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"orderPositionId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"orderPositionId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/order-position-restart": {
+			"post": {
+				"operationId": "OrerPositionRestart",
+				"responses": {
+					"204": {
+						"description": "No content"
 					}
 				},
 				"tags": [

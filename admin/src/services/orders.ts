@@ -25,10 +25,34 @@ const remove = createAsyncThunk<{}, { id: string }, IErrorResponse>(
   async (order, { rejectWithValue }) => await request(rejectWithValue, "/orders/remove", "POST", order)
 );
 
-const orderPositionFinish = createAsyncThunk<{}, { orderPositionId: number }, IErrorResponse>(
-  "orders/orderPositionFinish",
+const orderPositionStart = createAsyncThunk<{}, { orderPositionId: number }, IErrorResponse>(
+  "orders/orderPositionStart",
   async (r, { rejectWithValue }) =>
-    await request(rejectWithValue, "/orders/order-position-finish", "POST", {
+    await request(rejectWithValue, "/orders/order-position-start", "POST", {
+      orderPositionId: r.orderPositionId,
+    })
+);
+
+const orderPositionReady = createAsyncThunk<{}, { orderPositionId: number }, IErrorResponse>(
+  "orders/orderPositionReady",
+  async (r, { rejectWithValue }) =>
+    await request(rejectWithValue, "/orders/order-position-ready", "POST", {
+      orderPositionId: r.orderPositionId,
+    })
+);
+
+const orderPositionGiven = createAsyncThunk<{}, { orderPositionId: number }, IErrorResponse>(
+  "orders/orderPositionGiven",
+  async (r, { rejectWithValue }) =>
+    await request(rejectWithValue, "/orders/order-position-given", "POST", {
+      orderPositionId: r.orderPositionId,
+    })
+);
+
+const orderPositionRestart = createAsyncThunk<{}, { orderPositionId: number }, IErrorResponse>(
+  "orders/orderPositionRestart",
+  async (r, { rejectWithValue }) =>
+    await request(rejectWithValue, "/orders/order-position-restart", "POST", {
       orderPositionId: r.orderPositionId,
     })
 );
@@ -56,7 +80,10 @@ export const ordersService = {
   create,
   update,
   remove,
-  orderPositionFinish,
+  orderPositionStart,
+  orderPositionReady,
+  orderPositionGiven,
+  orderPositionRestart,
   finish,
   getDayReport,
 };

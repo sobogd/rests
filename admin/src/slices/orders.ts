@@ -255,14 +255,44 @@ export const ordersSlice = createSlice({
       state.discountForBill = 0;
       state.tableForModal = undefined;
     });
-    builder.addCase(ordersService.orderPositionFinish.pending, (state) => {
+    builder.addCase(ordersService.orderPositionStart.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(ordersService.orderPositionFinish.rejected, (state) => {
+    builder.addCase(ordersService.orderPositionStart.rejected, (state) => {
       state.isLoading = false;
       state.error = "Error with request";
     });
-    builder.addCase(ordersService.orderPositionFinish.fulfilled, (state) => {
+    builder.addCase(ordersService.orderPositionStart.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(ordersService.orderPositionReady.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(ordersService.orderPositionReady.rejected, (state) => {
+      state.isLoading = false;
+      state.error = "Error with request";
+    });
+    builder.addCase(ordersService.orderPositionReady.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(ordersService.orderPositionGiven.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(ordersService.orderPositionGiven.rejected, (state) => {
+      state.isLoading = false;
+      state.error = "Error with request";
+    });
+    builder.addCase(ordersService.orderPositionGiven.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(ordersService.orderPositionRestart.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(ordersService.orderPositionRestart.rejected, (state) => {
+      state.isLoading = false;
+      state.error = "Error with request";
+    });
+    builder.addCase(ordersService.orderPositionRestart.fulfilled, (state) => {
       state.isLoading = false;
     });
     builder.addCase(ordersService.finish.pending, (state) => {

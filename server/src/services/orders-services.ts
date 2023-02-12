@@ -35,7 +35,6 @@ const create = async (order: IOrderCreateRequest): Promise<void> => {
       positionId: position.positionId,
       additional: position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "",
       comment: position.comment,
-      startTime: DateTime.now().toUTC().toSQL(),
     });
   }
 };
@@ -75,35 +74,6 @@ const update = async (order: IOrderCreateRequest): Promise<void> => {
 
 const remove = async (category: { id: number }): Promise<{}> => {
   category.id && (await ordersRepository.removeById(category.id));
-  return {};
-};
-
-const orderPositionFinish = async (orderPositionId: number): Promise<{}> => {
-  const orderPosition = await ordersPositionsRepository.findById(orderPositionId);
-
-  const updatedOrderPosition = !!orderPosition.finishTime
-    ? await ordersPositionsRepository.removeFinishTimeById(orderPositionId)
-    : await ordersPositionsRepository.finishOrderPositionById(orderPositionId);
-
-  if (!!orderPosition.finishTime) {
-    return {};
-  }
-
-  const allPositionInOrder = await ordersPositionsRepository.findAllByOrderId(
-    Number(updatedOrderPosition.orderId)
-  );
-
-  const unFinishedPositions = allPositionInOrder.filter((op) => !op.finishTime);
-
-  if (!unFinishedPositions?.length) {
-    await ordersRepository.updateById(
-      {
-        finishTime: DateTime.now().toUTC().toSQL(),
-      },
-      Number(updatedOrderPosition.orderId)
-    );
-  }
-
   return {};
 };
 
@@ -323,15 +293,61 @@ const getPeriodPositionsStatic = async (startStringDate: string, endStringDate: 
   return orderedReportedPositions;
 };
 
+const orderPositionStart = async (orderPositionId: number) => {
+  await ordersPositionsRepository.startById(orderPositionId);
+};
+
+const orderPositionReady = async (orderPositionId: number) => {
+  await ordersPositionsRepository.readyById(orderPositionId);
+};
+
+const orderPositionGiven = async (orderPositionId: number): Promise<{}> => {
+  const orderPosition = await ordersPositionsRepository.findById(orderPositionId);
+
+  if (!orderPosition.id) {
+    return {};
+  }
+
+  const updatedOrderPosition = await ordersPositionsRepository.givenById(orderPositionId);
+
+  if (!!orderPosition.finishTime) {
+    return {};
+  }
+
+  const allPositionInOrder = await ordersPositionsRepository.findAllByOrderId(
+    Number(updatedOrderPosition.orderId)
+  );
+
+  const unFinishedPositions = allPositionInOrder.filter((op) => !op.finishTime);
+
+  if (!unFinishedPositions?.length) {
+    await ordersRepository.updateById(
+      {
+        finishTime: DateTime.now().toUTC().toSQL(),
+      },
+      Number(updatedOrderPosition.orderId)
+    );
+  }
+
+  return {};
+};
+
+const orderPositionRestart = async (orderPositionId: number) => {
+  await ordersPositionsRepository.restartById(orderPositionId);
+};
+
 export default {
   search,
   create,
   update,
   remove,
-  orderPositionFinish,
   finish,
   getDayReport,
   dayReport,
   getDayPositionsStatic,
   getPeriodPositionsStatic,
+  orderPositionStart,
+  orderPositionReady,
+  orderPositionGiven,
+  orderPositionRestart,
 };

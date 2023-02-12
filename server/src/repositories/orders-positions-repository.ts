@@ -9,6 +9,7 @@ const props = [
   { name: "positionId", dbName: "position_id" },
   { name: "additional", dbName: "additional" },
   { name: "startTime", dbName: "start_time" },
+  { name: "readyTime", dbName: "ready_time" },
   { name: "finishTime", dbName: "finish_time" },
   { name: "comment", dbName: "comment" },
 ];
@@ -65,18 +66,7 @@ const updateById = async (orderPosition: IOrderPosition, id: number) => {
   return queryBuilder.mapFromDb(updatdRows, props)[0];
 };
 
-const removeFinishTimeById = async (id: number) => {
-  const client = await pool.connect();
-  const { rows } = await client.query(
-    `UPDATE orders_positions SET finish_time = $2 WHERE id = $1 RETURNING *;`,
-    [id, null]
-  );
-  client.release();
-
-  return queryBuilder.mapFromDb(rows, props)[0];
-};
-
-const finishOrderPositionById = async (id: number) => {
+const givenById = async (id: number) => {
   const client = await pool.connect();
   const { rows } = await client.query(
     `UPDATE orders_positions SET finish_time = $2 WHERE id = $1 RETURNING *;`,
@@ -85,6 +75,33 @@ const finishOrderPositionById = async (id: number) => {
   client.release();
 
   return queryBuilder.mapFromDb(rows, props)[0];
+};
+
+const startById = async (id: number) => {
+  const client = await pool.connect();
+  await client.query(`UPDATE orders_positions SET start_time = $2 WHERE id = $1 RETURNING *;`, [
+    id,
+    DateTime.now().toUTC().toSQL(),
+  ]);
+  client.release();
+};
+
+const restartById = async (id: number) => {
+  const client = await pool.connect();
+  await client.query(
+    `UPDATE orders_positions SET start_time = $2, ready_time = $3, finish_time = $4 WHERE id = $1 RETURNING *;`,
+    [id, DateTime.now().toUTC().toSQL(), null, null]
+  );
+  client.release();
+};
+
+const readyById = async (id: number) => {
+  const client = await pool.connect();
+  await client.query(`UPDATE orders_positions SET ready_time = $2 WHERE id = $1 RETURNING *;`, [
+    id,
+    DateTime.now().toUTC().toSQL(),
+  ]);
+  client.release();
 };
 
 const removeById = async (id: number) => {
@@ -102,6 +119,8 @@ export default {
   create,
   updateById,
   removeById,
-  removeFinishTimeById,
-  finishOrderPositionById,
+  givenById,
+  startById,
+  readyById,
+  restartById,
 };

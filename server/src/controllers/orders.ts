@@ -35,12 +35,34 @@ export class OrdersController {
     return await ordersServices.remove(request);
   }
   @Tags("OrdersService")
-  @OperationId("OrerPositionFinish")
+  @OperationId("OrerPositionStart")
   @Security("Bearer", ["AuthService"])
-  @Post("order-position-finish")
-  public async orderPositionFinish(@Body() request: { orderPositionId: number }): Promise<{}> {
-    return await ordersServices.orderPositionFinish(request.orderPositionId);
+  @Post("order-position-start")
+  public async orderPositionStart(@Body() request: { orderPositionId: number }): Promise<void> {
+    return await ordersServices.orderPositionStart(request.orderPositionId);
   }
+  @Tags("OrdersService")
+  @OperationId("OrerPositionReady")
+  @Security("Bearer", ["AuthService"])
+  @Post("order-position-ready")
+  public async orderPositionReady(@Body() request: { orderPositionId: number }): Promise<void> {
+    return await ordersServices.orderPositionReady(request.orderPositionId);
+  }
+  @Tags("OrdersService")
+  @OperationId("OrerPositionGiven")
+  @Security("Bearer", ["AuthService"])
+  @Post("order-position-given")
+  public async orderPositionGiven(@Body() request: { orderPositionId: number }): Promise<{}> {
+    return await ordersServices.orderPositionGiven(request.orderPositionId);
+  }
+  @Tags("OrdersService")
+  @OperationId("OrerPositionRestart")
+  @Security("Bearer", ["AuthService"])
+  @Post("order-position-restart")
+  public async orderPositionRestart(@Body() request: { orderPositionId: number }): Promise<void> {
+    return await ordersServices.orderPositionRestart(request.orderPositionId);
+  }
+
   @Tags("OrdersService")
   @OperationId("Finish")
   @Security("Bearer", ["AuthService"])

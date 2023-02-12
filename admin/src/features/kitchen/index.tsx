@@ -1,62 +1,21 @@
-import styled from "@emotion/styled";
 import React from "react";
 import { ordersService } from "../../services/orders";
 import { positionsService } from "../../services/positions";
 import { tablesService } from "../../services/tables";
 import Loading from "../../shared/loading";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { format } from "date-fns";
+import { format, getMilliseconds } from "date-fns";
 import { grey } from "@mui/material/colors";
 import { IOrderPosition } from "../../interfaces/orders";
-import { Typography } from "@mui/material";
-
-const KitchenWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  margin: -15px;
-
-  @media (max-width: 550px) {
-    flex-direction: column;
-    margin: 0;
-    width: 100%;
-  }
-`;
-
-const KitchenBlock = styled.div`
-  position: relative;
-  margin: 5px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  @media (max-width: 550px) {
-    margin: 0 0 5px;
-    width: 100%;
-  }
-`;
-
-const KitchenBlockHeader = styled.div`
-  width: 100%;
-  background: #01695c;
-  padding: 10px 15px;
-`;
-
-const KitchenBlockPosition = styled.div<{ isFinished: boolean }>`
-  width: 100%;
-  background: ${({ isFinished }) => (!!isFinished ? grey[800] : grey[600])};
-  padding: 10px 15px;
-  border-bottom: 1px solid ${({ isFinished }) => (!!isFinished ? grey[600] : grey[800])};
-  :last-child {
-    border: 0;
-  }
-`;
+import { Box, Button, Chip, Divider, Typography } from "@mui/material";
+import { Stack } from "@mui/system";
 
 export const Kitchen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isLoading: isLoadingOrders, items } = useAppSelector((s) => s.orders);
   const { isLoading: isLoadingTables, items: tableItems } = useAppSelector((s) => s.tables);
   const { isLoading: isLoadingPositions, items: positionItems } = useAppSelector((s) => s.positions);
+  const [filter, setFilter] = React.useState("all");
 
   React.useEffect(() => {
     dispatch(ordersService.search());
@@ -76,77 +35,218 @@ export const Kitchen: React.FC = () => {
     dispatch(positionsService.search());
   }, []);
 
-  const handleClickFood = (orderPosition: IOrderPosition) => () => {
-    console.log({ orderPosition });
-    dispatch(ordersService.orderPositionFinish({ orderPositionId: orderPosition.id || 0 })).then(() => {
-      dispatch(ordersService.search());
-    });
+  const filters = [
+    { label: "All", value: "all" },
+    { label: "Not ready", value: "not_ready" },
+    { label: "Ready", value: "ready" },
+    { label: "Finished", value: "finished" },
+    { label: "Drinks and Deserts", value: "drinks_deserts" },
+  ];
+
+  const filterByStatus = (op: IOrderPosition, f: string) => {
+    if (f === "not_ready") {
+      return !op.readyTime && !op.finishTime;
+    }
+
+    if (f === "ready") {
+      return !!op.readyTime && !!op.startTime && !op.finishTime;
+    }
+
+    if (f === "finished") {
+      return !!op.finishTime;
+    }
+
+    if (f === "drinks_deserts") {
+      const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
+
+      return !!position?.categories?.filter((c) => [2, 3, 4].includes(Number(c.categoryId))).length;
+    }
+
+    return true;
+  };
+
+  const renderButtonForOrderPosition = (op: IOrderPosition) => {
+    if (!op.startTime) {
+      return (
+        <Button
+          fullWidth
+          variant="contained"
+          style={{ borderRadius: 0 }}
+          color="warning"
+          onClick={() =>
+            dispatch(ordersService.orderPositionStart({ orderPositionId: op.id || 0 })).then(() => {
+              dispatch(ordersService.search());
+            })
+          }
+        >
+          Start
+        </Button>
+      );
+    }
+
+    if (!!op.startTime && !op.readyTime) {
+      return (
+        <Button
+          fullWidth
+          variant="contained"
+          style={{ borderRadius: 0 }}
+          color="success"
+          onClick={() =>
+            dispatch(ordersService.orderPositionReady({ orderPositionId: op.id || 0 })).then(() => {
+              dispatch(ordersService.search());
+            })
+          }
+        >
+          Ready
+        </Button>
+      );
+    }
+
+    if (!!op.readyTime && !op.finishTime) {
+      return (
+        <Button
+          fullWidth
+          variant="contained"
+          style={{ borderRadius: 0 }}
+          color="error"
+          onClick={() =>
+            dispatch(ordersService.orderPositionGiven({ orderPositionId: op.id || 0 })).then(() => {
+              dispatch(ordersService.search());
+            })
+          }
+        >
+          Given
+        </Button>
+      );
+    }
+
+    if (!!op.readyTime && !!op.finishTime && !!op.startTime) {
+      return (
+        <Button
+          fullWidth
+          variant="contained"
+          style={{ borderRadius: 0 }}
+          color="warning"
+          onClick={() =>
+            dispatch(ordersService.orderPositionRestart({ orderPositionId: op.id || 0 })).then(() => {
+              dispatch(ordersService.search());
+            })
+          }
+        >
+          Restart
+        </Button>
+      );
+    }
   };
 
   return (
-    <KitchenWrapper>
+    <Box>
+      <Stack direction="row" spacing={1} marginBottom={2}>
+        {filters.map(({ label, value }) => (
+          <Chip
+            label={label}
+            variant={filter === value ? "outlined" : undefined}
+            onClick={() => setFilter(value)}
+          />
+        ))}
+      </Stack>
       <Loading isLoading={isLoadingOrders || isLoadingTables || isLoadingPositions} />
-      {items.map((o) => {
-        const tableForOrder = tableItems.find((t) => Number(t.id) === Number(o.tableId));
-        const createDate = Date.parse(o.createTime);
-        const offset = new Date().getTimezoneOffset();
-        const dateWithTimeZone = createDate - offset * 60000;
-        const date = format(dateWithTimeZone, "H:mm");
+      <Box display="flex" flexDirection="row" overflow="scroll hidden">
+        {items
+          .filter(
+            ({ ordersPositions }) => ordersPositions?.filter((op) => filterByStatus(op, filter))?.length
+          )
+          .map((o) => {
+            const tableForOrder = tableItems.find((t) => Number(t.id) === Number(o.tableId));
+            const createDate = Date.parse(o.createTime);
+            const offset = new Date().getTimezoneOffset();
+            const dateWithTimeZone = createDate - offset * 60000;
+            const date = format(dateWithTimeZone, "H:mm");
 
-        return (
-          <KitchenBlock>
-            <KitchenBlockHeader>
-              <Typography variant="body2" fontWeight={600}>
-                {tableForOrder?.number} table from {date}
-              </Typography>
-              {o?.comment ||
-                (tableForOrder?.name && (
-                  <Typography variant="body2">
-                    {o?.comment ? <p>{o?.comment}</p> : <p>{tableForOrder?.name}</p>}
+            return (
+              <Box minWidth={280} marginRight={3}>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography variant="h6" fontWeight={600}>
+                    {tableForOrder?.number} table
                   </Typography>
-                ))}
-            </KitchenBlockHeader>
-
-            {o.ordersPositions?.map((op) => {
-              const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
-
-              return (
-                <KitchenBlockPosition isFinished={!!op.finishTime} onClick={handleClickFood(op)}>
-                  <Typography variant="body2" color={!!op.finishTime ? grey[500] : grey[50]}>
-                    {position?.name}
-                  </Typography>
-
-                  {!!op.additional?.length &&
-                    op.additional?.split("/").map((opa) => {
-                      const splittedValue = opa.split("-");
-                      const additional = positionItems.find((p) => Number(p.id) === Number(splittedValue[1]));
+                  <Typography variant="h6">{date}</Typography>
+                </Box>
+                <Typography variant="body1" marginBottom={2}>
+                  {o?.comment || tableForOrder?.name}
+                </Typography>
+                <Box height="calc(100vh - 220px)" overflow="hidden scroll">
+                  {o.ordersPositions
+                    ?.filter((op) => filterByStatus(op, filter))
+                    .sort((a, b) => {
+                      if (a.id && b.id && a.id < b.id) {
+                        return 1;
+                      }
+                      if (a.id && b.id && a.id > b.id) {
+                        return -1;
+                      }
+                      return 0;
+                    })
+                    .map((op) => {
+                      const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
 
                       return (
-                        <Typography
-                          variant="body2"
-                          paddingLeft={2}
-                          color={!!op.finishTime ? grey[500] : grey[50]}
+                        <Box
+                          style={{ background: grey[50] }}
+                          marginBottom={1}
+                          borderRadius={2}
+                          overflow="hidden"
                         >
-                          {additional?.name} - {splittedValue[0]}
-                        </Typography>
+                          <Box padding={2}>
+                            <Typography variant="body2" fontWeight={600} color={grey[800]}>
+                              {position?.name}
+                            </Typography>
+                            {!!op.additional?.length && (
+                              <Box marginTop={1}>
+                                <Divider />
+                                {op.additional?.split("/").map((opa) => {
+                                  const splittedValue = opa.split("-");
+                                  const additional = positionItems.find(
+                                    (p) => Number(p.id) === Number(splittedValue[1])
+                                  );
+
+                                  return (
+                                    <Typography
+                                      variant="body2"
+                                      marginTop={1}
+                                      fontWeight={600}
+                                      color={grey[800]}
+                                    >
+                                      {additional?.name} - {splittedValue[0]}
+                                    </Typography>
+                                  );
+                                })}
+                              </Box>
+                            )}
+                            {!!op.comment && (
+                              <Box
+                                marginTop={1}
+                                style={{ background: grey[300] }}
+                                paddingLeft={2}
+                                paddingRight={2}
+                                paddingBottom={1}
+                                paddingTop={1}
+                                borderRadius={2}
+                              >
+                                <Typography variant="body2" fontWeight={600} color={grey[800]}>
+                                  {op.comment}
+                                </Typography>
+                              </Box>
+                            )}
+                          </Box>
+                          {renderButtonForOrderPosition(op)}
+                        </Box>
                       );
                     })}
-
-                  {!!op.comment && (
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color={!!op.finishTime ? grey[500] : grey[50]}
-                    >
-                      {op.comment}
-                    </Typography>
-                  )}
-                </KitchenBlockPosition>
-              );
-            })}
-          </KitchenBlock>
-        );
-      })}
-    </KitchenWrapper>
+                </Box>
+              </Box>
+            );
+          })}
+      </Box>
+    </Box>
   );
 };

@@ -21,6 +21,7 @@ export interface IOrderPosition {
   orderId?: string;
   positionId?: string;
   startTime?: string;
+  readyTime?: string;
 }
 
 export interface IPositionInOrder {
