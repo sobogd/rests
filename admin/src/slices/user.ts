@@ -1,29 +1,47 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IErrorWithFields } from "../interfaces/common";
-import { IUser, IUserChangeFields, IUserState } from "../interfaces/user";
+import { IUser, IUserState } from "../interfaces/user";
 import { authorization, getUsersForCompany, whoAmI } from "../services/user";
-import { userState } from "../state/user";
+
+const initialState: IUserState = {
+  data: undefined,
+  error: "",
+  isLoading: false,
+  usersForCompany: [],
+  inputtedPassword: "",
+};
 
 export const userSlice = createSlice({
   name: "user",
-  initialState: userState,
+  initialState,
   reducers: {
-    setFormValues: (state: IUserState, action: PayloadAction<IUserChangeFields>) => {
-      const { name, value } = action.payload;
-      state.form = {
-        ...state.form,
-        [name]: { value, error: "" },
-      };
-      state.error = "";
-    },
     signOut: (state: IUserState) => {
       state.data = undefined;
+      state.inputtedPassword = "";
+      state.error = "";
+      state.selectedUser = undefined;
     },
     setSelectedUser: (state: IUserState, action) => {
       state.selectedUser = action.payload;
+      state.error = "";
     },
     removeSelectedUser: (state: IUserState) => {
       state.selectedUser = undefined;
+      state.inputtedPassword = "";
+      state.error = "";
+    },
+    setPasswordLetter: (state: IUserState, { payload }: PayloadAction<string>) => {
+      if (state.inputtedPassword.length <= 3) {
+        state.inputtedPassword = state.inputtedPassword + payload;
+        state.error = "";
+      }
+    },
+    removeLastPasswordLetter: (state: IUserState) => {
+      state.inputtedPassword = state.inputtedPassword.slice(0, -1);
+      state.error = "";
+    },
+    removePasswordLetters: (state: IUserState) => {
+      state.inputtedPassword = "";
+      state.error = "";
     },
   },
   extraReducers: (builder) => {
@@ -33,26 +51,7 @@ export const userSlice = createSlice({
 
     builder.addCase(authorization.rejected, (state: IUserState, { payload }) => {
       state.isLoading = false;
-
-      if (payload?.fields) {
-        if (payload.fields?.includes("login")) {
-          state.form = {
-            ...state.form,
-            login: { value: state.form.login.value, error: "No user with this login" },
-          };
-        }
-
-        if (payload.fields?.includes("password")) {
-          state.form = {
-            ...state.form,
-            password: { value: state.form.password.value, error: "Password is incorrect" },
-          };
-        }
-      }
-
-      if (payload && !payload.fields) {
-        state.error = payload.message;
-      }
+      state.error = payload?.message || "Authorization error";
     });
 
     builder.addCase(authorization.fulfilled, (state: IUserState, action) => {
@@ -106,5 +105,3 @@ export const userSlice = createSlice({
     });
   },
 });
-
-export const { setFormValues, signOut, setSelectedUser, removeSelectedUser } = userSlice.actions;

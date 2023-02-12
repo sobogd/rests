@@ -4,7 +4,7 @@ import { backUrl } from "..";
 import { tablesService } from "../services/tables";
 import Header from "../shared/header";
 import Loading from "../shared/loading";
-import { signOut } from "../slices/user";
+import { userSlice } from "../slices/user";
 import { useAppDispatch, useAppSelector } from "../store";
 import { MyFormSubtitle } from "../styles/common";
 
@@ -18,7 +18,7 @@ export const Account: React.FC = () => {
 
   const handleSignOut = () => {
     sessionStorage.setItem("token", "");
-    dispatch(signOut());
+    dispatch(userSlice.actions.signOut());
   };
 
   const handleChangeTableImage = async (e: React.ChangeEvent<HTMLInputElement>) => {

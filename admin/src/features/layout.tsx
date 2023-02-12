@@ -4,7 +4,7 @@ import { whoAmI } from "../services/user";
 import { useAppDispatch, useAppSelector } from "../store";
 import { Container, ScrollableZone } from "../styles/common";
 import { BottomNavigationStyled } from "../styles/common";
-import Authorization from "./authorization";
+import { Login } from "./login/Login";
 import { EPages } from "../enums/pages";
 import { setActivePage } from "../slices/page";
 import { Account } from "./account";
@@ -55,7 +55,7 @@ export const Layout: React.FC<{ children?: any }> = ({ children }) => {
       }
     }
 
-    return <Authorization />;
+    return <Login />;
   }, [isAuthorizatedUser, page]);
 
   return (
