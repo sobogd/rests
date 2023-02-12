@@ -13,17 +13,17 @@ const authorization = async (request: AuthorizationRequest): Promise<Authorizati
   const foundedByLogin = await userRepository.findByLogin(request.login);
 
   if (!foundedByLogin || !foundedByLogin.id) {
-    throw new FieldsError("login");
+    throw new FieldsError("Login is incorrect");
   }
 
   if (!request.password) {
-    throw new FieldsError("password");
+    throw new FieldsError("Password is incorrect");
   }
 
   const foundedUser: IUser = await userRepository.findByLoginAndPassword(request.login, request.password);
 
   if (!foundedUser || !foundedUser.id) {
-    throw new FieldsError("password");
+    throw new FieldsError("Password is incorrect");
   }
 
   const token = await new jose.SignJWT({

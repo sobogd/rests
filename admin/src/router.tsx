@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import Authorization from "./features/authorization";
+import { Login } from "./features/login/Login";
 import Root from "./features/user";
 
 const router = createBrowserRouter([
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
   },
   {
     path: "authorization",
-    element: <Authorization />,
+    element: <Login />,
     // loader: contactLoader,
   },
 ]);

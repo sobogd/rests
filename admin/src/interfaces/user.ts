@@ -2,21 +2,19 @@ import { EUserType } from "../enums/user";
 import { IFormData } from "./common";
 
 export interface IUserState {
-  form: IAuthorizationForm;
   data?: IUser;
+  usersForCompany: IUser[];
   isLoading: boolean;
   error: string;
-}
-
-export interface IAuthorizationForm {
-  login: IFormData;
-  password: IFormData;
+  selectedUser?: IUser;
+  inputtedPassword: string;
 }
 
 export interface IUser {
   id: string;
   name: string;
   type: EUserType;
+  login?: string;
   token?: string;
 }
 

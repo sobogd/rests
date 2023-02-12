@@ -1736,6 +1736,36 @@
 				],
 				"parameters": []
 			}
+		},
+		"/user/get-users-for-company": {
+			"get": {
+				"operationId": "GetUsersForCompany",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"500": {
+						"description": "Response with error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"UserService"
+				],
+				"security": [],
+				"parameters": []
+			}
 		}
 	},
 	"servers": [
