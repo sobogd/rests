@@ -114,6 +114,13 @@ export const theme = createTheme({
         },
       },
     },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontWeight: 500,
+        },
+      },
+    },
   },
   palette: {
     secondary: {

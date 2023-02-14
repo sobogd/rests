@@ -60,14 +60,21 @@ export const OrdersList: React.FC = () => {
   return (
     <>
       <Loading isLoading={isLoading || isTableLoading || isPositionsLoading} />
-      <Header title="Orders" onClickAdd={() => dispatch(ordersSlice.actions.toggleIsOpenForm())} />
       {tableForModalView}
       {orderModalView}
-      <Box position={"relative"}>
+      <Box
+        position={"relative"}
+        marginBottom={2}
+        width="calc(100vw - 32px)"
+        height="calc(100vw - 32px)"
+        overflow="hidden"
+      >
         <img
-          src={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format`}
-          srcSet={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
+          src={`${backUrl}${imageSrc}`}
+          srcSet={`${backUrl}${imageSrc}`}
           alt={"Tables with orders"}
+          width="100%"
+          height="100%"
         />
         {tableListWithReadyStatus?.map((t) => (
           <TableSetBlock

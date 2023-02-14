@@ -26,7 +26,6 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box } from "@mui/system";
-import { ScrollableZone } from "../../styles/common";
 import { roundFive } from "../../utils/roundFive";
 import { getTimeInFormat } from "../../utils/timeInFormat";
 import { backgroundDefault } from "../../styles/theme";

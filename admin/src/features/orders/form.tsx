@@ -36,6 +36,9 @@ import { ordersService } from "../../services/orders";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableBarIcon from "@mui/icons-material/TableBar";
 import { grey, teal } from "@mui/material/colors";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { pageSlice } from "../../slices/page";
 
 const TableSetBlock = styled.div`
   position: absolute;
@@ -52,11 +55,26 @@ const TableSetBlock = styled.div`
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { error, comment, activeStep, selectedTable, selectedPositions, orderId } = useAppSelector(
+  const { error, comment, positionsForm, selectedTable, selectedPositions, orderId } = useAppSelector(
     (s) => s.orders
   );
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
   const { items: positions } = useAppSelector((s) => s.positions);
+
+  React.useEffect(() => {
+    dispatch(
+      pageSlice.actions.setHeaderComponent(
+        <Box display="flex" justifyContent="space-between" flexGrow={1} alignItems="center">
+          <Typography variant="h6">{!!positionsForm.isOpened ? "Position adding" : "New order"}</Typography>
+          {!!positionsForm.isOpened ? (
+            <HighlightOffIcon onClick={() => dispatch(ordersSlice.actions.toggleIsOpenPositionForm())} />
+          ) : (
+            <HighlightOffIcon onClick={() => dispatch(ordersSlice.actions.toggleIsOpenForm())} />
+          )}
+        </Box>
+      )
+    );
+  }, [positionsForm.isOpened]);
 
   const handleSelectTable = (t: ITable) => () => {
     dispatch(ordersSlice.actions.setSelectedTable(t));
@@ -93,12 +111,10 @@ export const OrdersForm: React.FC = () => {
     }
   };
 
-  return (
+  return !!positionsForm.isOpened ? (
+    <AddPositionModal />
+  ) : (
     <>
-      <Header
-        title={orderId ? "Редактирование заказа" : "Новый заказ"}
-        onClickBack={() => dispatch(ordersSlice.actions.toggleIsOpenForm())}
-      />
       {error ? (
         <AlertStyled style={{ marginBottom: 20 }} severity="error">
           {error}
@@ -112,11 +128,19 @@ export const OrdersForm: React.FC = () => {
           ? `Выбран столик №${selectedTable?.number} (${selectedTable?.name})`
           : "Пожалуйста, выберете столик для заказа:"}
       </Typography>
-      <Box position={"relative"} marginBottom={2}>
+      <Box
+        position={"relative"}
+        marginBottom={2}
+        width="calc(100vw - 32px)"
+        height="calc(100vw - 32px)"
+        overflow="hidden"
+      >
         <img
-          src={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format`}
-          srcSet={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
+          src={`${backUrl}${imageSrc}`}
+          srcSet={`${backUrl}${imageSrc}`}
           alt={"Tables with orders"}
+          width="100%"
+          height="100%"
         />
         {tables?.map((t) => (
           <TableSetBlock
@@ -139,7 +163,7 @@ export const OrdersForm: React.FC = () => {
           Пожалуйста, заполните позиции:
         </Typography>
       )}
-      <AddPositionModal />
+
       <List disablePadding style={{ marginBottom: 15 }}>
         {!!selectedPositions?.length &&
           selectedPositions.map((p, index: number) => {

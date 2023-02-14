@@ -4,7 +4,7 @@ import * as ReactDOM from "react-dom";
 import store from "./store";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./styles/theme";
-import { Layout } from "./features/layout";
+import App from "./app";
 
 export const backUrl = "http://54.79.43.64:4000";
 
@@ -12,7 +12,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Layout />
+        <App />
       </ThemeProvider>
     </Provider>
   </React.StrictMode>,

@@ -1,4 +1,4 @@
-import { Button, IconButton, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
 import Header from "../../shared/header";
@@ -8,23 +8,7 @@ import { ordersSlice } from "../../slices/orders";
 import styled from "@emotion/styled";
 import { backgroundDefault } from "../../styles/theme";
 import { EPositionFormSteps } from "../../enums/orders";
-
-const Modal = styled.div<{ isOpened: boolean }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 60px);
-  background: ${backgroundDefault};
-  z-index: 2;
-  display: ${({ isOpened }) => (isOpened ? "flex" : "none")};
-  flex-direction: column;
-  padding: 20px;
-`;
-
-const ModalScrollableBlock = styled.div`
-  overflow-y: scroll;
-`;
+import { pageSlice } from "../../slices/page";
 
 const AdditionalSelectBlock = styled(Typography)`
   font-size: 18px;
@@ -67,7 +51,7 @@ export const AddPositionModal: React.FC = () => {
       );
 
     return (
-      <ModalScrollableBlock>
+      <>
         {filteredPositions.map((p) => (
           <Button
             fullWidth
@@ -87,7 +71,7 @@ export const AddPositionModal: React.FC = () => {
             {p.description}
           </Button>
         ))}
-      </ModalScrollableBlock>
+      </>
     );
   };
 
@@ -109,7 +93,7 @@ export const AddPositionModal: React.FC = () => {
     }
 
     return (
-      <ModalScrollableBlock>
+      <>
         {additionals.map((p) => {
           const foundedAdditionalInForm = positionsForm.additional?.find((a) => a.id === p.id);
 
@@ -145,7 +129,7 @@ export const AddPositionModal: React.FC = () => {
         >
           Далее
         </Button>
-      </ModalScrollableBlock>
+      </>
     );
   };
 
@@ -183,15 +167,11 @@ export const AddPositionModal: React.FC = () => {
   };
 
   return (
-    <Modal isOpened={positionsForm.isOpened || false}>
-      <Header
-        title="Добавление позиции"
-        onClickBack={() => dispatch(ordersSlice.actions.toggleIsOpenPositionForm())}
-      />
+    <>
       {positionsForm.step === EPositionFormSteps.CATEGORY && renderSelectCategory()}
       {positionsForm.step === EPositionFormSteps.POSITION && renderSelectPosition()}
       {positionsForm.step === EPositionFormSteps.ADDITIONAL && renderSelectAdditional()}
       {positionsForm.step === EPositionFormSteps.COMMENT && renderComment()}
-    </Modal>
+    </>
   );
 };

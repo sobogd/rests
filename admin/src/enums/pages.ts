@@ -8,5 +8,5 @@ export enum EPages {
   ELEMENTS = "ELEMENTS",
   CATEGORIES = "CATEGORIES",
   KITCHEN = "KITCHEN",
-  DAY = "DAY",
+  REPORTS = "REPORTS",
 }
