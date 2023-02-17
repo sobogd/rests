@@ -4,6 +4,8 @@ import ordersRepository from "../repositories/orders-repository";
 import { DateTime } from "luxon";
 import positionsRepository from "../repositories/positions-repository";
 import reportPositionsRepository from "../repositories/report-positions-repository";
+import ordersPositionsLogsServices from "./orders-positions-logs-services";
+import { EOrderPositionLog } from "../enums.ts/orders-positions-logs-enums";
 
 const search = async (): Promise<IOrder[]> => {
   const orders = await ordersRepository.findAllActive();
@@ -30,11 +32,20 @@ const create = async (order: IOrderCreateRequest): Promise<void> => {
   });
 
   for (const position of order.positions) {
+    const additional = position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "";
+
     await ordersPositionsRepository.create({
       orderId: createdOrder.id,
       positionId: position.positionId,
-      additional: position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "",
+      additional,
       comment: position.comment,
+    });
+
+    await ordersPositionsLogsServices.create({
+      operationType: EOrderPositionLog.CREATE,
+      positionId: position.positionId,
+      positionAdditional: additional,
+      positionComment: position.comment,
     });
   }
 };
@@ -56,6 +67,13 @@ const update = async (order: IOrderCreateRequest): Promise<void> => {
 
     if (isOldOrderPositionRemoved) {
       await ordersPositionsRepository.removeById(orderPosition.id);
+
+      await ordersPositionsLogsServices.create({
+        operationType: EOrderPositionLog.REMOVE,
+        positionId: orderPosition.id,
+        positionAdditional: orderPosition.additional,
+        positionComment: orderPosition.comment,
+      });
     }
   }
 
@@ -67,6 +85,13 @@ const update = async (order: IOrderCreateRequest): Promise<void> => {
         additional: position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "",
         comment: position.comment,
         startTime: DateTime.now().toUTC().toSQL(),
+      });
+
+      await ordersPositionsLogsServices.create({
+        operationType: EOrderPositionLog.CREATE,
+        positionId: position.positionId,
+        positionAdditional: position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "",
+        positionComment: position.comment,
       });
     }
   }
