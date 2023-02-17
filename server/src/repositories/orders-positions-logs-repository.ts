@@ -6,6 +6,7 @@ const props = [
   { name: "id", dbName: "id" },
   { name: "operationType", dbName: "operation_type" },
   { name: "operationDate", dbName: "operation_date" },
+  { name: "orderId", dbName: "order_id" },
   { name: "positionId", dbName: "position_id" },
   { name: "positionComment", dbName: "position_comment" },
   { name: "positionAdditional", dbName: "position_additional" },

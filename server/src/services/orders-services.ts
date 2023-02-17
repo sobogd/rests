@@ -44,6 +44,7 @@ const create = async (order: IOrderCreateRequest): Promise<void> => {
     await ordersPositionsLogsServices.create({
       operationType: EOrderPositionLog.CREATE,
       positionId: position.positionId,
+      orderId: createdOrder.id,
       positionAdditional: additional,
       positionComment: position.comment,
     });
@@ -70,6 +71,7 @@ const update = async (order: IOrderCreateRequest): Promise<void> => {
 
       await ordersPositionsLogsServices.create({
         operationType: EOrderPositionLog.REMOVE,
+        orderId: updatedOrder.id,
         positionId: orderPosition.id,
         positionAdditional: orderPosition.additional,
         positionComment: orderPosition.comment,
@@ -89,6 +91,7 @@ const update = async (order: IOrderCreateRequest): Promise<void> => {
 
       await ordersPositionsLogsServices.create({
         operationType: EOrderPositionLog.CREATE,
+        orderId: updatedOrder.id,
         positionId: position.positionId,
         positionAdditional: position.additional?.map((a) => `${a.count}-${a.id}`).join("/") || "",
         positionComment: position.comment,
