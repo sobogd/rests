@@ -72,7 +72,7 @@ const update = async (order: IOrderCreateRequest): Promise<void> => {
       await ordersPositionsLogsServices.create({
         operationType: EOrderPositionLog.REMOVE,
         orderId: updatedOrder.id,
-        positionId: orderPosition.id,
+        positionId: orderPosition.positionId,
         positionAdditional: orderPosition.additional,
         positionComment: orderPosition.comment,
       });
