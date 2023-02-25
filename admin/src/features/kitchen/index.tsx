@@ -4,23 +4,26 @@ import { positionsService } from "../../services/positions";
 import { tablesService } from "../../services/tables";
 import Loading from "../../shared/loading";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { format, getMilliseconds } from "date-fns";
-import { grey } from "@mui/material/colors";
+import { format } from "date-fns";
+import { grey, teal } from "@mui/material/colors";
 import { IOrderPosition } from "../../interfaces/orders";
 import { Box, Button, Chip, Divider, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
+import { categoriesService } from "../../services/categories";
 
 export const Kitchen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isLoading: isLoadingOrders, items } = useAppSelector((s) => s.orders);
   const { isLoading: isLoadingTables, items: tableItems } = useAppSelector((s) => s.tables);
   const { isLoading: isLoadingPositions, items: positionItems } = useAppSelector((s) => s.positions);
-  const [filter, setFilter] = React.useState("all");
+  const { isLoading: isLoadingCategories, items: categoryItems } = useAppSelector((s) => s.categories);
+  const [filters, setFilters] = React.useState<{ label: string; value: string; type: string }[]>([]);
 
   React.useEffect(() => {
     dispatch(ordersService.search());
     dispatch(tablesService.search());
     dispatch(positionsService.search());
+    dispatch(categoriesService.search());
 
     const interval = setInterval(() => {
       dispatch(ordersService.search());
@@ -35,34 +38,64 @@ export const Kitchen: React.FC = () => {
     dispatch(positionsService.search());
   }, []);
 
-  const filters = [
-    { label: "All", value: "all" },
-    { label: "Not ready", value: "not_ready" },
-    { label: "Ready", value: "ready" },
-    { label: "Finished", value: "finished" },
-    { label: "Drinks and Deserts", value: "drinks_deserts" },
+  const allFilters = [
+    { label: "Not ready", value: "not_ready", type: "status" },
+    { label: "Ready", value: "ready", type: "status" },
+    { label: "Finished", value: "finished", type: "status" },
+    ...categoryItems.map((i) => ({ label: i.name, value: i.id.toString(), type: "category" })),
   ];
 
-  const filterByStatus = (op: IOrderPosition, f: string) => {
-    if (f === "not_ready") {
-      return !op.readyTime && !op.finishTime;
+  const filterByStatus = (op: IOrderPosition) => {
+    const filterValues = filters.filter((f) => f.type === "status").map((f) => f.value);
+
+    if (!filterValues.length) {
+      return true;
     }
 
-    if (f === "ready") {
-      return !!op.readyTime && !!op.startTime && !op.finishTime;
+    let count = 0;
+
+    if (filterValues.includes("not_ready") && !op.readyTime && !op.finishTime) {
+      count++;
     }
 
-    if (f === "finished") {
-      return !!op.finishTime;
+    if (filterValues.includes("ready") && !!op.readyTime && !!op.startTime && !op.finishTime) {
+      count++;
     }
 
-    if (f === "drinks_deserts") {
-      const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
-
-      return !!position?.categories?.filter((c) => [2, 3, 4].includes(Number(c.categoryId))).length;
+    if (filterValues.includes("finished") && !!op.finishTime) {
+      count++;
     }
 
-    return true;
+    return !!count;
+  };
+
+  const filterByCategory = (op: IOrderPosition) => {
+    const filterValues = filters.filter((f) => f.type === "category").map((f) => f.value);
+
+    if (!filterValues.length) {
+      return true;
+    }
+
+    const positionByOrderPosition = positionItems.find((p) => Number(p.id) === Number(op.positionId));
+    const categoryIdsByOrderPosition = positionByOrderPosition?.categories.map((c) => c.categoryId);
+
+    let count = 0;
+
+    categoryIdsByOrderPosition?.forEach((c) => {
+      if (filterValues.includes(c)) {
+        count++;
+      }
+    });
+
+    return !!count;
+  };
+
+  const handleChangeFilter = (filter: any) => () => {
+    if (filters.map((f) => f.value).includes(filter.value)) {
+      setFilters(filters.filter((f) => f.value !== filter.value));
+    } else {
+      setFilters([...filters, filter]);
+    }
   };
 
   const renderButtonForOrderPosition = (op: IOrderPosition) => {
@@ -140,22 +173,28 @@ export const Kitchen: React.FC = () => {
   };
 
   return (
-    <Box>
+    <Box padding={2}>
       <Stack direction="row" spacing={1} marginBottom={2}>
-        {filters.map(({ label, value }) => (
+        {allFilters.map((filter) => (
           <Chip
-            label={label}
-            variant={filter === value ? "outlined" : undefined}
-            onClick={() => setFilter(value)}
+            style={
+              filters.map((f) => f.value).includes(filter.value)
+                ? { background: teal[500], borderColor: teal[500] }
+                : undefined
+            }
+            label={filter.label}
+            onClick={handleChangeFilter(filter)}
+            variant="outlined"
           />
         ))}
       </Stack>
-      <Loading isLoading={isLoadingOrders || isLoadingTables || isLoadingPositions} />
+      <Loading isLoading={isLoadingOrders || isLoadingTables || isLoadingPositions || isLoadingCategories} />
       <Box display="flex" flexDirection="row" overflow="scroll hidden">
         {items
-          .filter(
-            ({ ordersPositions }) => ordersPositions?.filter((op) => filterByStatus(op, filter))?.length
+          .filter(({ ordersPositions }) =>
+            filters.length ? ordersPositions?.filter((op) => filterByStatus(op))?.length : true
           )
+          .sort((a, b) => (a.id && b.id && a.id < b.id ? -1 : 1))
           .map((o) => {
             const tableForOrder = tableItems.find((t) => Number(t.id) === Number(o.tableId));
             const createDate = Date.parse(o.createTime);
@@ -164,7 +203,7 @@ export const Kitchen: React.FC = () => {
             const date = format(dateWithTimeZone, "H:mm");
 
             return (
-              <Box minWidth={280} marginRight={3}>
+              <Box minWidth={280} marginRight={2}>
                 <Box display="flex" justifyContent="space-between">
                   <Typography variant="h6" fontWeight={600}>
                     {tableForOrder?.number} table
@@ -176,16 +215,9 @@ export const Kitchen: React.FC = () => {
                 </Typography>
                 <Box height="calc(100vh - 220px)" overflow="hidden scroll">
                   {o.ordersPositions
-                    ?.filter((op) => filterByStatus(op, filter))
-                    .sort((a, b) => {
-                      if (a.id && b.id && a.id < b.id) {
-                        return 1;
-                      }
-                      if (a.id && b.id && a.id > b.id) {
-                        return -1;
-                      }
-                      return 0;
-                    })
+                    ?.filter((op) => (filters.length ? filterByStatus(op) : true))
+                    .filter((op) => (filters.length ? filterByCategory(op) : true))
+                    .sort((a, b) => (a.id && b.id && a.id < b.id ? 1 : -1))
                     .map((op) => {
                       const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
 
