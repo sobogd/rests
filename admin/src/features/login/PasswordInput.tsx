@@ -1,15 +1,15 @@
 import React from "react";
 import { Box, Button, ButtonGroup, Typography } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { userSlice } from "../../slices/user";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { grey } from "@mui/material/colors";
 import { Stack } from "@mui/system";
-import { authorization } from "../../services/user";
+import { useAppDispatch, useAppSelector } from "app/store";
+import { authorization } from "shared/api";
+import { usersModel } from "entities/users";
 
 export const PasswordInput: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { selectedUser, inputtedPassword } = useAppSelector((s) => s.user);
+  const { selectedUser, inputtedPassword } = useAppSelector((s) => s.users);
 
   React.useEffect(() => {
     if (inputtedPassword?.length === 4 && selectedUser?.login) {
@@ -28,9 +28,9 @@ export const PasswordInput: React.FC = () => {
         color={color}
         style={{ margin: 0, height: 60, fontWeight: 600, fontSize: 20 }}
         onClick={() => {
-          if (type === "letter") dispatch(userSlice.actions.setPasswordLetter(letter));
-          if (type === "back") dispatch(userSlice.actions.removeLastPasswordLetter());
-          if (type === "clear") dispatch(userSlice.actions.removePasswordLetters());
+          if (type === "letter") dispatch(usersModel.actions.setPasswordLetter(letter));
+          if (type === "back") dispatch(usersModel.actions.removeLastPasswordLetter());
+          if (type === "clear") dispatch(usersModel.actions.removePasswordLetters());
         }}
       >
         {letter}
@@ -43,7 +43,7 @@ export const PasswordInput: React.FC = () => {
       <Stack direction="row" spacing={2} marginBottom={2}>
         <ArrowBackIcon
           style={{ marginTop: 4 }}
-          onClick={() => dispatch(userSlice.actions.removeSelectedUser())}
+          onClick={() => dispatch(usersModel.actions.removeSelectedUser())}
         />
         <Typography variant="h6" fontWeight={600}>
           {selectedUser?.name}

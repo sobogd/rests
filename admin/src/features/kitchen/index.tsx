@@ -1,15 +1,12 @@
 import React from "react";
-import { ordersService } from "../../services/orders";
-import { positionsService } from "../../services/positions";
-import { tablesService } from "../../services/tables";
 import Loading from "../../shared/loading";
-import { useAppDispatch, useAppSelector } from "../../store";
 import { format } from "date-fns";
 import { grey, teal } from "@mui/material/colors";
-import { IOrderPosition } from "../../interfaces/orders";
 import { Box, Button, Chip, Divider, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
-import { categoriesService } from "../../services/categories";
+import { useAppDispatch, useAppSelector } from "app/store";
+import { categoriesService, ordersService, searchPositions, tablesService } from "shared/api";
+import { IOrderPosition } from "entities/orders/model";
 
 export const Kitchen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -20,22 +17,22 @@ export const Kitchen: React.FC = () => {
   const [filters, setFilters] = React.useState<{ label: string; value: string; type: string }[]>([]);
 
   React.useEffect(() => {
-    dispatch(ordersService.search());
-    dispatch(tablesService.search());
-    dispatch(positionsService.search());
-    dispatch(categoriesService.search());
+    dispatch(ordersService.searchOrders());
+    dispatch(tablesService.searchTables());
+    dispatch(searchPositions());
+    dispatch(categoriesService.searchCategories());
 
     const interval = setInterval(() => {
-      dispatch(ordersService.search());
+      dispatch(ordersService.searchOrders());
     }, 30000);
 
     return () => clearInterval(interval);
   }, []);
 
   React.useEffect(() => {
-    dispatch(ordersService.search());
-    dispatch(tablesService.search());
-    dispatch(positionsService.search());
+    dispatch(ordersService.searchOrders());
+    dispatch(tablesService.searchTables());
+    dispatch(searchPositions());
   }, []);
 
   const allFilters = [
@@ -108,7 +105,7 @@ export const Kitchen: React.FC = () => {
           color="warning"
           onClick={() =>
             dispatch(ordersService.orderPositionStart({ orderPositionId: op.id || 0 })).then(() => {
-              dispatch(ordersService.search());
+              dispatch(ordersService.searchOrders());
             })
           }
         >
@@ -126,7 +123,7 @@ export const Kitchen: React.FC = () => {
           color="success"
           onClick={() =>
             dispatch(ordersService.orderPositionReady({ orderPositionId: op.id || 0 })).then(() => {
-              dispatch(ordersService.search());
+              dispatch(ordersService.searchOrders());
             })
           }
         >
@@ -144,7 +141,7 @@ export const Kitchen: React.FC = () => {
           color="error"
           onClick={() =>
             dispatch(ordersService.orderPositionGiven({ orderPositionId: op.id || 0 })).then(() => {
-              dispatch(ordersService.search());
+              dispatch(ordersService.searchOrders());
             })
           }
         >
@@ -162,7 +159,7 @@ export const Kitchen: React.FC = () => {
           color="warning"
           onClick={() =>
             dispatch(ordersService.orderPositionRestart({ orderPositionId: op.id || 0 })).then(() => {
-              dispatch(ordersService.search());
+              dispatch(ordersService.searchOrders());
             })
           }
         >
@@ -193,6 +190,9 @@ export const Kitchen: React.FC = () => {
         {items
           .filter(({ ordersPositions }) =>
             filters.length ? ordersPositions?.filter((op) => filterByStatus(op))?.length : true
+          )
+          .filter(({ ordersPositions }) =>
+            filters.length ? ordersPositions?.filter((op) => filterByCategory(op))?.length : true
           )
           .sort((a, b) => (a.id && b.id && a.id < b.id ? -1 : 1))
           .map((o) => {

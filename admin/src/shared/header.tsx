@@ -1,10 +1,10 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import styled from "@emotion/styled";
-import { textDefaultColor } from "../styles/theme";
 import { grey } from "@mui/material/colors";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { textDefaultColor } from "app/styles";
 
 const HeaderContainer = styled.header<{ isSpaceBetween: boolean }>`
   display: flex;

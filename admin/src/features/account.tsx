@@ -1,12 +1,12 @@
 import { Avatar, Button, Stack } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "app/store";
+import { MyFormSubtitle } from "app/styles";
+import { usersModel } from "entities/users";
 import React from "react";
+import { tablesService } from "shared/api";
 import { backUrl } from "..";
-import { tablesService } from "../services/tables";
 import Header from "../shared/header";
 import Loading from "../shared/loading";
-import { userSlice } from "../slices/user";
-import { useAppDispatch, useAppSelector } from "../store";
-import { MyFormSubtitle } from "../styles/common";
 
 export const Account: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -18,7 +18,7 @@ export const Account: React.FC = () => {
 
   const handleSignOut = () => {
     sessionStorage.setItem("token", "");
-    dispatch(userSlice.actions.signOut());
+    dispatch(usersModel.actions.signOut());
   };
 
   const handleChangeTableImage = async (e: React.ChangeEvent<HTMLInputElement>) => {

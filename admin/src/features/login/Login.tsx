@@ -1,15 +1,15 @@
 import React from "react";
-import { AlertStyled } from "../../styles/common";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { getUsersForCompany } from "../../services/user";
 import { Box } from "@mui/system";
 import Loading from "../../shared/loading";
 import { PasswordInput } from "./PasswordInput";
 import { UsersForCompany } from "./UsersForCompany";
+import { useAppDispatch, useAppSelector } from "app/store";
+import { getUsersForCompany } from "shared/api";
+import { AlertStyled } from "app/styles";
 
 export const Login: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, error, usersForCompany, selectedUser } = useAppSelector((s) => s.user);
+  const { isLoading, error, usersForCompany, selectedUser } = useAppSelector((s) => s.users);
 
   React.useEffect(() => {
     dispatch(getUsersForCompany());

@@ -1,34 +1,15 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { categoriesService } from "../../services/categories";
-import { ordersService } from "../../services/orders";
-import { positionsService } from "../../services/positions";
-import { tablesService } from "../../services/tables";
 import Loading from "../../shared/loading";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { formatInTimeZone } from "date-fns-tz";
-import { format } from "date-fns";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { grey } from "@mui/material/colors";
-import {
-  Alert,
-  Avatar,
-  Button,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { Alert, Button, List, ListItem, ListItemText, Modal, TextField, Typography } from "@mui/material";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box } from "@mui/system";
 import { roundFive } from "../../utils/roundFive";
 import { getTimeInFormat } from "../../utils/timeInFormat";
-import { backgroundDefault } from "../../styles/theme";
+import { useAppDispatch, useAppSelector } from "app/store";
+import { ordersService } from "shared/api";
+import { backgroundDefault } from "app/styles";
 
 const ScrollableDayReports = styled(List)`
   height: 100%;
