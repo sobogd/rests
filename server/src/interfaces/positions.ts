@@ -4,6 +4,7 @@ export interface IPosition {
   description: string;
   price: string;
   isAdditional: boolean;
+  sort?: number;
 }
 
 export interface ICreatePositionRequest extends IPosition {

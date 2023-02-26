@@ -8,6 +8,7 @@ const props = [
   { name: "description", dbName: "description" },
   { name: "price", dbName: "price" },
   { name: "isAdditional", dbName: "is_additional" },
+  { name: "sort", dbName: "sort" },
 ];
 
 const tableName = "positions";

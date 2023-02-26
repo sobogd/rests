@@ -10,6 +10,7 @@ export interface IPosition {
   categories: IPositionCategory[];
   additional: IPositionAdditional[];
   isAdditional: boolean;
+  sort?: number;
 }
 
 export interface IPositionValues {

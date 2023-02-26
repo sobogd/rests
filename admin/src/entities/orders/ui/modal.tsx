@@ -1,8 +1,9 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import React from "react";
 import styled from "@emotion/styled";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { EPositionFormSteps, ordersModel } from "../model";
+import { teal } from "@mui/material/colors";
 
 const AdditionalSelectBlock = styled(Typography)`
   font-size: 18px;
@@ -42,30 +43,33 @@ export const AddPositionModal: React.FC = () => {
       .filter((p) => !p.isAdditional)
       .filter((p) =>
         p.categories.map((c) => c.categoryId).includes(positionsForm.categoryId?.toString() || "")
-      );
+      )
+      .sort((a, b) => (a.sort && b.sort && a.sort < b.sort ? -1 : 1));
 
     return (
-      <>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {filteredPositions.map((p) => (
-          <Button
-            fullWidth
-            style={{ marginBottom: 20 }}
-            variant="contained"
-            onClick={() => {
-              dispatch(ordersModel.actions.setSelectedPositionId(p.id));
-              dispatch(
-                ordersModel.actions.setPositionFormStep(
-                  p.additional.length ? EPositionFormSteps.ADDITIONAL : EPositionFormSteps.COMMENT
-                )
-              );
-            }}
-          >
-            {p.name}
-            <br />
-            {p.description}
-          </Button>
+          <Grid item xs={6}>
+            <Button
+              fullWidth
+              style={{ fontWeight: 600, height: "100%", background: teal[800], fontSize: 13 }}
+              variant="contained"
+              onClick={() => {
+                dispatch(ordersModel.actions.setSelectedPositionId(p.id));
+                dispatch(
+                  ordersModel.actions.setPositionFormStep(
+                    p.additional.length ? EPositionFormSteps.ADDITIONAL : EPositionFormSteps.COMMENT
+                  )
+                );
+              }}
+            >
+              {p.name}
+              <br />
+              {p.description}
+            </Button>
+          </Grid>
         ))}
-      </>
+      </Grid>
     );
   };
 
@@ -80,36 +84,49 @@ export const AddPositionModal: React.FC = () => {
 
     const additionals = positions.items
       .filter((p) => p.isAdditional)
-      .filter((p) => additionalIds.includes(Number(p.id)));
+      .filter((p) => additionalIds.includes(Number(p.id)))
+      .sort((a, b) => (a.sort && b.sort && a.sort < b.sort ? -1 : 1));
 
     if (!additionals?.length) {
       return null;
     }
 
     return (
-      <>
+      <Grid container rowSpacing={1} columnSpacing={4}>
         {additionals.map((p) => {
           const foundedAdditionalInForm = positionsForm.additional?.find((a) => a.id === p.id);
 
           return (
-            <AdditionalSelectBlock>
-              {p.name}
-              <p>
-                <Button
-                  variant="contained"
-                  onClick={() => dispatch(ordersModel.actions.additionalMinus(p.id))}
-                >
-                  -
-                </Button>
-                <Typography variant="h6">{foundedAdditionalInForm?.count || 0}</Typography>
-                <Button
-                  variant="contained"
-                  onClick={() => dispatch(ordersModel.actions.additionalPlus(p.id))}
-                >
-                  +
-                </Button>
-              </p>
-            </AdditionalSelectBlock>
+            <Grid item xs={6}>
+              <Typography variant="body2" marginBottom={1}>
+                {p.name}
+              </Typography>
+              <Grid container rowSpacing={1} columnSpacing={0}>
+                <Grid item xs={4} padding={0}>
+                  <Button
+                    variant="contained"
+                    style={{ minWidth: 0 }}
+                    fullWidth
+                    onClick={() => dispatch(ordersModel.actions.additionalMinus(p.id))}
+                  >
+                    -
+                  </Button>
+                </Grid>
+                <Grid item xs={4} padding={0} display="flex" justifyContent="center" alignItems="center">
+                  <Typography variant="body2">{foundedAdditionalInForm?.count || 0}</Typography>
+                </Grid>
+                <Grid item xs={4} padding={0}>
+                  <Button
+                    variant="contained"
+                    style={{ minWidth: 0 }}
+                    fullWidth
+                    onClick={() => dispatch(ordersModel.actions.additionalPlus(p.id))}
+                  >
+                    +
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
           );
         })}
 
@@ -123,7 +140,7 @@ export const AddPositionModal: React.FC = () => {
         >
           Далее
         </Button>
-      </>
+      </Grid>
     );
   };
 

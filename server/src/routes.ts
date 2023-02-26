@@ -96,6 +96,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "price": {"dataType":"string","required":true},
             "isAdditional": {"dataType":"boolean","required":true},
+            "sort": {"dataType":"double"},
             "categories": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"categoryId":{"dataType":"double","required":true}}},"required":true},
             "composition": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"weight":{"dataType":"string","required":true},"element":{"dataType":"double","required":true}}},"required":true},
             "additional": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"positionId":{"dataType":"double","required":true}}},"required":true},

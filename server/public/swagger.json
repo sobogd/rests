@@ -204,6 +204,10 @@
 					"isAdditional": {
 						"type": "boolean"
 					},
+					"sort": {
+						"type": "number",
+						"format": "double"
+					},
 					"categories": {
 						"items": {
 							"properties": {

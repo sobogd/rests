@@ -6,7 +6,7 @@ import { store } from "app/store";
 import { theme } from "app/styles";
 import App from "app";
 
-export const backUrl = "http://54.79.43.64:4000";
+export const backUrl = "http://localhost:4000";
 
 ReactDOM.render(
   <React.StrictMode>
