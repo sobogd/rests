@@ -8,7 +8,7 @@ import { validatePrice, validateString } from "utils/validate";
 import Header from "shared/header";
 import YouSure from "shared/you-sure";
 import { AlertStyled, MyForm, MyFormSubtitle } from "app/styles";
-import { backUrl } from "index";
+import { API_URL } from "shared/config";
 
 const TableSetBlock = styled.div<{ positionX: string; positionY: string }>`
   position: relative;
@@ -136,8 +136,8 @@ export const TablesForm: React.FC = () => {
           <div>
             <TableSetBlock positionX={positionX.value} positionY={positionY.value}>
               <img
-                src={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format`}
-                srcSet={`${backUrl}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                src={`${API_URL}${imageSrc}?w=248&fit=crop&auto=format`}
+                srcSet={`${API_URL}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
                 width="300"
                 height="300"
                 alt={"234324"}

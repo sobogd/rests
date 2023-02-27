@@ -13,7 +13,7 @@ import { ordersModel } from "../model";
 import { ITable } from "entities/tables";
 import { ordersService } from "shared/api";
 import { AlertStyled } from "app/styles";
-import { backUrl } from "index";
+import { API_URL } from "shared/config";
 
 const TableSetBlock = styled.div`
   position: absolute;
@@ -111,8 +111,8 @@ export const OrdersForm: React.FC = () => {
         overflow="hidden"
       >
         <img
-          src={`${backUrl}${imageSrc}`}
-          srcSet={`${backUrl}${imageSrc}`}
+          src={`${API_URL}${imageSrc}`}
+          srcSet={`${API_URL}${imageSrc}`}
           alt={"Tables with orders"}
           width="100%"
           height="100%"

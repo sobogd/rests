@@ -1,4 +1,4 @@
-import { backUrl } from "../..";
+import { API_URL } from "shared/config";
 
 export interface IErrorResponse {
   rejectValue: { fields?: string[]; message?: string; code?: string };
@@ -7,7 +7,7 @@ export interface IErrorResponse {
 export const request = async (rejectWithValue: any, url: string, method: string, data?: object) => {
   const token = sessionStorage.getItem("token");
 
-  const response = await fetch(backUrl + url, {
+  const response = await fetch(API_URL + url, {
     method,
     headers: {
       "Content-Type": "application/json",
