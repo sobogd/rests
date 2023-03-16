@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ITable, ITableImage } from "entities/tables";
-import { requestFiles } from "utils/requestFiles";
+import { requestFiles } from "shared/utils/requestFiles";
 import { IErrorResponse, request } from "./base";
 
 export const findImage = createAsyncThunk<ITableImage, void, IErrorResponse>(

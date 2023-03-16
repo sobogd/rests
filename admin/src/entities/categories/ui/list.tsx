@@ -30,7 +30,9 @@ export const CategoriesList: React.FC = () => {
                 <IconButton
                   edge="end"
                   style={{ right: -10 }}
-                  onClick={() => dispatch(categoriesModel.actions.startEditItem(i))}
+                  onClick={() =>
+                    dispatch(categoriesModel.actions.startEditItem(i))
+                  }
                 >
                   <ModeEditOutlineIcon />
                 </IconButton>

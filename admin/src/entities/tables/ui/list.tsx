@@ -16,7 +16,10 @@ export const TablesList: React.FC = () => {
 
   return (
     <>
-      <Header title="Tables items" onClickAdd={() => dispatch(tablesModel.actions.toggleIsOpenForm())} />
+      <Header
+        title="Tables items"
+        onClickAdd={() => dispatch(tablesModel.actions.toggleIsOpenForm())}
+      />
       <List disablePadding>
         {!!items.length &&
           items.map((i) => (

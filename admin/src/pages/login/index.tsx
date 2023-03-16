@@ -1,21 +1,25 @@
 import React from "react";
 import { Box } from "@mui/system";
-import Loading from "../../shared/loading";
-import { PasswordInput } from "./PasswordInput";
-import { UsersForCompany } from "./UsersForCompany";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { getUsersForCompany } from "shared/api";
 import { AlertStyled } from "app/styles";
+import { PasswordInput } from "features/login/PasswordInput";
+import { UsersForCompany } from "features/login/UsersForCompany";
 
 export const Login: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, error, usersForCompany, selectedUser } = useAppSelector((s) => s.users);
+  const { error, usersForCompany, selectedUser } = useAppSelector(
+    (s) => s.users
+  );
 
   React.useEffect(() => {
     dispatch(getUsersForCompany());
   }, []);
 
-  const renderPasswordInput = React.useMemo(() => !!selectedUser && <PasswordInput />, [selectedUser]);
+  const renderPasswordInput = React.useMemo(
+    () => !!selectedUser && <PasswordInput />,
+    [selectedUser]
+  );
 
   const renderUsersForCompany = React.useMemo(
     () => !!usersForCompany?.length && !selectedUser && <UsersForCompany />,
@@ -31,7 +35,6 @@ export const Login: React.FC = () => {
       justifyContent="center"
       height="100%"
     >
-      <Loading isLoading={isLoading} />
       {error ? <AlertStyled severity="error">{error}</AlertStyled> : null}
       {renderPasswordInput}
       {renderUsersForCompany}

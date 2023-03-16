@@ -1,4 +1,11 @@
-import { Button, Grid, List, ListItem, ListItemText, Modal } from "@mui/material";
+import {
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { backgroundDefault, ModalScrollable } from "app/styles";
@@ -9,12 +16,20 @@ import { ordersModel } from "../model";
 export const TableForOrderModal: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { items: orders, isLoading: isLoadingOrders, tableForModal } = useAppSelector((s) => s.orders);
-  const { items: tables, isLoading: isLoadingTables } = useAppSelector((s) => s.tables);
+  const {
+    items: orders,
+    isLoading: isLoadingOrders,
+    tableForModal,
+  } = useAppSelector((s) => s.orders);
+  const { items: tables, isLoading: isLoadingTables } = useAppSelector(
+    (s) => s.tables
+  );
 
   const orderForTable = React.useMemo(() => {
-    return orders.filter((o) => Number(o.tableId) === Number(tableForModal?.id));
-  }, [tableForModal]);
+    return orders.filter(
+      (o) => Number(o.tableId) === Number(tableForModal?.id)
+    );
+  }, [tableForModal, orders]);
 
   return (
     <Modal
@@ -24,13 +39,17 @@ export const TableForOrderModal: React.FC = () => {
       <>
         <Header
           title={`Orders for table №${tableForModal?.number}`}
-          onClickBack={() => dispatch(ordersModel.actions.setTableForModal(undefined))}
+          onClickBack={() =>
+            dispatch(ordersModel.actions.setTableForModal(undefined))
+          }
         />
         <ModalScrollable>
           <List disablePadding style={{ background: "none" }}>
             {!!orderForTable.length &&
               orderForTable?.map((i) => {
-                const table = tables.find((t) => Number(t.id) === Number(i.tableId));
+                const table = tables.find(
+                  (t) => Number(t.id) === Number(i.tableId)
+                );
 
                 return (
                   <ListItem disablePadding style={{ marginBottom: 10 }}>
@@ -38,13 +57,19 @@ export const TableForOrderModal: React.FC = () => {
                       primary={i.comment ? i.comment : table?.name}
                       secondary={
                         <React.Fragment>
-                          <Box marginBottom={1}>{`Order №${i.id} / Table №${table?.number}`}</Box>
+                          <Box
+                            marginBottom={1}
+                          >{`Order №${i.id} / Table №${table?.number}`}</Box>
                           <Grid container spacing={1}>
                             <Grid item xs={6}>
                               <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={() => dispatch(ordersModel.actions.setOrderForBill(i))}
+                                onClick={() =>
+                                  dispatch(
+                                    ordersModel.actions.setOrderForBill(i)
+                                  )
+                                }
                               >
                                 Bill
                               </Button>
@@ -58,7 +83,9 @@ export const TableForOrderModal: React.FC = () => {
                                   dispatch(
                                     ordersModel.actions.startEditItem({
                                       ...i,
-                                      selectedTable: tables.find((t) => t.id === i.tableId),
+                                      selectedTable: tables.find(
+                                        (t) => t.id === i.tableId
+                                      ),
                                     })
                                   )
                                 }

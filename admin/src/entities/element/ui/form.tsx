@@ -5,7 +5,7 @@ import React from "react";
 import { elementsService } from "shared/api";
 import Header from "shared/header";
 import YouSure from "shared/you-sure";
-import { validatePrice, validateString } from "utils/validate";
+import { validatePrice, validateString } from "shared/utils/validate";
 import { elementModel, IElement } from "../model";
 
 export const ElementsForm: React.FC = () => {

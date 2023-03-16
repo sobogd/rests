@@ -15,6 +15,7 @@ export const usersModel = createSlice({
   initialState,
   reducers: {
     signOut: (state: IUserState) => {
+      sessionStorage.setItem("token", "");
       state.data = undefined;
       state.inputtedPassword = "";
       state.error = "";
@@ -73,7 +74,6 @@ export const usersModel = createSlice({
 
     builder.addCase(whoAmI.rejected, (state: IUserState) => {
       sessionStorage.setItem("token", "");
-      console.log("1");
       state.data = undefined;
       state.isLoading = false;
     });

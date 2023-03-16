@@ -1,5 +1,14 @@
 import React from "react";
-import { Alert, Box, Button, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+} from "@mui/material";
 import styled from "@emotion/styled";
 import { AddPositionModal } from "./modal";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -10,7 +19,6 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { pagesModel } from "entities/pages";
 import { ordersModel } from "../model";
-import { ITable } from "entities/tables";
 import { ordersService } from "shared/api";
 import { AlertStyled } from "app/styles";
 import { API_URL } from "shared/config";
@@ -30,30 +38,44 @@ const TableSetBlock = styled.div`
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { error, comment, positionsForm, selectedTable, selectedPositions, orderId } = useAppSelector(
-    (s) => s.orders
-  );
+  const {
+    error,
+    comment,
+    positionsForm,
+    selectedTable,
+    selectedPositions,
+    orderId,
+  } = useAppSelector((s) => s.orders);
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
   const { items: positions } = useAppSelector((s) => s.positions);
 
   React.useEffect(() => {
     dispatch(
       pagesModel.actions.setHeaderComponent(
-        <Box display="flex" justifyContent="space-between" flexGrow={1} alignItems="center">
-          <Typography variant="h6">{!!positionsForm.isOpened ? "Position adding" : "New order"}</Typography>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          flexGrow={1}
+          alignItems="center"
+        >
+          <Typography variant="h6">
+            {!!positionsForm.isOpened ? "Position adding" : "New order"}
+          </Typography>
           {!!positionsForm.isOpened ? (
-            <HighlightOffIcon onClick={() => dispatch(ordersModel.actions.toggleIsOpenPositionForm())} />
+            <HighlightOffIcon
+              onClick={() =>
+                dispatch(ordersModel.actions.toggleIsOpenPositionForm())
+              }
+            />
           ) : (
-            <HighlightOffIcon onClick={() => dispatch(ordersModel.actions.toggleIsOpenForm())} />
+            <HighlightOffIcon
+              onClick={() => dispatch(ordersModel.actions.toggleIsOpenForm())}
+            />
           )}
         </Box>
       )
     );
   }, [positionsForm.isOpened]);
-
-  const handleSelectTable = (t: ITable) => () => {
-    dispatch(ordersModel.actions.setSelectedTable(t));
-  };
 
   const handleSendOrder = () => {
     if (orderId) {
@@ -142,7 +164,9 @@ export const OrdersForm: React.FC = () => {
       <List disablePadding style={{ marginBottom: 15 }}>
         {!!selectedPositions?.length &&
           selectedPositions.map((p, index: number) => {
-            const positionData = positions.find((pos) => pos.id === p.positionId);
+            const positionData = positions.find(
+              (pos) => pos.id === p.positionId
+            );
 
             return (
               <ListItem
@@ -152,11 +176,15 @@ export const OrdersForm: React.FC = () => {
                 secondaryAction={[
                   <ContentCopyIcon
                     style={{ marginLeft: 7 }}
-                    onClick={() => dispatch(ordersModel.actions.copyPosition(index))}
+                    onClick={() =>
+                      dispatch(ordersModel.actions.copyPosition(index))
+                    }
                   />,
                   <DeleteIcon
                     style={{ marginLeft: 7 }}
-                    onClick={() => dispatch(ordersModel.actions.deletePosition(index))}
+                    onClick={() =>
+                      dispatch(ordersModel.actions.deletePosition(index))
+                    }
                   />,
                 ]}
               >
@@ -166,7 +194,9 @@ export const OrdersForm: React.FC = () => {
                   secondary={
                     <>
                       {p.additional?.map((a) => {
-                        const foundedAdditional = positions.find((add: any) => add.id === a.id);
+                        const foundedAdditional = positions.find(
+                          (add: any) => add.id === a.id
+                        );
                         return (
                           <>
                             {a.count}x {foundedAdditional?.name}
@@ -206,15 +236,23 @@ export const OrdersForm: React.FC = () => {
         name="description"
         value={comment}
         fullWidth
-        onChange={(e) => dispatch(ordersModel.actions.setComment(e.target.value))}
+        onChange={(e) =>
+          dispatch(ordersModel.actions.setComment(e.target.value))
+        }
       />
       {!!selectedPositions?.length && selectedTable?.id ? (
-        <Button fullWidth style={{ marginTop: 15 }} variant="contained" onClick={handleSendOrder}>
+        <Button
+          fullWidth
+          style={{ marginTop: 15 }}
+          variant="contained"
+          onClick={handleSendOrder}
+        >
           {orderId ? "Сохранить изменения" : "Отправить заказ на кухню"}
         </Button>
       ) : (
         <Alert severity="error" icon={false}>
-          Для создания заказа необходимо выбрать столик и заполнить хотя бы одну позицию!
+          Для создания заказа необходимо выбрать столик и заполнить хотя бы одну
+          позицию!
         </Alert>
       )}
     </>

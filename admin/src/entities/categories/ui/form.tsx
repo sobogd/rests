@@ -5,7 +5,7 @@ import React from "react";
 import { categoriesService } from "shared/api";
 import Header from "shared/header";
 import YouSure from "shared/you-sure";
-import { validateString } from "utils/validate";
+import { validateString } from "shared/utils/validate";
 import { categoriesModel, ICategory } from "../model";
 
 export const CategoriesForm: React.FC = () => {

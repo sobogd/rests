@@ -4,7 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { grey } from "@mui/material/colors";
 import { Stack } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { authorization } from "shared/api";
+import { authorization, whoAmI } from "shared/api";
 import { usersModel } from "entities/users";
 
 export const PasswordInput: React.FC = () => {
@@ -13,11 +13,16 @@ export const PasswordInput: React.FC = () => {
 
   React.useEffect(() => {
     if (inputtedPassword?.length === 4 && selectedUser?.login) {
-      dispatch(authorization({ login: selectedUser.login, password: inputtedPassword }));
+      dispatch(
+        authorization({ login: selectedUser.login, password: inputtedPassword })
+      ).then(() => dispatch(whoAmI()));
     }
-  }, [inputtedPassword]);
+  }, [inputtedPassword, selectedUser]);
 
-  const renderGridButton = (letter: string, type: "letter" | "back" | "clear") => {
+  const renderGridButton = (
+    letter: string,
+    type: "letter" | "back" | "clear"
+  ) => {
     let color: any = "primary";
     if (type === "back") color = "warning";
     if (type === "clear") color = "error";
@@ -28,9 +33,12 @@ export const PasswordInput: React.FC = () => {
         color={color}
         style={{ margin: 0, height: 60, fontWeight: 600, fontSize: 20 }}
         onClick={() => {
-          if (type === "letter") dispatch(usersModel.actions.setPasswordLetter(letter));
-          if (type === "back") dispatch(usersModel.actions.removeLastPasswordLetter());
-          if (type === "clear") dispatch(usersModel.actions.removePasswordLetters());
+          if (type === "letter")
+            dispatch(usersModel.actions.setPasswordLetter(letter));
+          if (type === "back")
+            dispatch(usersModel.actions.removeLastPasswordLetter());
+          if (type === "clear")
+            dispatch(usersModel.actions.removePasswordLetters());
         }}
       >
         {letter}

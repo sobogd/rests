@@ -30,7 +30,9 @@ export const PositionsList: React.FC = () => {
                 <IconButton
                   edge="end"
                   style={{ right: -10 }}
-                  onClick={() => dispatch(positionsModel.actions.startEditItem(i))}
+                  onClick={() =>
+                    dispatch(positionsModel.actions.startEditItem(i))
+                  }
                 >
                   <ModeEditOutlineIcon />
                 </IconButton>

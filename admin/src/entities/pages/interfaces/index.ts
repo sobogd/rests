@@ -1,15 +1,13 @@
 import { EPages } from "..";
 
 export interface IPageState {
-  activePage?: IPageActive;
+  headerComponent?: JSX.Element;
   isOpenMenu: boolean;
 }
 
 export interface IPageActive {
   permissions: string[];
-  name: string;
   id: EPages;
-  icon: any;
-  component: any;
-  headerComponent?: any;
+  showInMenu: boolean;
+  hideHeader: boolean;
 }

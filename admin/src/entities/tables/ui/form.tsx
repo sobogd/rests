@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { ITable, tablesModel } from "../model";
 import { tablesService } from "shared/api";
-import { validatePrice, validateString } from "utils/validate";
+import { validatePrice, validateString } from "shared/utils/validate";
 import Header from "shared/header";
 import YouSure from "shared/you-sure";
 import { AlertStyled, MyForm, MyFormSubtitle } from "app/styles";

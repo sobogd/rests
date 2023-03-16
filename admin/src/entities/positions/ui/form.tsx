@@ -12,7 +12,12 @@ import {
 import React from "react";
 import styled from "@emotion/styled";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { AlertStyled, backgroundDefault, MyForm, MyFormSubtitle } from "app/styles";
+import {
+  AlertStyled,
+  backgroundDefault,
+  MyForm,
+  MyFormSubtitle,
+} from "app/styles";
 import { useAppDispatch, useAppSelector } from "app/store";
 import {
   categoriesService,
@@ -28,7 +33,7 @@ import {
   IPositionValues,
   positionsModel,
 } from "../model";
-import { validatePrice, validateString } from "utils/validate";
+import { validatePrice, validateString } from "shared/utils/validate";
 import Header from "shared/header";
 import YouSure from "shared/you-sure";
 
@@ -78,13 +83,18 @@ export const PositionsForm: React.FC = () => {
   }, []);
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(positionsModel.actions.setFormValue({ name: e.target.name, value: e.target.value }));
+    dispatch(
+      positionsModel.actions.setFormValue({
+        name: e.target.name,
+        value: e.target.value,
+      })
+    );
   };
 
   const handleSubmitForm = () => {
-    const validatedValues: { [Key in keyof IPositionValues]: { value: string; error: string } } = Object.keys(
-      values
-    ).reduce((acc, key) => {
+    const validatedValues: {
+      [Key in keyof IPositionValues]: { value: string; error: string };
+    } = Object.keys(values).reduce((acc, key) => {
       switch (key) {
         // case "price":
         //   return {
@@ -94,83 +104,92 @@ export const PositionsForm: React.FC = () => {
         case "name":
           return {
             ...acc,
-            [key]: { value: values[key].value, error: validateString(values[key].value, 2, 100) },
+            [key]: {
+              value: values[key].value,
+              error: validateString(values[key].value, 2, 100),
+            },
           };
         default:
           return acc;
       }
     }, values);
 
-    const validatedComposition: { [Key in keyof IPositionComposition]: { value: string; error: string } }[] =
-      composition.map((c) =>
-        Object.keys(c).reduce((acc, key) => {
-          switch (key) {
-            case "element":
-              return {
-                ...acc,
-                [key]: {
-                  value: c[key].value,
-                  error: validatePrice(
-                    c[key].value,
-                    Math.min(...elements.map((e) => Number(e.id))),
-                    Math.max(...elements.map((e) => Number(e.id)))
-                  ),
-                },
-              };
-            case "weight":
-              return {
-                ...acc,
-                [key]: { value: c[key].value, error: validatePrice(c[key].value, 1, 100) },
-              };
-            default:
-              return acc;
-          }
-        }, c)
-      );
+    const validatedComposition: {
+      [Key in keyof IPositionComposition]: { value: string; error: string };
+    }[] = composition.map((c) =>
+      Object.keys(c).reduce((acc, key) => {
+        switch (key) {
+          case "element":
+            return {
+              ...acc,
+              [key]: {
+                value: c[key].value,
+                error: validatePrice(
+                  c[key].value,
+                  Math.min(...elements.map((e) => Number(e.id))),
+                  Math.max(...elements.map((e) => Number(e.id)))
+                ),
+              },
+            };
+          case "weight":
+            return {
+              ...acc,
+              [key]: {
+                value: c[key].value,
+                error: validatePrice(c[key].value, 1, 100),
+              },
+            };
+          default:
+            return acc;
+        }
+      }, c)
+    );
 
-    const validatedCategories: { [Key in keyof IPositionCategory]: { value: string; error: string } }[] =
-      categories.map((c) =>
-        Object.keys(c).reduce((acc, key) => {
-          switch (key) {
-            case "categoryId":
-              return {
-                ...acc,
-                [key]: {
-                  value: c[key].value,
-                  error: validatePrice(
-                    c[key].value,
-                    Math.min(...allCategories.map((e) => Number(e.id))),
-                    Math.max(...allCategories.map((e) => Number(e.id)))
-                  ),
-                },
-              };
-            default:
-              return acc;
-          }
-        }, c)
-      );
+    const validatedCategories: {
+      [Key in keyof IPositionCategory]: { value: string; error: string };
+    }[] = categories.map((c) =>
+      Object.keys(c).reduce((acc, key) => {
+        switch (key) {
+          case "categoryId":
+            return {
+              ...acc,
+              [key]: {
+                value: c[key].value,
+                error: validatePrice(
+                  c[key].value,
+                  Math.min(...allCategories.map((e) => Number(e.id))),
+                  Math.max(...allCategories.map((e) => Number(e.id)))
+                ),
+              },
+            };
+          default:
+            return acc;
+        }
+      }, c)
+    );
 
-    const validatedAdditional: { [Key in keyof IPositionAdditional]: { value: string; error: string } }[] =
-      additional.map((c) =>
-        Object.keys(c).reduce((acc, key) => {
-          switch (key) {
-            case "positionId":
-              return {
-                ...acc,
-                [key]: {
-                  value: c[key].value,
-                  error: validatePrice(
-                    c[key].value,
-                    Math.min(...allPositions.map((e) => Number(e.id))),
-                    Math.max(...allPositions.map((e) => Number(e.id)))
-                  ),
-                },
-              };
-            default:
-              return acc;
-          }
-        }, c)
-      );
+    const validatedAdditional: {
+      [Key in keyof IPositionAdditional]: { value: string; error: string };
+    }[] = additional.map((c) =>
+      Object.keys(c).reduce((acc, key) => {
+        switch (key) {
+          case "positionId":
+            return {
+              ...acc,
+              [key]: {
+                value: c[key].value,
+                error: validatePrice(
+                  c[key].value,
+                  Math.min(...allPositions.map((e) => Number(e.id))),
+                  Math.max(...allPositions.map((e) => Number(e.id)))
+                ),
+              },
+            };
+          default:
+            return acc;
+        }
+      }, c)
+    );
 
     const isValid =
       !Object.values(validatedValues).filter((f) => f.error).length &&
@@ -279,18 +298,26 @@ export const PositionsForm: React.FC = () => {
           name="price"
           value={price.value}
           type="number"
-          InputProps={{ endAdornment: <InputAdornment position="end">TL</InputAdornment> }}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">TL</InputAdornment>,
+          }}
           onChange={handleChangeValue}
         />
         <MyFormSubtitle>Состав</MyFormSubtitle>
         {composition.length > 0 &&
           composition.map((c, index) => (
             <ElementField>
-              <RemoveButton onClick={() => dispatch(positionsModel.actions.removeComposition(index))}>
+              <RemoveButton
+                onClick={() =>
+                  dispatch(positionsModel.actions.removeComposition(index))
+                }
+              >
                 <DeleteForeverIcon />
               </RemoveButton>
               <FormControl>
-                <InputLabel id={"element" + index + "label"}>Элемент</InputLabel>
+                <InputLabel id={"element" + index + "label"}>
+                  Элемент
+                </InputLabel>
                 <Select
                   labelId={"element" + index}
                   id={"element" + index}
@@ -300,7 +327,13 @@ export const PositionsForm: React.FC = () => {
                   label="Элемент"
                   required
                   onChange={({ target: { name, value } }) =>
-                    dispatch(positionsModel.actions.setCompositionValue({ name, value, index }))
+                    dispatch(
+                      positionsModel.actions.setCompositionValue({
+                        name,
+                        value,
+                        index,
+                      })
+                    )
                   }
                 >
                   {elements.map((i) => (
@@ -312,15 +345,27 @@ export const PositionsForm: React.FC = () => {
                 inputProps={{ form: { autocomplete: "off" } }}
                 label={"Вес/количество"}
                 variant="outlined"
-                helperText={c.weight.error || `Например: "100" грамм муки или "1" яйцо`}
+                helperText={
+                  c.weight.error || `Например: "100" грамм муки или "1" яйцо`
+                }
                 error={!!c.weight.error}
                 required
                 name="weight"
                 value={c.weight.value}
                 type="number"
-                InputProps={{ endAdornment: <InputAdornment position="end">г/шт</InputAdornment> }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">г/шт</InputAdornment>
+                  ),
+                }}
                 onChange={({ target: { name, value } }) =>
-                  dispatch(positionsModel.actions.setCompositionValue({ name, value, index }))
+                  dispatch(
+                    positionsModel.actions.setCompositionValue({
+                      name,
+                      value,
+                      index,
+                    })
+                  )
                 }
               />
             </ElementField>
@@ -339,11 +384,17 @@ export const PositionsForm: React.FC = () => {
         {categories.length > 0 &&
           categories.map((c, index) => (
             <ElementField>
-              <RemoveButton onClick={() => dispatch(positionsModel.actions.removeCategory(index))}>
+              <RemoveButton
+                onClick={() =>
+                  dispatch(positionsModel.actions.removeCategory(index))
+                }
+              >
                 <DeleteForeverIcon />
               </RemoveButton>
               <FormControl>
-                <InputLabel id={"categoryId" + index + "label"}>Категория</InputLabel>
+                <InputLabel id={"categoryId" + index + "label"}>
+                  Категория
+                </InputLabel>
                 <Select
                   labelId={"categoryId" + index}
                   id={"categoryId" + index}
@@ -353,7 +404,13 @@ export const PositionsForm: React.FC = () => {
                   label="Категория"
                   required
                   onChange={({ target: { name, value } }) =>
-                    dispatch(positionsModel.actions.setCategoryValue({ name, value, index }))
+                    dispatch(
+                      positionsModel.actions.setCategoryValue({
+                        name,
+                        value,
+                        index,
+                      })
+                    )
                   }
                 >
                   {allCategories.map((i) => (
@@ -381,7 +438,9 @@ export const PositionsForm: React.FC = () => {
               <Checkbox
                 checked={isAdditional}
                 style={{ paddingTop: 0, paddingBottom: 0 }}
-                onChange={() => dispatch(positionsModel.actions.toggleIsAdditional())}
+                onChange={() =>
+                  dispatch(positionsModel.actions.toggleIsAdditional())
+                }
               />
             }
             label="Эта позиция является дополнительной"
@@ -391,11 +450,17 @@ export const PositionsForm: React.FC = () => {
           !isAdditional &&
           additional.map((a, index) => (
             <ElementField>
-              <RemoveButton onClick={() => dispatch(positionsModel.actions.removeAdditional(index))}>
+              <RemoveButton
+                onClick={() =>
+                  dispatch(positionsModel.actions.removeAdditional(index))
+                }
+              >
                 <DeleteForeverIcon />
               </RemoveButton>
               <FormControl>
-                <InputLabel id={"positionId" + index + "label"}>Дополнительная позиция</InputLabel>
+                <InputLabel id={"positionId" + index + "label"}>
+                  Дополнительная позиция
+                </InputLabel>
                 <Select
                   labelId={"positionId" + index}
                   id={"positionId" + index}
@@ -405,7 +470,13 @@ export const PositionsForm: React.FC = () => {
                   label="Дополнительная позиция"
                   required
                   onChange={({ target: { name, value } }) =>
-                    dispatch(positionsModel.actions.setAdditionalValue({ name, value, index }))
+                    dispatch(
+                      positionsModel.actions.setAdditionalValue({
+                        name,
+                        value,
+                        index,
+                      })
+                    )
                   }
                 >
                   {allPositions
@@ -437,7 +508,9 @@ export const PositionsForm: React.FC = () => {
             style={{ marginTop: 10 }}
             color="error"
             variant="outlined"
-            onClick={() => dispatch(positionsModel.actions.toggleIsOpenYouSure())}
+            onClick={() =>
+              dispatch(positionsModel.actions.toggleIsOpenYouSure())
+            }
           >
             Удалить
           </Button>

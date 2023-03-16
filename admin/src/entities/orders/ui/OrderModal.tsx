@@ -6,7 +6,7 @@ import { backgroundDefault, ModalScrollable } from "app/styles";
 import React from "react";
 import { ordersService } from "shared/api";
 import Header from "shared/header";
-import { roundFive } from "utils/roundFive";
+import { roundFive } from "shared/utils/roundFive";
 import { ordersModel } from "../model";
 
 const discounts = [0, 10];

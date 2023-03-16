@@ -9,8 +9,6 @@ export const requestFiles = async (rejectWithValue: any, url: string, method: st
     formData.append(`files`, data[i]);
   }
 
-  console.log({ formData, data });
-
   const response = await fetch(API_URL + url, {
     method,
     headers: {

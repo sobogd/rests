@@ -1,20 +1,26 @@
 import React from "react";
-import Loading from "../../shared/loading";
 import { format } from "date-fns";
 import { grey, teal } from "@mui/material/colors";
 import { Box, Button, Chip, Divider, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { categoriesService, ordersService, searchPositions, tablesService } from "shared/api";
+import {
+  categoriesService,
+  ordersService,
+  searchPositions,
+  tablesService,
+} from "shared/api";
 import { IOrderPosition } from "entities/orders/model";
 
 export const Kitchen: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading: isLoadingOrders, items } = useAppSelector((s) => s.orders);
-  const { isLoading: isLoadingTables, items: tableItems } = useAppSelector((s) => s.tables);
-  const { isLoading: isLoadingPositions, items: positionItems } = useAppSelector((s) => s.positions);
-  const { isLoading: isLoadingCategories, items: categoryItems } = useAppSelector((s) => s.categories);
-  const [filters, setFilters] = React.useState<{ label: string; value: string; type: string }[]>([]);
+  const { items } = useAppSelector((s) => s.orders);
+  const { items: tableItems } = useAppSelector((s) => s.tables);
+  const { items: positionItems } = useAppSelector((s) => s.positions);
+  const { items: categoryItems } = useAppSelector((s) => s.categories);
+  const [filters, setFilters] = React.useState<
+    { label: string; value: string; type: string }[]
+  >([]);
 
   React.useEffect(() => {
     dispatch(ordersService.searchOrders());
@@ -39,11 +45,17 @@ export const Kitchen: React.FC = () => {
     { label: "Not ready", value: "not_ready", type: "status" },
     { label: "Ready", value: "ready", type: "status" },
     { label: "Finished", value: "finished", type: "status" },
-    ...categoryItems.map((i) => ({ label: i.name, value: i.id.toString(), type: "category" })),
+    ...categoryItems.map((i) => ({
+      label: i.name,
+      value: i.id.toString(),
+      type: "category",
+    })),
   ];
 
   const filterByStatus = (op: IOrderPosition) => {
-    const filterValues = filters.filter((f) => f.type === "status").map((f) => f.value);
+    const filterValues = filters
+      .filter((f) => f.type === "status")
+      .map((f) => f.value);
 
     if (!filterValues.length) {
       return true;
@@ -55,7 +67,12 @@ export const Kitchen: React.FC = () => {
       count++;
     }
 
-    if (filterValues.includes("ready") && !!op.readyTime && !!op.startTime && !op.finishTime) {
+    if (
+      filterValues.includes("ready") &&
+      !!op.readyTime &&
+      !!op.startTime &&
+      !op.finishTime
+    ) {
       count++;
     }
 
@@ -67,14 +84,20 @@ export const Kitchen: React.FC = () => {
   };
 
   const filterByCategory = (op: IOrderPosition) => {
-    const filterValues = filters.filter((f) => f.type === "category").map((f) => f.value);
+    const filterValues = filters
+      .filter((f) => f.type === "category")
+      .map((f) => f.value);
 
     if (!filterValues.length) {
       return true;
     }
 
-    const positionByOrderPosition = positionItems.find((p) => Number(p.id) === Number(op.positionId));
-    const categoryIdsByOrderPosition = positionByOrderPosition?.categories.map((c) => c.categoryId);
+    const positionByOrderPosition = positionItems.find(
+      (p) => Number(p.id) === Number(op.positionId)
+    );
+    const categoryIdsByOrderPosition = positionByOrderPosition?.categories.map(
+      (c) => c.categoryId
+    );
 
     let count = 0;
 
@@ -104,7 +127,9 @@ export const Kitchen: React.FC = () => {
           style={{ borderRadius: 0 }}
           color="warning"
           onClick={() =>
-            dispatch(ordersService.orderPositionStart({ orderPositionId: op.id || 0 })).then(() => {
+            dispatch(
+              ordersService.orderPositionStart({ orderPositionId: op.id || 0 })
+            ).then(() => {
               dispatch(ordersService.searchOrders());
             })
           }
@@ -122,7 +147,9 @@ export const Kitchen: React.FC = () => {
           style={{ borderRadius: 0 }}
           color="success"
           onClick={() =>
-            dispatch(ordersService.orderPositionReady({ orderPositionId: op.id || 0 })).then(() => {
+            dispatch(
+              ordersService.orderPositionReady({ orderPositionId: op.id || 0 })
+            ).then(() => {
               dispatch(ordersService.searchOrders());
             })
           }
@@ -140,7 +167,9 @@ export const Kitchen: React.FC = () => {
           style={{ borderRadius: 0 }}
           color="error"
           onClick={() =>
-            dispatch(ordersService.orderPositionGiven({ orderPositionId: op.id || 0 })).then(() => {
+            dispatch(
+              ordersService.orderPositionGiven({ orderPositionId: op.id || 0 })
+            ).then(() => {
               dispatch(ordersService.searchOrders());
             })
           }
@@ -158,7 +187,11 @@ export const Kitchen: React.FC = () => {
           style={{ borderRadius: 0 }}
           color="warning"
           onClick={() =>
-            dispatch(ordersService.orderPositionRestart({ orderPositionId: op.id || 0 })).then(() => {
+            dispatch(
+              ordersService.orderPositionRestart({
+                orderPositionId: op.id || 0,
+              })
+            ).then(() => {
               dispatch(ordersService.searchOrders());
             })
           }
@@ -170,7 +203,7 @@ export const Kitchen: React.FC = () => {
   };
 
   return (
-    <Box padding={2}>
+    <>
       <Stack direction="row" spacing={1} marginBottom={2}>
         {allFilters.map((filter) => (
           <Chip
@@ -185,18 +218,23 @@ export const Kitchen: React.FC = () => {
           />
         ))}
       </Stack>
-      <Loading isLoading={isLoadingOrders || isLoadingTables || isLoadingPositions || isLoadingCategories} />
       <Box display="flex" flexDirection="row" overflow="scroll hidden">
         {items
           .filter(({ ordersPositions }) =>
-            filters.length ? ordersPositions?.filter((op) => filterByStatus(op))?.length : true
+            filters.length
+              ? ordersPositions?.filter((op) => filterByStatus(op))?.length
+              : true
           )
           .filter(({ ordersPositions }) =>
-            filters.length ? ordersPositions?.filter((op) => filterByCategory(op))?.length : true
+            filters.length
+              ? ordersPositions?.filter((op) => filterByCategory(op))?.length
+              : true
           )
           .sort((a, b) => (a.id && b.id && a.id < b.id ? -1 : 1))
           .map((o) => {
-            const tableForOrder = tableItems.find((t) => Number(t.id) === Number(o.tableId));
+            const tableForOrder = tableItems.find(
+              (t) => Number(t.id) === Number(o.tableId)
+            );
             const createDate = Date.parse(o.createTime);
             const offset = new Date().getTimezoneOffset();
             const dateWithTimeZone = createDate - offset * 60000;
@@ -215,11 +253,17 @@ export const Kitchen: React.FC = () => {
                 </Typography>
                 <Box height="calc(100vh - 220px)" overflow="hidden scroll">
                   {o.ordersPositions
-                    ?.filter((op) => (filters.length ? filterByStatus(op) : true))
-                    .filter((op) => (filters.length ? filterByCategory(op) : true))
+                    ?.filter((op) =>
+                      filters.length ? filterByStatus(op) : true
+                    )
+                    .filter((op) =>
+                      filters.length ? filterByCategory(op) : true
+                    )
                     .sort((a, b) => (a.id && b.id && a.id < b.id ? 1 : -1))
                     .map((op) => {
-                      const position = positionItems.find((p) => Number(p.id) === Number(op.positionId));
+                      const position = positionItems.find(
+                        (p) => Number(p.id) === Number(op.positionId)
+                      );
 
                       return (
                         <Box
@@ -229,7 +273,11 @@ export const Kitchen: React.FC = () => {
                           overflow="hidden"
                         >
                           <Box padding={2}>
-                            <Typography variant="body2" fontWeight={600} color={grey[800]}>
+                            <Typography
+                              variant="body2"
+                              fontWeight={600}
+                              color={grey[800]}
+                            >
                               {position?.name}
                             </Typography>
                             {!!op.additional?.length && (
@@ -238,7 +286,8 @@ export const Kitchen: React.FC = () => {
                                 {op.additional?.split("/").map((opa) => {
                                   const splittedValue = opa.split("-");
                                   const additional = positionItems.find(
-                                    (p) => Number(p.id) === Number(splittedValue[1])
+                                    (p) =>
+                                      Number(p.id) === Number(splittedValue[1])
                                   );
 
                                   return (
@@ -264,7 +313,11 @@ export const Kitchen: React.FC = () => {
                                 paddingTop={1}
                                 borderRadius={2}
                               >
-                                <Typography variant="body2" fontWeight={600} color={grey[800]}>
+                                <Typography
+                                  variant="body2"
+                                  fontWeight={600}
+                                  color={grey[800]}
+                                >
                                   {op.comment}
                                 </Typography>
                               </Box>
@@ -279,6 +332,6 @@ export const Kitchen: React.FC = () => {
             );
           })}
       </Box>
-    </Box>
+    </>
   );
 };

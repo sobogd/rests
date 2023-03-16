@@ -4,7 +4,6 @@ import type {} from "@mui/x-date-pickers/themeAugmentation";
 
 export const backgroundDefault = grey[900];
 export const textDefaultColor = grey[100];
-export const greenDefault = teal[800];
 
 export const theme = createTheme({
   components: {
