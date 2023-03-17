@@ -45,21 +45,35 @@ const YouSureButtons = styled.div`
   }
 `;
 
-const YouSure: React.FC<{ onClickYes: () => void; onClickNo: () => void; isOpen: boolean }> = ({
+const YouSure: React.FC<{
+  onClickYes?: () => void;
+  onClickNo?: () => void;
+  isOpen: boolean;
+  title?: string;
+  onClickYesText?: string;
+  onClickNoText?: string;
+}> = ({
   onClickYes,
   onClickNo,
   isOpen,
+  title,
+  onClickYesText,
+  onClickNoText,
 }) => (
   <YouSureContainer isOpen={isOpen}>
     <YouSureModal>
-      <YouSureText>Вы уверены?</YouSureText>
+      <YouSureText>{title || "Вы уверены?"}</YouSureText>
       <YouSureButtons>
-        <Button color="error" variant="contained" onClick={onClickYes}>
-          Да
-        </Button>
-        <Button variant="outlined" onClick={onClickNo}>
-          Нет
-        </Button>
+        {!!onClickNo && (
+          <Button color="error" variant="outlined" onClick={onClickNo}>
+            {onClickNoText || "Нет"}
+          </Button>
+        )}
+        {!!onClickYes && (
+          <Button variant="contained" onClick={onClickYes}>
+            {onClickYesText || "Да"}
+          </Button>
+        )}
       </YouSureButtons>
     </YouSureModal>
   </YouSureContainer>

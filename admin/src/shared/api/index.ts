@@ -4,3 +4,4 @@ export * as ordersService from "./orders";
 export * as tablesService from "./tables";
 export * from "./positions";
 export * from "./users";
+export * from "./companies";

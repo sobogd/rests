@@ -1,9 +1,9 @@
-import { Avatar, Button, Stack } from "@mui/material";
+import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { MyFormSubtitle } from "app/styles";
 import React from "react";
 import { tablesService } from "shared/api";
 import { API_URL } from "shared/config";
+import { CompanyPassword } from "../../features/companyPassword";
 
 export const Account: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +24,9 @@ export const Account: React.FC = () => {
 
   return (
     <>
-      <MyFormSubtitle>Схема ресторана</MyFormSubtitle>
+      <Typography variant="h6" marginBottom={3}>
+        Schema of company area
+      </Typography>
       <Stack direction="row" spacing={2}>
         {!!imageSrc && (
           <Avatar
@@ -44,6 +46,9 @@ export const Account: React.FC = () => {
           />
         </Button>
       </Stack>
+      <Box marginTop={4}>
+        <CompanyPassword />
+      </Box>
     </>
   );
 };

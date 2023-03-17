@@ -7,6 +7,7 @@ import { positionsModel } from "entities/positions";
 import { usersModel } from "entities/users";
 import { pagesModel } from "entities/pages";
 import { ordersModel } from "entities/orders";
+import { companiesModel } from "../../entities/companies/model";
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     users: usersModel.reducer,
     pages: pagesModel.reducer,
     orders: ordersModel.reducer,
+    companies: companiesModel.reducer,
   },
 });
 

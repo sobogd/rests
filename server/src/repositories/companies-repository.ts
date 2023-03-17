@@ -1,32 +1,15 @@
 import pool from "../db";
+import { ICategory } from "../interfaces/categories";
 import queryBuilder from "../utils/query-builder";
 
 const props = [
   { name: "id", dbName: "id" },
-  { name: "name", dbName: "name" },
+  { name: "title", dbName: "title" },
   { name: "login", dbName: "login" },
-  { name: "password", dbName: "password" },
-  { name: "type", dbName: "type" },
-  { name: "companyId", dbName: "company_id" },
+  { name: "hash", dbName: "hash" },
 ];
 
-const tableName = "users";
-
-interface IUsers {
-  id: string;
-  name: string;
-  login: string;
-  password: string;
-  type: IUsersTypes;
-  companyId: number;
-}
-
-enum IUsersTypes {
-  MANAGER = "manager",
-  PERSONAL = "personal",
-  KITCHEN = "kitchen",
-  ADMIN = "admin",
-}
+const tableName = "companies";
 
 const findAll = async () => {
   const client = await pool.connect();
@@ -46,45 +29,25 @@ const findById = async (id: number) => {
   return queryBuilder.mapFromDb(foundedRows, props)[0];
 };
 
-const findByLogin = async (login: string) => {
+const create = async (company: any) => {
   const client = await pool.connect();
-  const foundedRows = await queryBuilder.selectBySpec(client, tableName, {
-    login,
-  });
-  client.release();
 
-  return queryBuilder.mapFromDb(foundedRows, props)[0];
-};
-
-const findByLoginAndPassword = async (login: string, password: string) => {
-  const client = await pool.connect();
-  const foundedRows = await queryBuilder.selectBySpec(client, tableName, {
-    login,
-    password,
-  });
-  client.release();
-
-  return queryBuilder.mapFromDb(foundedRows, props)[0];
-};
-
-const create = async (payload: IUsers) => {
-  const client = await pool.connect();
   const createdRows = await queryBuilder.insertOne(
     client,
     tableName,
-    queryBuilder.mapToDb(payload, props)
+    queryBuilder.mapToDb({ ...company, id: undefined }, props)
   );
   client.release();
 
   return queryBuilder.mapFromDb(createdRows, props)[0];
 };
 
-const updateById = async (payload: IUsers, id: number) => {
+const updateById = async (company: any, id: number) => {
   const client = await pool.connect();
   const updatdRows = await queryBuilder.updateOneBySpec(
     client,
     tableName,
-    queryBuilder.mapToDb(payload, props),
+    queryBuilder.mapToDb({ ...company, id: undefined }, props),
     { id }
   );
   client.release();
@@ -105,8 +68,6 @@ const removeById = async (id: number) => {
 export default {
   findAll,
   findById,
-  findByLogin,
-  findByLoginAndPassword,
   create,
   updateById,
   removeById,

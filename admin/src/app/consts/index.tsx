@@ -25,7 +25,7 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 export const CLinks = {
   [EPages.HOME]: "/",
   [EPages.AUTHORIZATION]: "/login",
-  [EPages.ACCOUNT]: "/account",
+  [EPages.COMPANY]: "/company",
   [EPages.ORDERS]: "/orders",
   [EPages.TABLES]: "/tables",
   [EPages.ELEMENTS]: "/elements",
@@ -38,7 +38,7 @@ export const CLinks = {
 export const CPageNames = {
   [EPages.HOME]: "Home",
   [EPages.AUTHORIZATION]: "Authorization",
-  [EPages.ACCOUNT]: "Account",
+  [EPages.COMPANY]: "Company",
   [EPages.ORDERS]: "Orders",
   [EPages.TABLES]: "Tables",
   [EPages.ELEMENTS]: "Elements",
@@ -51,7 +51,7 @@ export const CPageNames = {
 export const CPageComponents = {
   [EPages.HOME]: <Home />,
   [EPages.AUTHORIZATION]: <Login />,
-  [EPages.ACCOUNT]: <Account />,
+  [EPages.COMPANY]: <Account />,
   [EPages.ORDERS]: <Orders />,
   [EPages.TABLES]: <Tables />,
   [EPages.ELEMENTS]: <Elements />,
@@ -64,7 +64,7 @@ export const CPageComponents = {
 export const CPageIcons = {
   [EPages.HOME]: <AssessmentIcon sx={{ color: teal[50] }} />,
   [EPages.AUTHORIZATION]: <AccountCircleIcon sx={{ color: teal[50] }} />,
-  [EPages.ACCOUNT]: <AccountCircleIcon sx={{ color: teal[50] }} />,
+  [EPages.COMPANY]: <AccountCircleIcon sx={{ color: teal[50] }} />,
   [EPages.ORDERS]: <ReceiptLongIcon sx={{ color: teal[50] }} />,
   [EPages.TABLES]: <TableRestaurantIcon sx={{ color: teal[50] }} />,
   [EPages.ELEMENTS]: <AutoFixHighIcon sx={{ color: teal[50] }} />,
@@ -82,8 +82,8 @@ export const CPages: IPageActive[] = [
     hideHeader: false,
   },
   {
-    id: EPages.ACCOUNT,
-    permissions: ["manager", "personal", "admin", "kitchen"],
+    id: EPages.COMPANY,
+    permissions: ["admin"],
     showInMenu: true,
     hideHeader: false,
   },

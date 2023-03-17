@@ -22,6 +22,7 @@ const App: React.FC = () => {
   const { isLoading: isLoadingElements } = useAppSelector((s) => s.elements);
   const { isLoading: isLoadingPositions } = useAppSelector((s) => s.positions);
   const { headerComponent } = useAppSelector((s) => s.pages);
+  const { isLoading: isLoadingCompanies } = useAppSelector((s) => s.companies);
 
   React.useEffect(() => {
     if (data?.id && location.pathname === CLinks[EPages.AUTHORIZATION]) {
@@ -62,7 +63,8 @@ const App: React.FC = () => {
       isLoadingOrders ||
       isLoadingCats ||
       isLoadingElements ||
-      isLoadingPositions
+      isLoadingPositions ||
+      isLoadingCompanies
     );
   }, [
     isLoadingUsers,
@@ -71,18 +73,23 @@ const App: React.FC = () => {
     isLoadingCats,
     isLoadingElements,
     isLoadingPositions,
+    isLoadingCompanies,
   ]);
+
+  const routes = React.useMemo(() => {
+    return CPages.filter((page) =>
+      data?.type ? page.permissions.includes(data?.type) : true
+    ).map((page) => (
+      <Route path={CLinks[page.id]} element={CPageComponents[page.id]} />
+    ));
+  }, [data]);
 
   return (
     <Wrapper>
       {!isHideHeader && <HeaderBar />}
       <Loading isLoading={isLoading} />
       <BodyContainer isFullHeight={isHideHeader}>
-        <Routes>
-          {CPages.map((page) => (
-            <Route path={CLinks[page.id]} element={CPageComponents[page.id]} />
-          ))}
-        </Routes>
+        <Routes>{routes}</Routes>
       </BodyContainer>
     </Wrapper>
   );
