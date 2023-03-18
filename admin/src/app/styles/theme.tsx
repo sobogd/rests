@@ -54,6 +54,65 @@ export const theme = createTheme({
         },
       },
     },
+    MuiFilledInput: {
+      styleOverrides: {
+        root: {
+          "::before": {
+            display: "none",
+          },
+          "::after": {
+            display: "none",
+          },
+        },
+        input: {
+          borderRadius: 5,
+          background: grey[200],
+          color: grey[700],
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        filled: {
+          color: grey[700],
+        },
+        root: {
+          "&.MuiInputLabel-shrink": {
+            color: teal[600],
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        filled: {
+          color: grey[700],
+          background: grey[200],
+          borderRadius: 5,
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&.Mui-disabled": {
+            background: grey[600],
+          },
+        },
+        containedSizeLarge: {
+          height: 56,
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        icon: {
+          ".MuiSvgIcon-root": {
+            color: grey[700],
+          },
+        },
+      },
+    },
     MuiListItem: {
       styleOverrides: {
         root: {

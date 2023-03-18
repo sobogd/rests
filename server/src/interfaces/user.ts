@@ -17,3 +17,16 @@ export interface IUser {
   password?: string;
   type: string;
 }
+
+export interface IUserForUpdate {
+  userId: number;
+  newPassword?: string;
+  name: string;
+  type: string;
+}
+
+export interface IUserForCreate {
+  password: string;
+  name: string;
+  type: string;
+}

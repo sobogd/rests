@@ -7,15 +7,25 @@ import AppError from "../../helpers/app-error";
 
 dotenv.config();
 
-const secretKey = crypto.createSecretKey((process.env.TOKEN || "").toString(), "utf-8");
+const secretKey = crypto.createSecretKey(
+  (process.env.TOKEN || "").toString(),
+  "utf-8"
+);
 
-export const expressAuthentication = async (request: Request, securityName: string, _: string[]) => {
+export const expressAuthentication = async (
+  request: Request,
+  securityName: string,
+  _: string[]
+) => {
   if (!request?.headers?.authorization) {
     return Promise.reject(new AppError(401, "Unauthorized"));
   }
 
   if (securityName === "Bearer") {
-    const { payload } = await jose.jwtVerify(request.headers.authorization.replace("Bearer ", ""), secretKey);
+    const { payload } = await jose.jwtVerify(
+      request.headers.authorization.replace("Bearer ", ""),
+      secretKey
+    );
 
     if (!payload || !payload.id) {
       return Promise.reject(new AppError(401, "Unauthorized"));
@@ -31,6 +41,6 @@ export const expressAuthentication = async (request: Request, securityName: stri
       return Promise.reject(new AppError(401, "Unauthorized"));
     }
 
-    return Promise.resolve({ id: user.id });
+    return Promise.resolve({ id: user.id, companyId: user.companyId });
   }
 };
