@@ -16,7 +16,7 @@
     />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" onClick="openFullscreen();"></div>
   </body>
   <script>
     /* Get the element you want displayed in fullscreen mode (a video in this example): */
@@ -35,6 +35,6 @@
         elem.msRequestFullscreen();
       }
     }
-    // openFullscreen();
+    openFullscreen();
   </script>
 </html>
