@@ -61,5 +61,5 @@ export const BodyContainer = styled.section<{ isFullHeight?: boolean }>`
   padding: 16px;
   background-color: ${grey["900"]};
   height: ${({ isFullHeight }) =>
-    isFullHeight ? "100vh" : "calc(100vh - 64px)"};
+    isFullHeight ? "100%" : "calc(100% - 64px)"};
 `;
