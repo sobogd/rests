@@ -58,8 +58,8 @@ export const BodyContainer = styled.section<{ isFullHeight?: boolean }>`
   overflow-y: auto;
   position: relative;
   width: 100%;
-  padding: 16px;
+  padding: 16px 16px 80px;
   background-color: ${grey["900"]};
   height: ${({ isFullHeight }) =>
-    isFullHeight ? "100%" : "calc(100% - 64px)"};
+    isFullHeight ? "100vh" : "calc(100vh - 64px)"};
 `;
