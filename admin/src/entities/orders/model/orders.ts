@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ITable } from "entities/tables/model";
 import { ordersService } from "shared/api";
 
@@ -73,6 +73,7 @@ export interface IOrderState {
   tableForModal?: ITable;
   orderForBill?: IOrder;
   discountForBill: number;
+  positionDialogIndex?: number;
 }
 
 export interface IOrderForToday {
@@ -103,6 +104,7 @@ const initialState: IOrderState = {
   comment: "",
   error: "",
   discountForBill: 0,
+  positionDialogIndex: undefined,
 };
 
 export const ordersModel = createSlice({
@@ -161,30 +163,38 @@ export const ordersModel = createSlice({
       state.comment = payload;
     },
     additionalPlus: (state, { payload: id }) => {
-      const foundedAdditional = state.positionsForm.additional?.find((a) => a.id === id);
+      const foundedAdditional = state.positionsForm.additional?.find(
+        (a) => a.id === id
+      );
 
       if (foundedAdditional) {
-        state.positionsForm.additional = state.positionsForm.additional?.map((a) => {
-          if (a.id === id) {
-            return {
-              ...a,
-              count: a.count + 1,
-            };
-          }
+        state.positionsForm.additional = state.positionsForm.additional?.map(
+          (a) => {
+            if (a.id === id) {
+              return {
+                ...a,
+                count: a.count + 1,
+              };
+            }
 
-          return a;
-        });
+            return a;
+          }
+        );
       } else {
-        state.positionsForm.additional = state.positionsForm.additional?.concat([
-          {
-            id,
-            count: 1,
-          },
-        ]);
+        state.positionsForm.additional = state.positionsForm.additional?.concat(
+          [
+            {
+              id,
+              count: 1,
+            },
+          ]
+        );
       }
     },
     additionalMinus: (state, { payload: id }) => {
-      const foundedAdditional = state.positionsForm.additional?.find((a) => a.id === id);
+      const foundedAdditional = state.positionsForm.additional?.find(
+        (a) => a.id === id
+      );
 
       if (foundedAdditional) {
         state.positionsForm.additional = state.positionsForm.additional
@@ -224,29 +234,39 @@ export const ordersModel = createSlice({
       }
     },
     editPosition: (state, { payload: editIndex }) => {
-      const isHaveAdditional = !!state.selectedPositions[editIndex].additional?.length;
+      const isHaveAdditional =
+        !!state.selectedPositions[editIndex].additional?.length;
       state.positionsForm = {
         ...state.positionsForm,
         editIndex,
         additional: state.selectedPositions[editIndex].additional,
         comment: state.selectedPositions[editIndex].comment,
         positionId: state.selectedPositions[editIndex].positionId,
-        step: isHaveAdditional ? EPositionFormSteps.ADDITIONAL : EPositionFormSteps.COMMENT,
+        step: isHaveAdditional
+          ? EPositionFormSteps.ADDITIONAL
+          : EPositionFormSteps.COMMENT,
         isOpened: true,
       };
     },
     deletePosition: (state, { payload: deleteIndex }) => {
-      state.selectedPositions = state.selectedPositions.filter((_, index) => index !== deleteIndex);
+      state.selectedPositions = state.selectedPositions.filter(
+        (_, index) => index !== deleteIndex
+      );
+      state.positionDialogIndex = undefined;
     },
     copyPosition: (state, { payload: copyIndex }) => {
-      state.selectedPositions = state.selectedPositions.reduce((acc: any, p, index) => {
-        acc.push(p);
-        if (index === copyIndex) {
-          acc.push({ ...p, id: undefined });
-        }
+      state.selectedPositions = state.selectedPositions.reduce(
+        (acc: any, p, index) => {
+          acc.push(p);
+          if (index === copyIndex) {
+            acc.push({ ...p, id: undefined });
+          }
 
-        return acc;
-      }, []);
+          return acc;
+        },
+        []
+      );
+      state.positionDialogIndex = undefined;
     },
     setActiveStep: (state, { payload }) => {
       state.activeStep = payload;
@@ -277,6 +297,12 @@ export const ordersModel = createSlice({
       state.selectedTable = payload.selectedTable;
       state.comment = payload.comment;
       state.isOpenForm = true;
+    },
+    setPositionDialogIndex: (
+      state,
+      { payload }: PayloadAction<number | undefined>
+    ) => {
+      state.positionDialogIndex = payload;
     },
   },
   extraReducers(builder) {
@@ -404,10 +430,13 @@ export const ordersModel = createSlice({
       state.isLoading = false;
       state.error = "Error with request";
     });
-    builder.addCase(ordersService.getDayReport.fulfilled, (state, { payload }) => {
-      state.isLoading = false;
-      state.ordersForToday = payload;
-    });
+    builder.addCase(
+      ordersService.getDayReport.fulfilled,
+      (state, { payload }) => {
+        state.isLoading = false;
+        state.ordersForToday = payload;
+      }
+    );
   },
 });
 

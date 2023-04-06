@@ -2,11 +2,11 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "./store";
 import { EPages, pagesModel } from "entities/pages";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { whoAmI } from "../shared/api";
 import { HeaderBar } from "../widgets";
 import Loading from "../shared/loading";
 import { CLinks, CPageComponents, CPages } from "./consts";
 import { BodyContainer, Wrapper } from "./styles";
+import { whoAmI } from "../entities/auth";
 
 const App: React.FC = () => {
   const isAuthorizedUser = !!sessionStorage.getItem("token");
@@ -15,7 +15,7 @@ const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data, isLoading: isLoadingUsers } = useAppSelector((s) => s.users);
+  const { isLoading: isLoadingUsers } = useAppSelector((s) => s.users);
   const { isLoading: isLoadingTables } = useAppSelector((s) => s.tables);
   const { isLoading: isLoadingOrders } = useAppSelector((s) => s.orders);
   const { isLoading: isLoadingCats } = useAppSelector((s) => s.categories);
@@ -23,16 +23,20 @@ const App: React.FC = () => {
   const { isLoading: isLoadingPositions } = useAppSelector((s) => s.positions);
   const { headerComponent } = useAppSelector((s) => s.pages);
   const { isLoading: isLoadingCompanies } = useAppSelector((s) => s.companies);
+  const {
+    form: { isLoading: isLoadingAuth },
+    user,
+  } = useAppSelector((s) => s.auth);
 
   React.useEffect(() => {
-    if (data?.id && location.pathname === CLinks[EPages.AUTHORIZATION]) {
+    if (user?.id && location.pathname === CLinks[EPages.AUTHORIZATION]) {
       navigate(CLinks[EPages.HOME]);
     }
-  }, [data]);
+  }, [user]);
 
   React.useEffect(() => {
     if (
-      !data &&
+      !user &&
       !isAuthorizedUser &&
       location.pathname !== CLinks[EPages.AUTHORIZATION]
     ) {
@@ -64,7 +68,8 @@ const App: React.FC = () => {
       isLoadingCats ||
       isLoadingElements ||
       isLoadingPositions ||
-      isLoadingCompanies
+      isLoadingCompanies ||
+      isLoadingAuth
     );
   }, [
     isLoadingUsers,
@@ -74,15 +79,20 @@ const App: React.FC = () => {
     isLoadingElements,
     isLoadingPositions,
     isLoadingCompanies,
+    isLoadingAuth,
   ]);
 
   const routes = React.useMemo(() => {
     return CPages.filter((page) =>
-      data?.type ? page.permissions.includes(data?.type) : true
+      user?.type ? page.permissions.includes(user?.type) : true
     ).map((page) => (
-      <Route path={CLinks[page.id]} element={CPageComponents[page.id]} />
+      <Route
+        key={page.id}
+        path={CLinks[page.id]}
+        element={CPageComponents[page.id]}
+      />
     ));
-  }, [data]);
+  }, [user]);
 
   return (
     <Wrapper>

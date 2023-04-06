@@ -1,40 +1,31 @@
 import React from "react";
-import {
-  Alert,
-  Box,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography,
-} from "@mui/material";
-import styled from "@emotion/styled";
-import { AddPositionModal } from "./modal";
+import { Box, TextField, Typography } from "@mui/material";
+import { AddPositionDialog } from "./AddPositionDialog";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TableBarIcon from "@mui/icons-material/TableBar";
-import { grey, teal } from "@mui/material/colors";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { pagesModel } from "entities/pages";
 import { ordersModel } from "../model";
 import { ordersService } from "shared/api";
-import { AlertStyled } from "app/styles";
+import {
+  ButtonStyled,
+  ErrorBox,
+  Item,
+  ItemIconsBlock,
+  NewModal,
+  NewModalCloseButton,
+  NewModalContainer,
+  TextSpan,
+  TitleH1,
+} from "app/styles";
 import { API_URL } from "shared/config";
-
-const TableSetBlock = styled.div`
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  margin: -13px;
-  cursor: pointer;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid ${grey[800]};
-`;
+import { TableSelectWrapper, TableSetBlock } from "./syles";
+import { grey } from "@mui/material/colors";
+import CloseIcon from "@mui/icons-material/Close";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { PositionsFilling } from "./PositionsFilling";
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -45,6 +36,7 @@ export const OrdersForm: React.FC = () => {
     selectedTable,
     selectedPositions,
     orderId,
+    positionDialogIndex,
   } = useAppSelector((s) => s.orders);
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
   const { items: positions } = useAppSelector((s) => s.positions);
@@ -108,30 +100,19 @@ export const OrdersForm: React.FC = () => {
     }
   };
 
-  return !!positionsForm.isOpened ? (
-    <AddPositionModal />
-  ) : (
+  const titleDescription = React.useMemo(() => {
+    return selectedTable?.id
+      ? `Selected table: №${selectedTable?.number} (${selectedTable?.name})`
+      : "Please, select table for this order:";
+  }, [selectedTable]);
+
+  return (
     <>
-      {error ? (
-        <AlertStyled style={{ marginBottom: 20 }} severity="error">
-          {error}
-        </AlertStyled>
-      ) : null}
-      <Typography variant="h5" marginBottom={1}>
-        Выбор столика
-      </Typography>
-      <Typography variant="body1" marginBottom={2}>
-        {selectedTable?.id
-          ? `Выбран столик №${selectedTable?.number} (${selectedTable?.name})`
-          : "Пожалуйста, выберете столик для заказа:"}
-      </Typography>
-      <Box
-        position={"relative"}
-        marginBottom={2}
-        width="calc(100vw - 32px)"
-        height="calc(100vw - 32px)"
-        overflow="hidden"
-      >
+      <AddPositionDialog />
+      {!!error && <ErrorBox style={{ marginBottom: 20 }}>{error}</ErrorBox>}
+      <TitleH1 bottom={5}>Select table:</TitleH1>
+      <TextSpan bottom={20}>{titleDescription}</TextSpan>
+      <TableSelectWrapper>
         <img
           src={`${API_URL}${imageSrc}`}
           srcSet={`${API_URL}${imageSrc}`}
@@ -141,91 +122,21 @@ export const OrdersForm: React.FC = () => {
         />
         {tables?.map((t) => (
           <TableSetBlock
-            style={{
-              bottom: `${t.positionY}%`,
-              left: `${t.positionX}%`,
-              background: t.id !== selectedTable?.id ? grey[500] : teal[800],
-            }}
+            key={t.id}
+            positionY={t.positionY}
+            positionX={t.positionX}
+            isSelected={selectedTable?.id === t.id}
             onClick={() => dispatch(ordersModel.actions.setSelectedTable(t))}
           >
             <TableBarIcon />
           </TableSetBlock>
         ))}
-      </Box>
-      <Typography variant="h5" marginBottom={1} marginTop={4}>
-        Заполнение позиций
-      </Typography>
-      {!selectedPositions?.length && (
-        <Typography variant="body1" marginBottom={2}>
-          Пожалуйста, заполните позиции:
-        </Typography>
-      )}
-
-      <List disablePadding style={{ marginBottom: 15 }}>
-        {!!selectedPositions?.length &&
-          selectedPositions.map((p, index: number) => {
-            const positionData = positions.find(
-              (pos) => pos.id === p.positionId
-            );
-
-            return (
-              <ListItem
-                disablePadding
-                divider={index !== selectedPositions?.length - 1}
-                style={{ paddingTop: 5, paddingBottom: 5 }}
-                secondaryAction={[
-                  <ContentCopyIcon
-                    style={{ marginLeft: 7 }}
-                    onClick={() =>
-                      dispatch(ordersModel.actions.copyPosition(index))
-                    }
-                  />,
-                  <DeleteIcon
-                    style={{ marginLeft: 7 }}
-                    onClick={() =>
-                      dispatch(ordersModel.actions.deletePosition(index))
-                    }
-                  />,
-                ]}
-              >
-                <ListItemText
-                  style={{ paddingRight: 100 }}
-                  primary={positionData?.name}
-                  secondary={
-                    <>
-                      {p.additional?.map((a) => {
-                        const foundedAdditional = positions.find(
-                          (add: any) => add.id === a.id
-                        );
-                        return (
-                          <>
-                            {a.count}x {foundedAdditional?.name}
-                            <br />
-                          </>
-                        );
-                      })}
-                      {p.comment}
-                    </>
-                  }
-                />
-              </ListItem>
-            );
-          })}
-      </List>
-      <Button
-        fullWidth
-        style={{ marginBottom: 25 }}
-        variant="contained"
-        onClick={() => dispatch(ordersModel.actions.toggleIsOpenPositionForm())}
-      >
-        Добавить позицию
-      </Button>
-      <Typography variant="h5" marginBottom={1} marginTop={1}>
-        Комментарий к заказу
-      </Typography>
-      <Typography variant="body1" marginBottom={2}>
-        Введите пожелания к заказу или комментарий для раздельной оплаты.
-      </Typography>
+      </TableSelectWrapper>
+      <PositionsFilling />
+      <TitleH1 top={30} bottom={5}>
+        Comment for order:
+      </TitleH1>
+      <TextSpan bottom={20}>Fill order description or name of client</TextSpan>
       <TextField
         inputProps={{ form: { autocomplete: "off" } }}
         multiline
@@ -241,19 +152,14 @@ export const OrdersForm: React.FC = () => {
         }
       />
       {!!selectedPositions?.length && selectedTable?.id ? (
-        <Button
-          fullWidth
-          style={{ marginTop: 15 }}
-          variant="contained"
-          onClick={handleSendOrder}
-        >
+        <ButtonStyled style={{ marginTop: 15 }} onClick={handleSendOrder}>
           {orderId ? "Сохранить изменения" : "Отправить заказ на кухню"}
-        </Button>
+        </ButtonStyled>
       ) : (
-        <Alert severity="error" icon={false}>
+        <ErrorBox>
           Для создания заказа необходимо выбрать столик и заполнить хотя бы одну
           позицию!
-        </Alert>
+        </ErrorBox>
       )}
     </>
   );

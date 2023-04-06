@@ -4,7 +4,12 @@ export interface IErrorResponse {
   rejectValue: { fields?: string[]; message?: string; code?: string };
 }
 
-export const request = async (rejectWithValue: any, url: string, method: string, data?: object) => {
+export const request = async (
+  rejectWithValue: any,
+  url: string,
+  method: string,
+  data?: object
+) => {
   const token = sessionStorage.getItem("token");
 
   const response = await fetch(API_URL + url, {
@@ -21,5 +26,11 @@ export const request = async (rejectWithValue: any, url: string, method: string,
     return rejectWithValue(await response.json());
   }
 
-  return response.json();
+  const jsonResponse = await response.json();
+
+  if (jsonResponse?.isSuccess === false) {
+    return rejectWithValue(jsonResponse);
+  }
+
+  return jsonResponse;
 };

@@ -3,7 +3,8 @@
 *::after {
   box-sizing: border-box;
   transition: 0.2s;
-  font-weight: 100;
+  font-weight: 400;
+  font-family: Arial !important;
 }
 body,
 html {
@@ -86,4 +87,30 @@ button {
 &::-moz-focus-inner {
   border: 0;
   padding: 0;
+}
+
+
+@media print {
+  #printableArea {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #printableArea header {
+    display: none;
+  }
+
+  #printableArea footer {
+    display: none;
+  }
+
+  #printableArea * {
+    color: black !important;
+  }
+
+  #noneForPrint1,#noneForPrint2,#noneForPrint3, #noneForPrint4,#noneForPrint5 {
+    display: none;
+  }
 }

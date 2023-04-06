@@ -1,23 +1,49 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "app/store";
-import { usersModel } from "entities/users";
+import {
+  ButtonStyled,
+  NewModalBody,
+  NewModalHeader,
+  TitleH1,
+} from "../../app/styles";
+import { LoginBackIconButton } from "./styles";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { IUser } from "../../entities/users";
+import { useAppDispatch, useAppSelector } from "../../app/store";
+import { authSlice, ELoginSteps } from "../../entities/auth";
 
 export const UsersForCompany: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { usersForCompany } = useAppSelector((s) => s.users);
+  const { users } = useAppSelector((s) => s.auth.form);
+
+  const handleClickUserButton = (login: string) => () => {
+    dispatch(authSlice.actions.selectUserLogin(login));
+  };
+
+  const handleClickBack = () => {
+    dispatch(authSlice.actions.setStep(ELoginSteps.LOGIN));
+  };
 
   return (
-    <Box marginTop={1} display="flex" flexDirection="column">
-      {usersForCompany.map((u) => (
-        <Button
-          variant="contained"
-          style={{ fontWeight: 600, margin: 0, marginBottom: 10, height: 40 }}
-          onClick={() => dispatch(usersModel.actions.setSelectedUser(u))}
-        >
-          {u.name}
-        </Button>
-      ))}
-    </Box>
+    <>
+      <NewModalHeader>
+        <TitleH1 style={{ justifyContent: "center", textAlign: "center" }}>
+          Select company user
+        </TitleH1>
+      </NewModalHeader>
+      <LoginBackIconButton onClick={handleClickBack}>
+        <ArrowBackIcon />
+      </LoginBackIconButton>
+      <NewModalBody>
+        {users?.map((user: IUser) => (
+          <ButtonStyled
+            key={user.login}
+            onClick={handleClickUserButton(user.login)}
+            bottom={10}
+          >
+            {user.name}
+          </ButtonStyled>
+        ))}
+      </NewModalBody>
+    </>
   );
 };

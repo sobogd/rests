@@ -1,30 +1,68 @@
-import { Alert, Button, Chip, Grid, List, ListItem, ListItemText, Modal, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Chip,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from "@mui/material";
 import { grey, teal } from "@mui/material/colors";
 import { Box } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { backgroundDefault, ModalScrollable } from "app/styles";
+import {
+  backgroundDefault,
+  ButtonStyled,
+  ErrorBox,
+  Item,
+  ModalScrollable,
+  NewModal,
+  NewModalBody,
+  NewModalCloseButton,
+  NewModalContainer,
+  NewModalFooter,
+  NewModalHeader,
+  primaryColor,
+  secondaryColor,
+  textDefaultColor,
+  textDefaultWhiteColor,
+  TextSpan,
+  TitleH1,
+} from "app/styles";
 import React from "react";
 import { ordersService } from "shared/api";
 import Header from "shared/header";
 import { roundFive } from "shared/utils/roundFive";
 import { ordersModel } from "../model";
+import CloseIcon from "@mui/icons-material/Close";
 
 const discounts = [0, 10];
 
 export const OrderModal: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isLoadingOrders, orderForBill, discountForBill } = useAppSelector((s) => s.orders);
-  const { items: positions, isLoading: isLoadingPositions } = useAppSelector((s) => s.positions);
+  const {
+    isLoading: isLoadingOrders,
+    orderForBill,
+    discountForBill,
+  } = useAppSelector((s) => s.orders);
+  const { items: positions, isLoading: isLoadingPositions } = useAppSelector(
+    (s) => s.positions
+  );
 
-  const isAllPositionFinished = orderForBill?.ordersPositions?.filter((op) => !op.finishTime).length === 0;
+  const isAllPositionFinished =
+    orderForBill?.ordersPositions?.filter((op) => !op.finishTime).length === 0;
 
   const additionalsForPosition = orderForBill?.ordersPositions
     ?.filter((op) => !!op.additional?.length)
     .map((op) => op.additional);
 
   const positionsForOrder: any = orderForBill?.ordersPositions?.map((op) => {
-    const position = positions.find((pi) => Number(pi.id) === Number(op.positionId));
+    const position = positions.find(
+      (pi) => Number(pi.id) === Number(op.positionId)
+    );
     return { ...position, additional: op.additional };
   });
 
@@ -34,8 +72,12 @@ export const OrderModal: React.FC = () => {
       const splitted = afp?.split("/");
       splitted?.forEach((spl) => {
         const colAndId = spl.split("-");
-        const pos = positions.find((pi) => Number(pi.id) === Number(colAndId[1]));
-        arrayAdditional.push(`${pos?.name} - ${Number(pos?.price) * Number(colAndId[0])}`);
+        const pos = positions.find(
+          (pi) => Number(pi.id) === Number(colAndId[1])
+        );
+        arrayAdditional.push(
+          `${pos?.name} - ${Number(pos?.price) * Number(colAndId[0])}`
+        );
       });
     });
   }
@@ -53,145 +95,149 @@ export const OrderModal: React.FC = () => {
     });
   };
 
+  const handleCloseModal = () => {
+    dispatch(ordersModel.actions.closeBillModal());
+  };
+
   return (
-    <Modal
-      style={{ background: backgroundDefault }}
+    <NewModal
       open={!!orderForBill && !isLoadingOrders && !isLoadingPositions}
+      onClose={handleCloseModal}
     >
-      <>
-        <Header title="Оплата заказа" onClickBack={() => dispatch(ordersModel.actions.closeBillModal())} />
-        <ModalScrollable>
-          {!isAllPositionFinished && (
-            <Alert icon={false} severity="error" style={{ marginBottom: 10 }}>
-              Не все позиции в заказе были завершены!
-            </Alert>
-          )}
-          {!!orderForBill?.comment && (
-            <Alert severity="info" icon={false} style={{ marginBottom: 25 }}>
-              {orderForBill?.comment}
-            </Alert>
-          )}
-          <Typography variant="h5" marginBottom={1}>
-            Состав заказа
-          </Typography>
-          <List disablePadding style={{ background: "none", marginBottom: 20 }}>
-            {!!positionsForOrder?.length &&
-              positionsForOrder?.map((e: any) => {
-                const primary = (
-                  <Grid container spacing={1}>
-                    <Grid item xs={10}>
-                      {e?.name}
-                    </Grid>
-                    <Grid item xs={2} style={{ textAlign: "right" }}>
-                      {Number(e?.price) > 0 ? e?.price : null}
-                    </Grid>
-                  </Grid>
-                );
-
-                summary = summary + Number(e.price);
-
-                const secondary: any[] = [];
-
-                if (e.additional?.length) {
-                  const splitted = e.additional?.split("/");
-
-                  splitted?.forEach((spl: any) => {
-                    const colAndId = spl.split("-");
-                    const pos = positions.find((pi) => Number(pi.id) === Number(colAndId[1]));
-                    const price = Number(pos?.price) * Number(colAndId[0]);
-                    summary = summary + price;
-
-                    secondary.push(
-                      <Grid container spacing={1}>
-                        <Grid item xs={10}>
-                          {pos?.name}
-                        </Grid>
-                        <Grid item xs={2} style={{ textAlign: "right" }}>
-                          {Number(pos?.price) > 0 ? pos?.price : null}
-                        </Grid>
-                      </Grid>
-                    );
-                  });
-                }
-
-                return (
-                  <ListItem disablePadding divider>
-                    <ListItemText
-                      primary={primary}
-                      secondary={<React.Fragment>{secondary}</React.Fragment>}
-                    />
-                  </ListItem>
-                );
-              })}
-          </List>
+      <NewModalContainer id="printableArea">
+        <NewModalHeader>
+          <TitleH1 size={20}>Bill for order №{orderForBill?.id}</TitleH1>
+        </NewModalHeader>
+        <NewModalCloseButton onClick={handleCloseModal}>
+          <CloseIcon />
+        </NewModalCloseButton>
+        <NewModalBody>
           {!isAllPositionFinished ? (
-            <Alert icon={false} severity="error">
-              Не все позиции в заказе были завершены!
-            </Alert>
+            <ErrorBox>Not all position was finished!</ErrorBox>
           ) : (
             <>
-              <Typography variant="h5" marginBottom={1}>
-                Данные для оплаты
-              </Typography>
-              <Typography variant="body1" marginBottom={2}>
-                Выберите процент скидки, система рассчитает итоговую сумму заказа с учетом скидки.
-              </Typography>
-              <Box style={{ margin: -5, marginBottom: 15 }}>
+              {!!orderForBill?.comment && (
+                <>
+                  <TextSpan size={18} bottom={5} id="noneForPrint1">
+                    Comment for order:
+                  </TextSpan>
+                  <TextSpan bottom={20} id="noneForPrint2">
+                    {orderForBill?.comment}
+                  </TextSpan>
+                </>
+              )}
+              <TextSpan size={18} bottom={15}>
+                Order list:
+              </TextSpan>
+              {!!positionsForOrder?.length &&
+                positionsForOrder?.map((e: any) => {
+                  summary = summary + Number(e.price);
+
+                  const secondary: any[] = [];
+
+                  if (e.additional?.length) {
+                    const splitted = e.additional?.split("/");
+
+                    splitted?.forEach((spl: any, index: number) => {
+                      const colAndId = spl.split("-");
+                      const pos = positions.find(
+                        (pi) => Number(pi.id) === Number(colAndId[1])
+                      );
+                      const price = Number(pos?.price) * Number(colAndId[0]);
+                      summary = summary + price;
+
+                      secondary.push(
+                        <Grid container spacing={1}>
+                          <Grid item xs={9}>
+                            <TextSpan
+                              top={!index ? 10 : 0}
+                              size={14}
+                              color={grey[500]}
+                            >
+                              {pos?.name}
+                            </TextSpan>
+                          </Grid>
+                          <Grid item xs={3} style={{ textAlign: "right" }}>
+                            <TextSpan size={14} color={grey[500]}>
+                              {Number(pos?.price) > 0 ? pos?.price : null}
+                            </TextSpan>
+                          </Grid>
+                        </Grid>
+                      );
+                    });
+                  }
+
+                  return (
+                    <Item top={0} bottom={10} paddingX={20} paddingY={10}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={9}>
+                          <TextSpan>{e?.name}</TextSpan>
+                        </Grid>
+                        <Grid item xs={3} style={{ textAlign: "right" }}>
+                          <TextSpan>
+                            {Number(e?.price) > 0 ? e?.price : null}
+                          </TextSpan>
+                        </Grid>
+                      </Grid>
+                      {secondary}
+                    </Item>
+                  );
+                })}
+              <TextSpan size={18} bottom={5} top={20} id="noneForPrint3">
+                Payment information:
+              </TextSpan>
+              <TextSpan bottom={5} id="noneForPrint4">
+                Select discount percent for order:
+              </TextSpan>
+              <Box id="noneForPrint5">
                 {discounts.map((d) => (
                   <Chip
                     label={d}
                     variant="outlined"
                     style={{
                       margin: 5,
-                      borderColor: d !== discountForBill ? grey[200] : teal[400],
-                      color: d !== discountForBill ? grey[200] : teal[400],
+                      borderColor:
+                        d !== discountForBill ? primaryColor : primaryColor,
+                      color:
+                        d !== discountForBill
+                          ? primaryColor
+                          : textDefaultWhiteColor,
+                      background:
+                        d !== discountForBill
+                          ? backgroundDefault
+                          : primaryColor,
                     }}
-                    onClick={() => dispatch(ordersModel.actions.setDiscountForBill(d))}
+                    onClick={() =>
+                      dispatch(ordersModel.actions.setDiscountForBill(d))
+                    }
                   />
                 ))}
               </Box>
-              <List disablePadding style={{ background: "none", marginBottom: 20 }}>
-                <ListItem disablePadding divider>
-                  <ListItemText
-                    primary={
-                      <Grid container spacing={1}>
-                        <Grid item xs={8}>
-                          Итого
-                        </Grid>
-                        <Grid item xs={4} style={{ textAlign: "right" }}>
-                          {summary} TL
-                        </Grid>
-                      </Grid>
-                    }
-                  />
-                </ListItem>
-                <ListItem disablePadding divider>
-                  <ListItemText
-                    primary={
-                      <Grid container>
-                        <Grid item xs={8}>
-                          Итого с учетом скидки
-                        </Grid>
-                        <Grid item xs={4} style={{ textAlign: "right" }}>
-                          {roundFive(summary - summary * (discountForBill / 100))} TL
-                        </Grid>
-                      </Grid>
-                    }
-                  />
-                </ListItem>
-              </List>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleFinishOrder(orderForBill?.id || "", discountForBill)}
-                style={{ marginBottom: 40 }}
-              >
-                {roundFive(summary - summary * (discountForBill / 100))} TL оплачено
-              </Button>
+              <TextSpan size={16} top={20} bottom={10}>
+                Total: {summary} TL
+              </TextSpan>
+              {!!discountForBill && (
+                <TextSpan size={16}>
+                  Total with discount:{" "}
+                  {roundFive(summary - summary * (discountForBill / 100))} TL
+                </TextSpan>
+              )}
             </>
           )}
-        </ModalScrollable>
-      </>
-    </Modal>
+        </NewModalBody>
+        {isAllPositionFinished && (
+          <NewModalFooter>
+            <ButtonStyled
+              onClick={handleFinishOrder(
+                orderForBill?.id || "",
+                discountForBill
+              )}
+            >
+              {roundFive(summary - summary * (discountForBill / 100))} TL Paid
+            </ButtonStyled>
+          </NewModalFooter>
+        )}
+      </NewModalContainer>
+    </NewModal>
   );
 };

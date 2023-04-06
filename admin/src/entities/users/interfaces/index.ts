@@ -1,13 +1,10 @@
 import { EUserType } from "../enums";
 import { bool } from "yup";
 
-export interface IUserState {
-  data?: IUser;
+export interface IUsersState {
   usersForCompany: IUser[];
   isLoading: boolean;
   error: string;
-  selectedUser?: IUser;
-  inputtedPassword: string;
   form: IUserStateForm;
 }
 
@@ -30,7 +27,7 @@ export interface IUser {
   id: number;
   name: string;
   type: EUserType;
-  login?: string;
+  login: string;
   token?: string;
   companyId?: number;
 }

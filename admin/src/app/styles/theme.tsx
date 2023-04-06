@@ -2,8 +2,11 @@ import { createTheme } from "@mui/material";
 import { teal, grey } from "@mui/material/colors";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
 
-export const backgroundDefault = grey[900];
-export const textDefaultColor = grey[100];
+export const backgroundDefault = "#f9f7ff";
+export const textDefaultColor = grey[900];
+export const textDefaultWhiteColor = grey[50];
+export const primaryColor = "#661fe7";
+export const secondaryColor = "#07facb";
 
 export const theme = createTheme({
   components: {
@@ -23,6 +26,19 @@ export const theme = createTheme({
         },
       },
     },
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          color: textDefaultWhiteColor,
+          svg: {
+            color: textDefaultWhiteColor,
+          },
+          ".MuiTypography-root": {
+            color: textDefaultWhiteColor,
+          },
+        },
+      },
+    },
     MuiBottomNavigationAction: {
       styleOverrides: {
         root: {
@@ -34,6 +50,9 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           background: backgroundDefault,
+          svg: {
+            color: primaryColor,
+          },
         },
       },
     },
@@ -182,15 +201,15 @@ export const theme = createTheme({
   },
   palette: {
     secondary: {
-      main: teal[600],
+      main: secondaryColor,
       contrastText: textDefaultColor,
     },
     primary: {
-      main: teal[600],
+      main: primaryColor,
       contrastText: textDefaultColor,
     },
     background: {
-      default: grey["A700"],
+      default: backgroundDefault,
     },
     text: {
       primary: textDefaultColor,
@@ -215,6 +234,6 @@ export const theme = createTheme({
     body1: { color: textDefaultColor, fontWeight: 100 },
     body2: { color: textDefaultColor, fontWeight: 100 },
     caption: { color: textDefaultColor, fontWeight: 100 },
-    button: { fontWeight: 100, color: textDefaultColor },
+    button: { fontWeight: 100, color: textDefaultWhiteColor },
   },
 });

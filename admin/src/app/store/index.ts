@@ -8,6 +8,8 @@ import { usersModel } from "entities/users";
 import { pagesModel } from "entities/pages";
 import { ordersModel } from "entities/orders";
 import { companiesModel } from "../../entities/companies/model";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { authSlice } from "../../entities/auth";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +21,7 @@ export const store = configureStore({
     pages: pagesModel.reducer,
     orders: ordersModel.reducer,
     companies: companiesModel.reducer,
+    auth: authSlice.reducer,
   },
 });
 
@@ -27,3 +30,5 @@ export const useAppDispatch = () => useDispatch<typeof store.dispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export type RootState = ReturnType<typeof store.getState>;
+
+setupListeners(store.dispatch);

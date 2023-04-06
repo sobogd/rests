@@ -9,24 +9,14 @@ import { useAppDispatch, useAppSelector } from "app/store";
 import { ordersModel } from "../model";
 import Loading from "shared/loading";
 import { API_URL } from "shared/config";
-
-const TableSetBlock = styled.span`
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  margin: -13px;
-  cursor: pointer;
-  background: #01695c;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #212121;
-`;
+import { TableSelectWrapper, TableSetBlock } from "./syles";
+import TableBarIcon from "@mui/icons-material/TableBar";
 
 export const OrdersList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { items, isLoading, tableForModal, orderForBill } = useAppSelector((s) => s.orders);
+  const { items, isLoading, tableForModal, orderForBill } = useAppSelector(
+    (s) => s.orders
+  );
   const { isLoading: isTableLoading } = useAppSelector((s) => s.tables);
   const { isLoading: isPositionsLoading } = useAppSelector((s) => s.positions);
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
@@ -34,11 +24,14 @@ export const OrdersList: React.FC = () => {
   const tableListWithReadyStatus = React.useMemo(() => {
     return tables
       .map((t) => {
-        const ordersForTable = items.filter((i) => Number(i.tableId) === Number(t.id));
+        const ordersForTable = items.filter(
+          (i) => Number(i.tableId) === Number(t.id)
+        );
         return {
           ...t,
           isHaveOrders: !!ordersForTable.length,
-          countReadyOrders: ordersForTable.filter((oft) => !!oft.finishTime).length,
+          countReadyOrders: ordersForTable.filter((oft) => !!oft.finishTime)
+            .length,
         };
       })
       .filter((t) => t.isHaveOrders);
@@ -61,13 +54,7 @@ export const OrdersList: React.FC = () => {
       <Loading isLoading={isLoading || isTableLoading || isPositionsLoading} />
       {tableForModalView}
       {orderModalView}
-      <Box
-        position={"relative"}
-        marginBottom={2}
-        width="calc(100vw - 32px)"
-        height="calc(100vw - 32px)"
-        overflow="hidden"
-      >
+      <TableSelectWrapper>
         <img
           src={`${API_URL}${imageSrc}`}
           srcSet={`${API_URL}${imageSrc}`}
@@ -77,13 +64,16 @@ export const OrdersList: React.FC = () => {
         />
         {tableListWithReadyStatus?.map((t) => (
           <TableSetBlock
-            style={{ bottom: `${t.positionY}%`, left: `${t.positionX}%` }}
+            key={t.id}
+            positionY={t.positionY}
+            positionX={t.positionX}
+            isSelected={false}
             onClick={() => dispatch(ordersModel.actions.setTableForModal(t))}
           >
             {!!t.countReadyOrders ? <DoneIcon /> : <AutorenewIcon />}
           </TableSetBlock>
         ))}
-      </Box>
+      </TableSelectWrapper>
     </>
   );
 };

@@ -19,12 +19,13 @@ import { usersModel } from "entities/users";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { CLinks, CPageIcons, CPageNames, CPages } from "app/consts";
 import { useLocation, useNavigate } from "react-router-dom";
+import { authSlice } from "../../entities/auth";
 
 export const HeaderBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { data } = useAppSelector((s) => s.users);
+  const { user } = useAppSelector((s) => s.auth);
   const { isOpenMenu, headerComponent } = useAppSelector((s) => s.pages);
 
   const toggleDrawer = () => {
@@ -38,7 +39,7 @@ export const HeaderBar: React.FC = () => {
 
   const handleSignOut = () => {
     toggleDrawer();
-    dispatch(usersModel.actions.signOut());
+    dispatch(authSlice.actions.signOut());
     navigate(CLinks[EPages.AUTHORIZATION]);
   };
 
@@ -74,7 +75,7 @@ export const HeaderBar: React.FC = () => {
             <List>
               {CPages.filter(
                 (page) =>
-                  page.permissions.includes(data?.type || "") && page.showInMenu
+                  page.permissions.includes(user?.type || "") && page.showInMenu
               ).map((page, index) => (
                 <ListItem
                   key={index + page.id}

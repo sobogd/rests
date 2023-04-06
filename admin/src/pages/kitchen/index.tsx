@@ -11,6 +11,7 @@ import {
   tablesService,
 } from "shared/api";
 import { IOrderPosition } from "entities/orders/model";
+import { WrapperScrolled } from "app/styles";
 
 export const Kitchen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -203,7 +204,7 @@ export const Kitchen: React.FC = () => {
   };
 
   return (
-    <>
+    <WrapperScrolled>
       <Stack direction="row" spacing={1} marginBottom={2}>
         {allFilters.map((filter) => (
           <Chip
@@ -332,6 +333,6 @@ export const Kitchen: React.FC = () => {
             );
           })}
       </Box>
-    </>
+    </WrapperScrolled>
   );
 };

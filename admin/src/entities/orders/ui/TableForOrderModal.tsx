@@ -8,10 +8,24 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { backgroundDefault, ModalScrollable } from "app/styles";
+import {
+  backgroundDefault,
+  ButtonStyled,
+  Item,
+  ModalScrollable,
+  NewModal,
+  NewModalBody,
+  NewModalCloseButton,
+  NewModalContainer,
+  NewModalHeader,
+  TextSpan,
+  TitleH1,
+} from "app/styles";
 import React from "react";
 import Header from "shared/header";
-import { ordersModel } from "../model";
+import { IOrder, ordersModel } from "../model";
+import CloseIcon from "@mui/icons-material/Close";
+import { format } from "date-fns";
 
 export const TableForOrderModal: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -31,78 +45,71 @@ export const TableForOrderModal: React.FC = () => {
     );
   }, [tableForModal, orders]);
 
-  return (
-    <Modal
-      style={{ background: backgroundDefault }}
-      open={!!tableForModal && !isLoadingOrders && !isLoadingTables}
-    >
-      <>
-        <Header
-          title={`Orders for table №${tableForModal?.number}`}
-          onClickBack={() =>
-            dispatch(ordersModel.actions.setTableForModal(undefined))
-          }
-        />
-        <ModalScrollable>
-          <List disablePadding style={{ background: "none" }}>
-            {!!orderForTable.length &&
-              orderForTable?.map((i) => {
-                const table = tables.find(
-                  (t) => Number(t.id) === Number(i.tableId)
-                );
+  const handleCloseModal = () => {
+    dispatch(ordersModel.actions.setTableForModal(undefined));
+  };
 
-                return (
-                  <ListItem disablePadding style={{ marginBottom: 10 }}>
-                    <ListItemText
-                      primary={i.comment ? i.comment : table?.name}
-                      secondary={
-                        <React.Fragment>
-                          <Box
-                            marginBottom={1}
-                          >{`Order №${i.id} / Table №${table?.number}`}</Box>
-                          <Grid container spacing={1}>
-                            <Grid item xs={6}>
-                              <Button
-                                fullWidth
-                                variant="contained"
-                                onClick={() =>
-                                  dispatch(
-                                    ordersModel.actions.setOrderForBill(i)
-                                  )
-                                }
-                              >
-                                Bill
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6}>
-                              <Button
-                                fullWidth
-                                color="warning"
-                                variant="contained"
-                                onClick={() =>
-                                  dispatch(
-                                    ordersModel.actions.startEditItem({
-                                      ...i,
-                                      selectedTable: tables.find(
-                                        (t) => t.id === i.tableId
-                                      ),
-                                    })
-                                  )
-                                }
-                              >
-                                Edit
-                              </Button>
-                            </Grid>
-                          </Grid>
-                        </React.Fragment>
-                      }
-                    />
-                  </ListItem>
-                );
-              })}
-          </List>
-        </ModalScrollable>
-      </>
-    </Modal>
+  const handleBillOrder = (order: IOrder) => () => {
+    dispatch(ordersModel.actions.setOrderForBill(order));
+  };
+
+  const handleEditOrder = (order: IOrder) => () => {
+    dispatch(
+      ordersModel.actions.startEditItem({
+        ...order,
+        selectedTable: tables.find((t) => t.id === order.tableId),
+      })
+    );
+  };
+
+  return (
+    <NewModal
+      open={!!tableForModal && !isLoadingOrders && !isLoadingTables}
+      onClose={handleCloseModal}
+    >
+      <NewModalContainer>
+        <NewModalHeader>
+          <TitleH1 size={20}>
+            Orders for table:
+            <br /> {tableForModal?.name}
+          </TitleH1>
+        </NewModalHeader>
+        <NewModalCloseButton onClick={handleCloseModal}>
+          <CloseIcon />
+        </NewModalCloseButton>
+        <NewModalBody>
+          {!!orderForTable.length &&
+            orderForTable?.map((order) => {
+              const table = tables.find(
+                (t) => Number(t.id) === Number(order.tableId)
+              );
+              const createDate = Date.parse(order.createTime);
+              const offset = new Date().getTimezoneOffset();
+              const dateWithTimeZone = createDate - offset * 60000;
+              const date = format(dateWithTimeZone, "H:mm");
+
+              return (
+                <Item bottom={10} paddingX={20} paddingY={10}>
+                  <TextSpan>Order №{order.id}</TextSpan>
+                  <TextSpan>From {date}</TextSpan>
+                  {!!order.comment && (
+                    <TextSpan>Comment: {order.comment}</TextSpan>
+                  )}
+                  <ButtonStyled
+                    bottom={10}
+                    top={10}
+                    onClick={handleBillOrder(order)}
+                  >
+                    Bill
+                  </ButtonStyled>
+                  <ButtonStyled onClick={handleEditOrder(order)}>
+                    Edit
+                  </ButtonStyled>
+                </Item>
+              );
+            })}
+        </NewModalBody>
+      </NewModalContainer>
+    </NewModal>
   );
 };

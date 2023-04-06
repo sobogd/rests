@@ -12,6 +12,7 @@ import {
 import { pagesModel } from "entities/pages";
 import { ordersModel } from "entities/orders/model";
 import { OrdersForm, OrdersList } from "entities/orders";
+import { Wrapper, WrapperScrolled } from "../../app/styles";
 
 export const Orders: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -50,5 +51,9 @@ export const Orders: React.FC = () => {
     );
   }, [isOpenForm]);
 
-  return <>{isOpenForm ? <OrdersForm /> : <OrdersList />}</>;
+  return (
+    <WrapperScrolled>
+      {isOpenForm ? <OrdersForm /> : <OrdersList />}
+    </WrapperScrolled>
+  );
 };
