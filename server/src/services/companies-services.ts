@@ -1,5 +1,6 @@
 import pool from "../db";
 import * as bcrypt from "bcryptjs";
+import { IUser } from "../interfaces/user";
 
 const changePassword = async ({
   oldPassword,
@@ -53,4 +54,32 @@ const changePassword = async ({
   return { isSuccess: true };
 };
 
-export default { changePassword };
+const getUsersByCompanyLogin = async (
+  companyLogin: string
+): Promise<IUser[] | { isSuccess: boolean; message?: string }> => {
+  const client = await pool.connect();
+
+  const { rows: foundedCompanyByLogin } = await client.query(
+    "SELECT id FROM companies WHERE login = $1",
+    [companyLogin]
+  );
+
+  const companyId = foundedCompanyByLogin[0]?.id;
+
+  if (!companyId) {
+    return { isSuccess: false, message: "Login is incorrect" };
+  }
+
+  const { rows }: { rows: IUser[] } = await client.query(
+    "SELECT name, login FROM users WHERE company_id = $1",
+    [companyId]
+  );
+
+  if (!rows?.length) {
+    return { isSuccess: false, message: "Users not found" };
+  }
+
+  return rows;
+};
+
+export default { changePassword, getUsersByCompanyLogin };

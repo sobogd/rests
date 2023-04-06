@@ -39,6 +39,18 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUser": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "login": {"dataType":"string"},
+            "password": {"dataType":"string"},
+            "type": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IElement": {
         "dataType": "refObject",
         "properties": {
@@ -150,18 +162,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "login": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IUser": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string","required":true},
-            "name": {"dataType":"string","required":true},
-            "login": {"dataType":"string"},
-            "password": {"dataType":"string"},
-            "type": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -330,6 +330,31 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.changePassword.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/companies/getUsersByCompanyLogin',
+            ...(fetchMiddlewares<RequestHandler>(CompaniesController)),
+            ...(fetchMiddlewares<RequestHandler>(CompaniesController.prototype.getUsersByCompanyLogin)),
+
+            function CompaniesController_getUsersByCompanyLogin(request: any, response: any, next: any) {
+            const args = {
+                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"companyLogin":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new CompaniesController();
+
+
+              const promise = controller.getUsersByCompanyLogin.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

@@ -1,5 +1,6 @@
 import { Body, OperationId, Request, Post, Route, Security, Tags } from "tsoa";
 import companiesServices from "../services/companies-services";
+import { IUser } from "../interfaces/user";
 
 @Route("companies")
 export class CompaniesController {
@@ -16,5 +17,17 @@ export class CompaniesController {
       ...body,
       userId: request?.user?.id,
     });
+  }
+
+  @Tags("CompaniesService")
+  @OperationId("GetUsersByCompanyLogin")
+  @Post("getUsersByCompanyLogin")
+  public async getUsersByCompanyLogin(
+    @Body()
+    body: {
+      companyLogin: string;
+    }
+  ): Promise<IUser[] | { isSuccess: boolean; message?: string }> {
+    return await companiesServices.getUsersByCompanyLogin(body.companyLogin);
   }
 }
