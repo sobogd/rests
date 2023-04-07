@@ -7,6 +7,7 @@ import Loading from "../shared/loading";
 import { CLinks, CPageComponents, CPages } from "./consts";
 import { BodyContainer, Wrapper } from "./styles";
 import { whoAmI } from "../entities/auth";
+import { CssBaseline } from "@mui/material";
 
 const App: React.FC = () => {
   const isAuthorizedUser = !!sessionStorage.getItem("token");
@@ -96,6 +97,7 @@ const App: React.FC = () => {
 
   return (
     <Wrapper>
+      <CssBaseline />
       {!isHideHeader && <HeaderBar />}
       <Loading isLoading={isLoading} />
       <BodyContainer isFullHeight={isHideHeader}>

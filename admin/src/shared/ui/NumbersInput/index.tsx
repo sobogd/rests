@@ -17,6 +17,24 @@ export const NumbersInput: React.FC<TNumbersInputProps> = ({
 }) => {
   const [numbers, setNumbers] = React.useState<string>("");
 
+  const handleClickKeyboard = (target: any) => {
+    console.log({ target });
+  };
+
+  React.useEffect(() => {
+    const allowedLetters = ["1", "2", "3", "4", "5", "7", "8", "6", "9", "0"];
+
+    const onKeypress = (e: any) => {
+      if (allowedLetters.includes(e.key)) handleClickNumber(e.key);
+      if (e.key === "Backspace") handleClearLastNumber();
+    };
+
+    document.addEventListener("keydown", onKeypress);
+    return () => {
+      document.removeEventListener("keydown", onKeypress);
+    };
+  }, [numbers]);
+
   React.useEffect(() => {
     if (numbers.length === maxLength) {
       onFinishInput(numbers);

@@ -9,3 +9,9 @@ export const getTimeInFormat = (inputDate: any) => {
 
   return date;
 };
+
+export const getTimeInSeconds = (inputDate: any) => {
+  const date1 = Math.round(new Date(inputDate).getTime() / 1000);
+
+  return date1;
+};

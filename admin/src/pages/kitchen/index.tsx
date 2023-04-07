@@ -10,8 +10,48 @@ import {
   searchPositions,
   tablesService,
 } from "shared/api";
-import { IOrderPosition } from "entities/orders/model";
-import { WrapperScrolled } from "app/styles";
+import { IOrder, IOrderPosition } from "entities/orders/model";
+import {
+  backgroundDefault,
+  ButtonStyled,
+  Item,
+  primaryColor,
+  secondaryColor,
+  textDefaultWhiteColor,
+  TextSpan,
+  WrapperScrolled,
+} from "app/styles";
+import {
+  KitchenScrollable,
+  KitchenTableBlock,
+  KitchenTableBlockBody,
+  KitchenTableBlockHeader,
+} from "./styles";
+import {
+  getTimeInFormat,
+  getTimeInSeconds,
+} from "../../shared/utils/timeInFormat";
+import { TimeDifference } from "./timeDifference";
+
+export enum EOrderPositionStatuses {
+  TO_DO = "TO_DO",
+  COOKING = "COOKING",
+  READY = "READY",
+  FINISHED = "FINISHED",
+}
+
+const getStatusPriority = (status: EOrderPositionStatuses) => {
+  switch (status) {
+    case EOrderPositionStatuses.READY:
+      return 2;
+    case EOrderPositionStatuses.COOKING:
+      return 1;
+    case EOrderPositionStatuses.FINISHED:
+      return 3;
+    default:
+      return 0;
+  }
+};
 
 export const Kitchen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -53,7 +93,7 @@ export const Kitchen: React.FC = () => {
     })),
   ];
 
-  const filterByStatus = (op: IOrderPosition) => {
+  const filterByStatus = (status: EOrderPositionStatuses) => {
     const filterValues = filters
       .filter((f) => f.type === "status")
       .map((f) => f.value);
@@ -64,27 +104,33 @@ export const Kitchen: React.FC = () => {
 
     let count = 0;
 
-    if (filterValues.includes("not_ready") && !op.readyTime && !op.finishTime) {
+    if (
+      filterValues.includes("not_ready") &&
+      [EOrderPositionStatuses.TO_DO, EOrderPositionStatuses.COOKING].includes(
+        status
+      )
+    ) {
       count++;
     }
 
     if (
       filterValues.includes("ready") &&
-      !!op.readyTime &&
-      !!op.startTime &&
-      !op.finishTime
+      status === EOrderPositionStatuses.READY
     ) {
       count++;
     }
 
-    if (filterValues.includes("finished") && !!op.finishTime) {
+    if (
+      filterValues.includes("finished") &&
+      status === EOrderPositionStatuses.FINISHED
+    ) {
       count++;
     }
 
     return !!count;
   };
 
-  const filterByCategory = (op: IOrderPosition) => {
+  const filterByCategory = (orderPositionId: number) => {
     const filterValues = filters
       .filter((f) => f.type === "category")
       .map((f) => f.value);
@@ -94,7 +140,7 @@ export const Kitchen: React.FC = () => {
     }
 
     const positionByOrderPosition = positionItems.find(
-      (p) => Number(p.id) === Number(op.positionId)
+      (p) => Number(p.id) === Number(orderPositionId)
     );
     const categoryIdsByOrderPosition = positionByOrderPosition?.categories.map(
       (c) => c.categoryId
@@ -119,99 +165,158 @@ export const Kitchen: React.FC = () => {
     }
   };
 
-  const renderButtonForOrderPosition = (op: IOrderPosition) => {
-    if (!op.startTime) {
-      return (
-        <Button
-          fullWidth
-          variant="contained"
-          style={{ borderRadius: 0 }}
-          color="warning"
-          onClick={() =>
-            dispatch(
-              ordersService.orderPositionStart({ orderPositionId: op.id || 0 })
-            ).then(() => {
-              dispatch(ordersService.searchOrders());
-            })
-          }
-        >
-          Start
-        </Button>
-      );
-    }
+  const positionNamesObject: any = React.useMemo(() => {
+    const positionNamesObject: any = {};
+    positionItems.forEach((position) => {
+      positionNamesObject[position.id] = position.name;
+    });
+    return positionNamesObject;
+  }, [positionItems]);
 
-    if (!!op.startTime && !op.readyTime) {
-      return (
-        <Button
-          fullWidth
-          variant="contained"
-          style={{ borderRadius: 0 }}
-          color="success"
-          onClick={() =>
-            dispatch(
-              ordersService.orderPositionReady({ orderPositionId: op.id || 0 })
-            ).then(() => {
-              dispatch(ordersService.searchOrders());
+  const orderPositionsByTables = React.useMemo(
+    () =>
+      tableItems
+        .map((table) => ({
+          tableName: table.name,
+          tableNumber: table.number,
+          orderPositions: items
+            .filter((order) => order.tableId === table.id)
+            .reduce((acc: any[], order) => {
+              return acc.concat(
+                order.ordersPositions?.map((orderPosition) => ({
+                  id: orderPosition.id,
+                  positionId: orderPosition.positionId,
+                  positionName: positionNamesObject[orderPosition.positionId],
+                  status: (() => {
+                    if (!!orderPosition.startTime && !orderPosition.readyTime)
+                      return EOrderPositionStatuses.COOKING;
+                    if (!!orderPosition.readyTime && !orderPosition.finishTime)
+                      return EOrderPositionStatuses.READY;
+                    if (
+                      !!orderPosition.readyTime &&
+                      !!orderPosition.finishTime &&
+                      !!orderPosition.startTime
+                    )
+                      return EOrderPositionStatuses.FINISHED;
+                    return EOrderPositionStatuses.TO_DO;
+                  })(),
+                  startTime: orderPosition.startTime || order.createTime,
+                  positionComment: orderPosition.comment,
+                  orderComment: order.comment || order.id,
+                  additional: orderPosition.additional
+                    ?.split("/")
+                    .map((additionalPosition) => ({
+                      count: additionalPosition.split("-")[0],
+                      name: positionNamesObject[
+                        additionalPosition.split("-")[1]
+                      ],
+                    })),
+                }))
+              );
+            }, [])
+            .filter((orderPosition) => filterByStatus(orderPosition.status))
+            .filter((orderPosition) =>
+              filterByCategory(orderPosition.positionId)
+            )
+            .sort((a: any, b: any) => {
+              const aTime = getTimeInSeconds(a.startTime);
+              const bTime = getTimeInSeconds(b.startTime);
+              if (aTime < bTime) {
+                return -1;
+              }
+              if (aTime > bTime) {
+                return 1;
+              }
+              return 0;
             })
-          }
-        >
-          Ready
-        </Button>
-      );
-    }
+            .sort((a: any, b: any) => {
+              const aStatusPriority = getStatusPriority(a.status);
+              const bStatusPriority = getStatusPriority(b.status);
+              if (aStatusPriority < bStatusPriority) {
+                return -1;
+              }
+              if (aStatusPriority > bStatusPriority) {
+                return 1;
+              }
+              return 0;
+            }),
+        }))
+        .filter((table) => table.orderPositions?.length),
+    [items, tableItems, positionItems, filters]
+  );
 
-    if (!!op.readyTime && !op.finishTime) {
-      return (
-        <Button
-          fullWidth
-          variant="contained"
-          style={{ borderRadius: 0 }}
-          color="error"
-          onClick={() =>
-            dispatch(
-              ordersService.orderPositionGiven({ orderPositionId: op.id || 0 })
-            ).then(() => {
-              dispatch(ordersService.searchOrders());
-            })
-          }
-        >
-          Given
-        </Button>
-      );
-    }
+  const handleClickOrderPositionButton =
+    (status: EOrderPositionStatuses, orderPositionId: number) => () => {
+      let methodName:
+        | "orderPositionGiven"
+        | "orderPositionReady"
+        | "orderPositionStart"
+        | "orderPositionRestart"
+        | undefined = undefined;
 
-    if (!!op.readyTime && !!op.finishTime && !!op.startTime) {
-      return (
-        <Button
-          fullWidth
-          variant="contained"
-          style={{ borderRadius: 0 }}
-          color="warning"
-          onClick={() =>
-            dispatch(
-              ordersService.orderPositionRestart({
-                orderPositionId: op.id || 0,
-              })
-            ).then(() => {
-              dispatch(ordersService.searchOrders());
-            })
-          }
-        >
-          Restart
-        </Button>
-      );
+      switch (status) {
+        case EOrderPositionStatuses.READY:
+          methodName = "orderPositionGiven";
+          break;
+        case EOrderPositionStatuses.COOKING:
+          methodName = "orderPositionReady";
+          break;
+        case EOrderPositionStatuses.FINISHED:
+          methodName = "orderPositionRestart";
+          break;
+        case EOrderPositionStatuses.TO_DO:
+          methodName = "orderPositionStart";
+          break;
+      }
+
+      dispatch(ordersService[methodName]({ orderPositionId })).then(() => {
+        dispatch(ordersService.searchOrders());
+      });
+    };
+
+  const getOrderPositionButtonName = (status: EOrderPositionStatuses) => {
+    switch (status) {
+      case EOrderPositionStatuses.READY:
+        return "Given";
+      case EOrderPositionStatuses.COOKING:
+        return "Ready";
+      case EOrderPositionStatuses.FINISHED:
+        return "Restart";
+      default:
+        return "Start";
+    }
+  };
+
+  const getOrderPositionButtonBackground = (status: EOrderPositionStatuses) => {
+    switch (status) {
+      case EOrderPositionStatuses.READY:
+        return "#ec0d67";
+      case EOrderPositionStatuses.COOKING:
+        return "#40aa00";
+      case EOrderPositionStatuses.FINISHED:
+        return "#ee6b19";
+      default:
+        return "#fad70e";
     }
   };
 
   return (
     <WrapperScrolled>
-      <Stack direction="row" spacing={1} marginBottom={2}>
+      <Stack direction="row" spacing={1}>
         {allFilters.map((filter) => (
           <Chip
             style={
               filters.map((f) => f.value).includes(filter.value)
-                ? { background: teal[500], borderColor: teal[500] }
-                : undefined
+                ? {
+                    background: primaryColor,
+                    borderColor: primaryColor,
+                    color: textDefaultWhiteColor,
+                  }
+                : {
+                    background: backgroundDefault,
+                    borderColor: grey[700],
+                    color: grey[700],
+                  }
             }
             label={filter.label}
             onClick={handleChangeFilter(filter)}
@@ -219,120 +324,67 @@ export const Kitchen: React.FC = () => {
           />
         ))}
       </Stack>
-      <Box display="flex" flexDirection="row" overflow="scroll hidden">
-        {items
-          .filter(({ ordersPositions }) =>
-            filters.length
-              ? ordersPositions?.filter((op) => filterByStatus(op))?.length
-              : true
-          )
-          .filter(({ ordersPositions }) =>
-            filters.length
-              ? ordersPositions?.filter((op) => filterByCategory(op))?.length
-              : true
-          )
-          .sort((a, b) => (a.id && b.id && a.id < b.id ? -1 : 1))
-          .map((o) => {
-            const tableForOrder = tableItems.find(
-              (t) => Number(t.id) === Number(o.tableId)
-            );
-            const createDate = Date.parse(o.createTime);
-            const offset = new Date().getTimezoneOffset();
-            const dateWithTimeZone = createDate - offset * 60000;
-            const date = format(dateWithTimeZone, "H:mm");
-
-            return (
-              <Box minWidth={280} marginRight={2}>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography variant="h6" fontWeight={600}>
-                    {tableForOrder?.number} table
-                  </Typography>
-                  <Typography variant="h6">{date}</Typography>
-                </Box>
-                <Typography variant="body1" marginBottom={2}>
-                  {o?.comment || tableForOrder?.name}
-                </Typography>
-                <Box height="calc(100vh - 220px)" overflow="hidden scroll">
-                  {o.ordersPositions
-                    ?.filter((op) =>
-                      filters.length ? filterByStatus(op) : true
+      <KitchenScrollable>
+        {orderPositionsByTables.map((table) => (
+          <KitchenTableBlock>
+            <KitchenTableBlockHeader>
+              №{table.tableNumber}: {table.tableName}
+            </KitchenTableBlockHeader>
+            <KitchenTableBlockBody>
+              {table.orderPositions?.map((orderPosition) => (
+                <Item paddingY={15} paddingX={20} bottom={5}>
+                  <TextSpan size={14}> {orderPosition.positionName}</TextSpan>
+                  {orderPosition?.additional?.map(
+                    (additionalPosition: any, index: number) => (
+                      <TextSpan
+                        top={!index ? 5 : 0}
+                        size={14}
+                        color={grey[600]}
+                      >
+                        {additionalPosition.count}x - {additionalPosition.name}
+                      </TextSpan>
                     )
-                    .filter((op) =>
-                      filters.length ? filterByCategory(op) : true
-                    )
-                    .sort((a, b) => (a.id && b.id && a.id < b.id ? 1 : -1))
-                    .map((op) => {
-                      const position = positionItems.find(
-                        (p) => Number(p.id) === Number(op.positionId)
-                      );
-
-                      return (
-                        <Box
-                          style={{ background: grey[50] }}
-                          marginBottom={1}
-                          borderRadius={2}
-                          overflow="hidden"
-                        >
-                          <Box padding={2}>
-                            <Typography
-                              variant="body2"
-                              fontWeight={600}
-                              color={grey[800]}
-                            >
-                              {position?.name}
-                            </Typography>
-                            {!!op.additional?.length && (
-                              <Box marginTop={1}>
-                                <Divider />
-                                {op.additional?.split("/").map((opa) => {
-                                  const splittedValue = opa.split("-");
-                                  const additional = positionItems.find(
-                                    (p) =>
-                                      Number(p.id) === Number(splittedValue[1])
-                                  );
-
-                                  return (
-                                    <Typography
-                                      variant="body2"
-                                      marginTop={1}
-                                      fontWeight={600}
-                                      color={grey[800]}
-                                    >
-                                      {additional?.name} - {splittedValue[0]}
-                                    </Typography>
-                                  );
-                                })}
-                              </Box>
-                            )}
-                            {!!op.comment && (
-                              <Box
-                                marginTop={1}
-                                style={{ background: grey[300] }}
-                                paddingLeft={2}
-                                paddingRight={2}
-                                paddingBottom={1}
-                                paddingTop={1}
-                                borderRadius={2}
-                              >
-                                <Typography
-                                  variant="body2"
-                                  fontWeight={600}
-                                  color={grey[800]}
-                                >
-                                  {op.comment}
-                                </Typography>
-                              </Box>
-                            )}
-                          </Box>
-                          {renderButtonForOrderPosition(op)}
-                        </Box>
-                      );
-                    })}
-                </Box>
-              </Box>
-            );
-          })}
-      </Box>
+                  )}
+                  {orderPosition.positionComment && (
+                    <TextSpan size={14} top={5} color={grey[600]}>
+                      {orderPosition.positionComment}
+                    </TextSpan>
+                  )}
+                  {orderPosition.orderComment && (
+                    <TextSpan size={14} top={5} color={grey[600]}>
+                      {orderPosition.orderComment}
+                    </TextSpan>
+                  )}
+                  <ButtonStyled
+                    top={10}
+                    height={40}
+                    size={15}
+                    onClick={handleClickOrderPositionButton(
+                      orderPosition.status,
+                      orderPosition.id
+                    )}
+                    background={getOrderPositionButtonBackground(
+                      orderPosition.status
+                    )}
+                  >
+                    {getOrderPositionButtonName(orderPosition.status)}
+                    {[
+                      EOrderPositionStatuses.TO_DO,
+                      EOrderPositionStatuses.COOKING,
+                    ].includes(orderPosition.status) && (
+                      <TimeDifference
+                        timeInSeconds={getTimeInSeconds(
+                          orderPosition.startTime
+                        )}
+                      />
+                    )}
+                  </ButtonStyled>
+                </Item>
+              ))}
+            </KitchenTableBlockBody>
+          </KitchenTableBlock>
+        ))}
+      </KitchenScrollable>
     </WrapperScrolled>
   );
 };

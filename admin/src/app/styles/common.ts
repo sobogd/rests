@@ -104,36 +104,35 @@ export const ButtonStyled = styled.button<{
   size?: number;
   top?: number;
   bottom?: number;
+  background?: string;
+  color?: string;
+  height?: number;
 }>`
   margin-top: ${(p) => p.top + "px" || 0};
   margin-bottom: ${(p) => p.bottom + "px" || 0};
-  min-height: 45px;
+  min-height: ${(p) => p.height || 45}px;
+  height: ${(p) => (p.height ? p.height + "px" : "auto")};
   min-width: 45px;
-  font-size: 16px;
+  font-size: ${(p) => p.size || 16}px;
   width: 100%;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: 2px 2px 7px -3px #661fe7;
+  box-shadow: 2px 2px 14px -7px ${(p) => p.background || primaryColor};
   font-weight: 500;
-  background: ${primaryColor};
-  color: ${textDefaultWhiteColor};
+  background: ${(p) => p.background || primaryColor};
+  color: ${(p) => p.color || textDefaultWhiteColor};
   padding: 10px 15px;
   display: flex;
   align-items: center;
   justify-content: center;
 
   svg {
-    color: ${textDefaultWhiteColor};
+    color: ${(p) => p.color || textDefaultWhiteColor};
     margin-right: 10px;
   }
 
   :hover {
-    background: #07facb;
-    color: black;
-
-    svg {
-      color: ${textDefaultColor};
-    }
+    opacity: 0.8;
   }
 `;
 

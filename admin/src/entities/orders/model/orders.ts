@@ -30,9 +30,9 @@ export interface IOrderPosition {
   additional?: string;
   comment?: string;
   finishTime?: string;
-  id?: number;
-  orderId?: string;
-  positionId?: string;
+  id: number;
+  orderId: string;
+  positionId: string;
   startTime?: string;
   readyTime?: string;
 }

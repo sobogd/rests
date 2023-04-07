@@ -10,6 +10,87 @@ export const secondaryColor = "#07facb";
 
 export const theme = createTheme({
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        "body, html": {
+          height: "100%",
+          width: "100%",
+          position: "fixed",
+          overflow: "hidden",
+        },
+        "#root": {
+          position: "relative",
+          width: "100%",
+          height: "100%",
+        },
+        "body, h1, h2, h3, h4, p, figure, blockquote, dl, dd": {
+          margin: 0,
+        },
+        "html:focus-within": {
+          scrollBehavior: "smooth",
+        },
+        "img, picture": {
+          maxWidth: "100%",
+          display: "block",
+        },
+        "input, button, textarea, select": {
+          font: "inherit",
+        },
+        button: {
+          border: "none",
+          margin: 0,
+          padding: 0,
+          width: "auto",
+          overflow: "visible",
+          background: "transparent",
+          color: "inherit",
+          font: "inherit",
+          lineHeight: "normal",
+        },
+        body: {
+          minHeight: "100%",
+          textRendering: "optimizeSpeed",
+          lineHeight: 1.5,
+          overflow: "hidden",
+        },
+        [`ul[role="list"], ol[role="list"]`]: {
+          listStyle: "none",
+        },
+        "*,*::before,*::after": {
+          boxSizing: "border-box",
+          transition: "0.2s",
+          fontWeight: 400,
+          fontFamily: "'Roboto', sans-serif !important",
+        },
+        "@media print": {
+          "#printableArea": {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: `white !important`,
+          },
+          "#printableArea header": {
+            display: "none",
+          },
+          "#printableArea footer": {
+            display: "none",
+          },
+          "*": {
+            color: "black !important",
+            boxShadow: "none !important",
+            background: `none !important`,
+            overflow: "initial !important",
+            fontWeight: `600 !important`,
+          },
+          "#noneForPrint1,#noneForPrint2,#noneForPrint3, #noneForPrint4,#noneForPrint5":
+            {
+              display: "none",
+            },
+        },
+      },
+    },
     MuiPickersDay: {
       styleOverrides: {
         root: {
