@@ -1,24 +1,19 @@
 import React from "react";
-import { Box } from "@mui/system";
-import styled from "@emotion/styled";
 import DoneIcon from "@mui/icons-material/Done";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import { TableForOrderModal } from "./TableForOrderModal";
 import { OrderModal } from "./OrderModal";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { ordersModel } from "../model";
-import Loading from "shared/loading";
 import { API_URL } from "shared/config";
 import { TableSelectWrapper, TableSetBlock } from "./syles";
-import TableBarIcon from "@mui/icons-material/TableBar";
+import { ButtonStyled } from "../../../app/styles";
 
 export const OrdersList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { items, isLoading, tableForModal, orderForBill } = useAppSelector(
+  const { items, tableForModal, orderForBill } = useAppSelector(
     (s) => s.orders
   );
-  const { isLoading: isTableLoading } = useAppSelector((s) => s.tables);
-  const { isLoading: isPositionsLoading } = useAppSelector((s) => s.positions);
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
 
   const tableListWithReadyStatus = React.useMemo(() => {
@@ -49,9 +44,12 @@ export const OrdersList: React.FC = () => {
     }
   }, [orderForBill]);
 
+  const handleOpenNewOrderModal = () => {
+    dispatch(ordersModel.actions.toggleIsOpenForm());
+  };
+
   return (
     <>
-      <Loading isLoading={isLoading || isTableLoading || isPositionsLoading} />
       {tableForModalView}
       {orderModalView}
       <TableSelectWrapper>
@@ -74,6 +72,9 @@ export const OrdersList: React.FC = () => {
           </TableSetBlock>
         ))}
       </TableSelectWrapper>
+      <ButtonStyled top={15} onClick={handleOpenNewOrderModal}>
+        New order
+      </ButtonStyled>
     </>
   );
 };

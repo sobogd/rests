@@ -4,19 +4,12 @@ import { grey, teal } from "@mui/material/colors";
 import { Box, Button, Chip, Divider, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
-import {
-  categoriesService,
-  ordersService,
-  searchPositions,
-  tablesService,
-} from "shared/api";
-import { IOrder, IOrderPosition } from "entities/orders/model";
+import { ordersService } from "shared/api";
 import {
   backgroundDefault,
   ButtonStyled,
   Item,
   primaryColor,
-  secondaryColor,
   textDefaultWhiteColor,
   TextSpan,
   WrapperScrolled,
@@ -27,10 +20,7 @@ import {
   KitchenTableBlockBody,
   KitchenTableBlockHeader,
 } from "./styles";
-import {
-  getTimeInFormat,
-  getTimeInSeconds,
-} from "../../shared/utils/timeInFormat";
+import { getTimeInSeconds } from "../../shared/utils/timeInFormat";
 import { TimeDifference } from "./timeDifference";
 
 export enum EOrderPositionStatuses {
@@ -65,21 +55,12 @@ export const Kitchen: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(ordersService.searchOrders());
-    dispatch(tablesService.searchTables());
-    dispatch(searchPositions());
-    dispatch(categoriesService.searchCategories());
 
     const interval = setInterval(() => {
       dispatch(ordersService.searchOrders());
     }, 30000);
 
     return () => clearInterval(interval);
-  }, []);
-
-  React.useEffect(() => {
-    dispatch(ordersService.searchOrders());
-    dispatch(tablesService.searchTables());
-    dispatch(searchPositions());
   }, []);
 
   const allFilters = [
@@ -202,7 +183,7 @@ export const Kitchen: React.FC = () => {
                   })(),
                   startTime: orderPosition.startTime || order.createTime,
                   positionComment: orderPosition.comment,
-                  orderComment: order.comment || order.id,
+                  orderComment: order.comment,
                   additional: orderPosition.additional
                     ?.split("/")
                     .map((additionalPosition) => ({

@@ -116,7 +116,7 @@ export const ButtonStyled = styled.button<{
   font-size: ${(p) => p.size || 16}px;
   width: 100%;
   border-radius: 10px;
-  cursor: pointer;
+  cursor: ${(p) => (p.disabled ? "not-allowed" : "pointer")};
   box-shadow: 2px 2px 14px -7px ${(p) => p.background || primaryColor};
   font-weight: 500;
   background: ${(p) => p.background || primaryColor};
@@ -125,6 +125,7 @@ export const ButtonStyled = styled.button<{
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: ${(p) => (p.disabled ? "0.4" : "1")};
 
   svg {
     color: ${(p) => p.color || textDefaultWhiteColor};
@@ -132,7 +133,7 @@ export const ButtonStyled = styled.button<{
   }
 
   :hover {
-    opacity: 0.8;
+    opacity: ${(p) => (p.disabled ? "0.4" : "0.8")};
   }
 `;
 
@@ -214,9 +215,10 @@ export const NewModal = styled(Modal)`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px 10px;
 `;
 
-export const NewModalContainer = styled.div`
+export const NewModalContainer = styled.div<{ maxWidth?: number }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -229,6 +231,7 @@ export const NewModalContainer = styled.div`
   box-shadow: 0px 4px 35px rgba(43, 13, 98, 0.1);
   margin: 15px;
   outline: none !important;
+  max-width: ${(p) => (p.maxWidth ? p.maxWidth + "px" : "auto")};
 `;
 
 export const NewModalHeader = styled.header`
@@ -254,7 +257,7 @@ export const NewModalFooter = styled.footer`
 `;
 
 export const NewModalBody = styled.div`
-  overflow: scroll;
+  overflow: hidden auto;
   width: calc(100% + 40px);
   margin: 0 -20px;
   padding: 15px 20px;

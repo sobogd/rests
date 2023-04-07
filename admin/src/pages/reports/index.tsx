@@ -17,7 +17,20 @@ import { roundFive } from "shared/utils/roundFive";
 import { getTimeInFormat } from "shared/utils/timeInFormat";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { ordersService } from "shared/api";
-import { backgroundDefault } from "app/styles";
+import {
+  backgroundDefault,
+  ButtonStyled,
+  NewModal,
+  NewModalBody,
+  NewModalCloseButton,
+  NewModalContainer,
+  NewModalHeader,
+  TextSpan,
+  TitleH1,
+  WrapperScrolled,
+} from "app/styles";
+import CloseIcon from "@mui/icons-material/Close";
+import { grey } from "@mui/material/colors";
 
 const ScrollableDayReports = styled(List)`
   height: 100%;
@@ -71,36 +84,39 @@ export const Day: React.FC = () => {
     return null;
   }, [ordersForToday]);
 
+  const handleCloseModal = () => {
+    setIsOpenDayReportModal(false);
+  };
+
   return (
-    <>
-      <Button
-        fullWidth
-        style={{ marginBottom: 25 }}
-        variant="contained"
-        onClick={() => setIsOpenDayReportModal(true)}
-      >
+    <WrapperScrolled>
+      <ButtonStyled bottom={15} onClick={() => setIsOpenDayReportModal(true)}>
         Get day report
-      </Button>
-      <Modal
-        open={isOpenDayReportModal}
-        onClose={() => setIsOpenDayReportModal(false)}
-        style={{ background: backgroundDefault }}
-      >
-        <Box>
-          <Typography variant="h6">Day Report</Typography>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <MobileDatePicker
-              label="Select date for report creating"
-              inputFormat="dd.MM.yyyy"
-              value={dateOfReport}
-              onChange={(e: string | null) => setDateOfReport(e)}
-              renderInput={(params) => (
-                <TextField fullWidth style={{ marginTop: 20 }} {...params} />
-              )}
-              closeOnSelect
-            />
-          </LocalizationProvider>
-          <ScrollableDayReports disablePadding>
+      </ButtonStyled>
+      <NewModal open={isOpenDayReportModal} onClose={handleCloseModal}>
+        <NewModalContainer id="printableArea">
+          <NewModalHeader>
+            <TitleH1 size={20}>Day report</TitleH1>
+          </NewModalHeader>
+          <NewModalCloseButton onClick={handleCloseModal}>
+            <CloseIcon />
+          </NewModalCloseButton>
+          <NewModalBody>
+            <TextSpan bottom={15} color={grey[600]}>
+              For get day report, please select date in the calendar.
+            </TextSpan>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <MobileDatePicker
+                label="Select date for report creating"
+                inputFormat="dd.MM.yyyy"
+                value={dateOfReport}
+                onChange={(e: string | null) => setDateOfReport(e)}
+                renderInput={(params) => (
+                  <TextField fullWidth style={{ marginTop: 20 }} {...params} />
+                )}
+                closeOnSelect
+              />
+            </LocalizationProvider>
             {dayTotal && (
               <Alert
                 icon={false}
@@ -141,9 +157,9 @@ export const Day: React.FC = () => {
                 />
               </ListItem>
             ))}
-          </ScrollableDayReports>
-        </Box>
-      </Modal>
-    </>
+          </NewModalBody>
+        </NewModalContainer>
+      </NewModal>
+    </WrapperScrolled>
   );
 };

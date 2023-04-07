@@ -92,10 +92,10 @@ export const authSlice = createSlice({
     builder.addCase(
       whoAmI.fulfilled,
       (state: TAuthState, { payload }: PayloadAction<IUser>) => {
-        if (payload?.id) {
+        if (payload?.id !== state.user?.id) {
           state.user = payload;
-          state.form.isLoading = false;
         }
+        state.form.isLoading = false;
       }
     );
   },

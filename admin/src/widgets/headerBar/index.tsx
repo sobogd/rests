@@ -104,11 +104,11 @@ export const HeaderBar: React.FC = () => {
             </List>
           </Box>
         </Drawer>
-        {headerComponent || (
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {CPageNames[activePageId]}
-          </Typography>
-        )}
+        {/*{headerComponent || (*/}
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          {CPageNames[activePageId]}
+        </Typography>
+        {/*)}*/}
       </Toolbar>
     </AppBar>
   );

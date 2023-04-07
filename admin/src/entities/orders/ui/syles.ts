@@ -32,8 +32,7 @@ export const TableSetBlock = styled.div<{
 
 export const TableSelectWrapper = styled.div`
   position: relative;
-  width: calc(100vw - 32px);
-  height: calc(100vw - 32px);
+  width: 100%;
   overflow: hidden;
   max-width: 500px;
   max-height: 500px;
