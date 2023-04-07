@@ -300,8 +300,12 @@ export const Kitchen: React.FC = () => {
     }
   };
 
+  const handleClickWrapper = () => {
+    document.querySelector("body")?.requestFullscreen();
+  };
+
   return (
-    <WrapperScrolled>
+    <WrapperScrolled onClick={handleClickWrapper}>
       <Stack direction="row" spacing={1}>
         {allFilters.map((filter) => (
           <Chip
