@@ -26,6 +26,7 @@ import Header from "shared/header";
 import { IOrder, ordersModel } from "../model";
 import CloseIcon from "@mui/icons-material/Close";
 import { format } from "date-fns";
+import { getTimeInFormat } from "../../../shared/utils/timeInFormat";
 
 export const TableForOrderModal: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -80,18 +81,10 @@ export const TableForOrderModal: React.FC = () => {
         <NewModalBody>
           {!!orderForTable.length &&
             orderForTable?.map((order) => {
-              const table = tables.find(
-                (t) => Number(t.id) === Number(order.tableId)
-              );
-              const createDate = Date.parse(order.createTime);
-              const offset = new Date().getTimezoneOffset();
-              const dateWithTimeZone = createDate - offset * 60000;
-              const date = format(dateWithTimeZone, "H:mm");
-
               return (
                 <Item bottom={10} paddingX={20} paddingY={10}>
                   <TextSpan>Order №{order.id}</TextSpan>
-                  <TextSpan>From {date}</TextSpan>
+                  <TextSpan>From {getTimeInFormat(order.createTime)}</TextSpan>
                   {!!order.comment && (
                     <TextSpan>Comment: {order.comment}</TextSpan>
                   )}

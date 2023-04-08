@@ -310,14 +310,19 @@ export const Kitchen: React.FC = () => {
         ))}
       </Stack>
       <KitchenScrollable>
-        {orderPositionsByTables.map((table) => (
-          <KitchenTableBlock>
+        {orderPositionsByTables.map((table, index) => (
+          <KitchenTableBlock key={table.tableNumber + index}>
             <KitchenTableBlockHeader>
               №{table.tableNumber}: {table.tableName}
             </KitchenTableBlockHeader>
             <KitchenTableBlockBody>
               {table.orderPositions?.map((orderPosition) => (
-                <Item paddingY={15} paddingX={20} bottom={5}>
+                <Item
+                  paddingY={15}
+                  paddingX={20}
+                  bottom={5}
+                  key={orderPosition.id}
+                >
                   <TextSpan size={14}> {orderPosition.positionName}</TextSpan>
                   {orderPosition?.additional?.map(
                     (additionalPosition: any, index: number) => (
@@ -358,6 +363,7 @@ export const Kitchen: React.FC = () => {
                       EOrderPositionStatuses.COOKING,
                     ].includes(orderPosition.status) && (
                       <TimeDifference
+                        key={orderPosition.id}
                         timeInSeconds={getTimeInSeconds(
                           orderPosition.startTime
                         )}
