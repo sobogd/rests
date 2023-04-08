@@ -84,7 +84,7 @@ export const TableForOrderModal: React.FC = () => {
               return (
                 <Item bottom={10} paddingX={20} paddingY={10}>
                   <TextSpan>Order №{order.id}</TextSpan>
-                  <TextSpan>From {getTimeInFormat(order.createTime)}</TextSpan>
+                  <TextSpan>From {getTimeInFormat(order.created)}</TextSpan>
                   {!!order.comment && (
                     <TextSpan>Comment: {order.comment}</TextSpan>
                   )}

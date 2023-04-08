@@ -1,11 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ITable } from "entities/tables/model";
 import { ordersService } from "shared/api";
+import { EOrderPositionStatuses } from "../../../pages";
 
 export enum EOrderSteps {
   TABLE = "table",
   FILLING = "filling",
   ADDITIONAL = "additional",
+}
+
+export enum EOrderStatus {
+  ACTIVE = "active",
+  FINISHED = "finished",
+  PAID = "paid",
+  ARCHIVED = "archived",
 }
 
 export enum EPositionFormSteps {
@@ -16,25 +24,22 @@ export enum EPositionFormSteps {
 }
 
 export interface IOrder {
-  createTime: string;
-  finishTime: string;
-  readyTime: string;
   id: string;
+  created: string;
   tableId: string;
-  statusId: string;
-  ordersPositions?: IOrderPosition[];
   comment?: string;
+  status: EOrderStatus;
+  positions: IOrderPosition[];
 }
 
 export interface IOrderPosition {
-  additional?: string;
-  comment?: string;
-  finishTime?: string;
   id: number;
   orderId: string;
   positionId: string;
-  startTime?: string;
-  readyTime?: string;
+  created: string;
+  status: EOrderPositionStatuses;
+  additional?: string;
+  comment?: string;
 }
 
 export interface IPositionInOrder {
@@ -281,7 +286,7 @@ export const ordersModel = createSlice({
     },
     startEditItem: (state, { payload }) => {
       state.activeStep = EOrderSteps.FILLING;
-      state.selectedPositions = payload.ordersPositions.map((p: any) => ({
+      state.selectedPositions = payload.positions.map((p: any) => ({
         id: p.id,
         positionId: Number(p.positionId),
         comment: p.comment,
@@ -347,6 +352,7 @@ export const ordersModel = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(ordersService.updateOrder.fulfilled, (state) => {
+      console.log(111);
       state.isLoading = initialState.isLoading;
       state.isOpenForm = initialState.isOpenForm;
       state.isOpenYouSure = initialState.isOpenYouSure;

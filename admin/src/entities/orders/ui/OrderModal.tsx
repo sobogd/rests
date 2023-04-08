@@ -1,15 +1,5 @@
-import {
-  Alert,
-  Button,
-  Chip,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Modal,
-  Typography,
-} from "@mui/material";
-import { grey, teal } from "@mui/material/colors";
+import { Chip, Grid } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import { Box } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
 import {
@@ -17,7 +7,6 @@ import {
   ButtonStyled,
   ErrorBox,
   Item,
-  ModalScrollable,
   NewModal,
   NewModalBody,
   NewModalCloseButton,
@@ -25,17 +14,14 @@ import {
   NewModalFooter,
   NewModalHeader,
   primaryColor,
-  secondaryColor,
-  textDefaultColor,
   textDefaultWhiteColor,
   TextSpan,
   TitleH1,
 } from "app/styles";
 import React from "react";
 import { ordersService } from "shared/api";
-import Header from "shared/header";
 import { roundFive } from "shared/utils/roundFive";
-import { ordersModel } from "../model";
+import { EOrderStatus, ordersModel } from "../model";
 import CloseIcon from "@mui/icons-material/Close";
 
 const discounts = [0, 10];
@@ -52,18 +38,17 @@ export const OrderModal: React.FC = () => {
     (s) => s.positions
   );
 
-  const isAllPositionFinished =
-    orderForBill?.ordersPositions?.filter((op) => !op.finishTime).length === 0;
+  const isAllPositionFinished = orderForBill?.status === EOrderStatus.FINISHED;
 
-  const additionalsForPosition = orderForBill?.ordersPositions
-    ?.filter((op) => !!op.additional?.length)
-    .map((op) => op.additional);
+  const additionalsForPosition = orderForBill?.positions
+    ?.filter((p) => !!p.additional?.length)
+    .map((p) => p.additional);
 
-  const positionsForOrder: any = orderForBill?.ordersPositions?.map((op) => {
+  const positionsForOrder: any = orderForBill?.positions?.map((p) => {
     const position = positions.find(
-      (pi) => Number(pi.id) === Number(op.positionId)
+      (pi) => Number(pi.id) === Number(p.positionId)
     );
-    return { ...position, additional: op.additional };
+    return { ...position, additional: p.additional };
   });
 
   const arrayAdditional: any = [];

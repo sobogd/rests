@@ -24,10 +24,11 @@ import { getTimeInSeconds } from "../../shared/utils/timeInFormat";
 import { TimeDifference } from "./timeDifference";
 
 export enum EOrderPositionStatuses {
-  TO_DO = "TO_DO",
-  COOKING = "COOKING",
-  READY = "READY",
-  FINISHED = "FINISHED",
+  TO_DO = "to_do",
+  COOKING = "cooking",
+  READY = "ready",
+  FINISHED = "finished",
+  ARCHIVED = "archived",
 }
 
 const getStatusPriority = (status: EOrderPositionStatuses) => {
@@ -164,27 +165,15 @@ export const Kitchen: React.FC = () => {
             .filter((order) => order.tableId === table.id)
             .reduce((acc: any[], order) => {
               return acc.concat(
-                order.ordersPositions?.map((orderPosition) => ({
-                  id: orderPosition.id,
-                  positionId: orderPosition.positionId,
-                  positionName: positionNamesObject[orderPosition.positionId],
-                  status: (() => {
-                    if (!!orderPosition.startTime && !orderPosition.readyTime)
-                      return EOrderPositionStatuses.COOKING;
-                    if (!!orderPosition.readyTime && !orderPosition.finishTime)
-                      return EOrderPositionStatuses.READY;
-                    if (
-                      !!orderPosition.readyTime &&
-                      !!orderPosition.finishTime &&
-                      !!orderPosition.startTime
-                    )
-                      return EOrderPositionStatuses.FINISHED;
-                    return EOrderPositionStatuses.TO_DO;
-                  })(),
-                  startTime: orderPosition.startTime || order.createTime,
-                  positionComment: orderPosition.comment,
+                order.positions?.map((p) => ({
+                  id: p.id,
+                  positionId: p.positionId,
+                  positionName: positionNamesObject[p.positionId],
+                  status: p.status,
+                  startTime: p.created,
+                  positionComment: p.comment,
                   orderComment: order.comment,
-                  additional: orderPosition.additional
+                  additional: p.additional
                     ?.split("/")
                     .map((additionalPosition) => ({
                       count: additionalPosition.split("-")[0],
@@ -246,6 +235,9 @@ export const Kitchen: React.FC = () => {
           methodName = "orderPositionRestart";
           break;
         case EOrderPositionStatuses.TO_DO:
+          methodName = "orderPositionStart";
+          break;
+        case EOrderPositionStatuses.ARCHIVED:
           methodName = "orderPositionStart";
           break;
       }

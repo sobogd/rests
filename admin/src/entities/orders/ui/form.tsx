@@ -42,12 +42,12 @@ export const OrdersForm: React.FC = () => {
           positions: selectedPositions.map((p) => ({
             id: p.id,
             positionId: p.positionId,
-            additional: p.additional || [],
-            comment: p.comment || "",
+            additional: p.additional || undefined,
+            comment: p.comment || undefined,
           })),
           tableId: selectedTable?.id,
-          comment: comment || "",
-          orderId,
+          comment: comment || undefined,
+          id: orderId,
         })
       );
     } else {
@@ -55,12 +55,11 @@ export const OrdersForm: React.FC = () => {
         ordersService.createOrder({
           positions: selectedPositions.map((p) => ({
             positionId: p.positionId,
-            additional: p.additional || [],
-            comment: p.comment || "",
+            additional: p.additional || undefined,
+            comment: p.comment || undefined,
           })),
           tableId: selectedTable?.id,
-          comment: comment || "",
-          createTime: new Date().toISOString(),
+          comment: comment || undefined,
         })
       );
     }

@@ -1,25 +1,50 @@
+import { IOrderPosition } from "./orders-positions";
+
 export interface IOrder {
   id?: number;
   tableId?: number;
-  createTime?: string;
-  readyTime?: string;
-  finishTime?: string;
+  companyId?: number;
+  created?: string;
   comment?: string;
   status?: string;
   discount?: string;
+  positions?: IOrderPosition[];
 }
 
-export interface IOrderCreateRequest {
-  orderId?: number;
+export type TOrderForCreate = {
   tableId: number;
-  createTime?: string;
-  positions: {
-    id?: number;
-    positionId: number;
-    additional?: { id: number; count: number }[];
-    comment?: string;
-  }[];
+  comment: string;
+};
+
+export type TBDOOrder = {
+  id?: number;
+  table_id?: number;
+  company_id?: number;
+  created?: string;
   comment?: string;
+  status?: string;
+  discount?: string;
+};
+
+export interface IOrderPositionForCreate {
+  positionId: number;
+  additional?: { id: number; count: number }[];
+  comment?: string;
+}
+
+export interface IOrderPositionForUpdate extends IOrderPositionForCreate {
+  id?: number;
+}
+
+export interface IOrderForCreate {
+  tableId: number;
+  comment?: string;
+  positions: IOrderPositionForCreate[];
+}
+
+export interface IOrderForUpdate extends IOrderForCreate {
+  id: number;
+  positions: IOrderPositionForUpdate[];
 }
 
 export interface IDayReportResponse {

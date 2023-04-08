@@ -1,6 +1,18 @@
-import { Body, OperationId, Post, Route, Security, Tags } from "tsoa";
-import { IDayReportResponse, IOrder, IOrderCreateRequest } from "../interfaces/orders";
+import { Body, OperationId, Post, Request, Route, Security, Tags } from "tsoa";
+import {
+  IDayReportResponse,
+  IOrder,
+  IOrderForCreate,
+  IOrderForUpdate,
+} from "../interfaces/orders";
 import ordersServices from "../services/orders-services";
+import { EOrderPositionStatus, IAuthRequest } from "../enums.ts/ordersLogs";
+import { searchActiveOrdersByCompanyId } from "../services/orders/searchActiveOrdersByCompanyId";
+import { createOrder } from "../services/orders/createOrder";
+import { updateOrder } from "../services/orders/updateOrder";
+import { archiveOrder } from "../services/orders/archiveOrder";
+import { orderPositionStatusChange } from "../services/orders/orderPositionStatusChange";
+import { finishOrder } from "../services/orders/finishOrder";
 
 @Route("orders")
 export class OrdersController {
@@ -8,73 +20,115 @@ export class OrdersController {
   @OperationId("Search")
   @Security("Bearer", ["AuthService"])
   @Post("search")
-  public async search(): Promise<IOrder[]> {
-    return await ordersServices.search();
+  public async search(@Request() { user }: IAuthRequest): Promise<IOrder[]> {
+    return await searchActiveOrdersByCompanyId(user.companyId);
   }
   @Tags("OrdersService")
   @OperationId("Create")
   @Security("Bearer", ["AuthService"])
   @Post("create")
-  public async create(@Body() request: IOrderCreateRequest): Promise<{}> {
-    await ordersServices.create(request);
+  public async create(
+    @Body() request: IOrderForCreate,
+    @Request() { user }: IAuthRequest
+  ): Promise<{}> {
+    await createOrder(user.companyId, request);
     return {};
   }
   @Tags("OrdersService")
   @OperationId("Update")
   @Security("Bearer", ["AuthService"])
   @Post("update")
-  public async update(@Body() request: IOrderCreateRequest): Promise<{}> {
-    await ordersServices.update(request);
+  public async update(
+    @Body() orderForUpdate: IOrderForUpdate,
+    @Request() { user }: IAuthRequest
+  ): Promise<{}> {
+    await updateOrder(orderForUpdate, user.companyId);
     return {};
   }
   @Tags("OrdersService")
-  @OperationId("Remove")
+  @OperationId("Archive")
   @Security("Bearer", ["AuthService"])
-  @Post("remove")
-  public async remove(@Body() request: { id: number }): Promise<{}> {
-    return await ordersServices.remove(request);
-  }
-  @Tags("OrdersService")
-  @OperationId("OrerPositionStart")
-  @Security("Bearer", ["AuthService"])
-  @Post("order-position-start")
-  public async orderPositionStart(@Body() request: { orderPositionId: number }): Promise<void> {
-    return await ordersServices.orderPositionStart(request.orderPositionId);
-  }
-  @Tags("OrdersService")
-  @OperationId("OrerPositionReady")
-  @Security("Bearer", ["AuthService"])
-  @Post("order-position-ready")
-  public async orderPositionReady(@Body() request: { orderPositionId: number }): Promise<void> {
-    return await ordersServices.orderPositionReady(request.orderPositionId);
-  }
-  @Tags("OrdersService")
-  @OperationId("OrerPositionGiven")
-  @Security("Bearer", ["AuthService"])
-  @Post("order-position-given")
-  public async orderPositionGiven(@Body() request: { orderPositionId: number }): Promise<{}> {
-    return await ordersServices.orderPositionGiven(request.orderPositionId);
-  }
-  @Tags("OrdersService")
-  @OperationId("OrerPositionRestart")
-  @Security("Bearer", ["AuthService"])
-  @Post("order-position-restart")
-  public async orderPositionRestart(@Body() request: { orderPositionId: number }): Promise<void> {
-    return await ordersServices.orderPositionRestart(request.orderPositionId);
+  @Post("archive")
+  public async archive(
+    @Body() request: { id: number },
+    @Request() { user }: IAuthRequest
+  ): Promise<{}> {
+    await archiveOrder(request.id, user.companyId);
+    return {};
   }
 
+  @Tags("OrdersService")
+  @OperationId("OrderPositionStart")
+  @Security("Bearer", ["AuthService"])
+  @Post("order-position-start")
+  public async start(
+    @Body() request: { orderPositionId: number }
+  ): Promise<{}> {
+    await orderPositionStatusChange(
+      request.orderPositionId,
+      EOrderPositionStatus.COOKING
+    );
+    return {};
+  }
+  @Tags("OrdersService")
+  @OperationId("OrderPositionReady")
+  @Security("Bearer", ["AuthService"])
+  @Post("order-position-ready")
+  public async ready(
+    @Body() request: { orderPositionId: number }
+  ): Promise<{}> {
+    await orderPositionStatusChange(
+      request.orderPositionId,
+      EOrderPositionStatus.READY
+    );
+    return {};
+  }
+  @Tags("OrdersService")
+  @OperationId("OrderPositionGiven")
+  @Security("Bearer", ["AuthService"])
+  @Post("order-position-given")
+  public async given(
+    @Body() request: { orderPositionId: number },
+    @Request() { user }: IAuthRequest
+  ): Promise<{}> {
+    await orderPositionStatusChange(
+      request.orderPositionId,
+      EOrderPositionStatus.FINISHED
+    );
+    return {};
+  }
+  @Tags("OrdersService")
+  @OperationId("OrderPositionRestart")
+  @Security("Bearer", ["AuthService"])
+  @Post("order-position-restart")
+  public async restart(
+    @Body() request: { orderPositionId: number }
+  ): Promise<{}> {
+    await orderPositionStatusChange(
+      request.orderPositionId,
+      EOrderPositionStatus.TO_DO
+    );
+    return {};
+  }
   @Tags("OrdersService")
   @OperationId("Finish")
   @Security("Bearer", ["AuthService"])
   @Post("finish")
-  public async finish(@Body() request: { id: string; discount: number }): Promise<{}> {
-    return await ordersServices.finish(request.id, request.discount);
+  public async finish(
+    @Body() request: { id: number; discount: number }
+  ): Promise<{}> {
+    await finishOrder(request.id, request.discount);
+    return {};
   }
+
   @Tags("OrdersService")
   @OperationId("GetDayReport")
   @Security("Bearer", ["AuthService"])
   @Post("get-day-report")
-  public async getDayReport(@Body() request: { date: Date }): Promise<IDayReportResponse> {
+  public async getDayReport(
+    @Body() request: { date: Date },
+    @Request() { user }: IAuthRequest
+  ): Promise<IDayReportResponse> {
     return await ordersServices.getDayReport(request.date);
   }
   @Tags("OrdersService")
@@ -88,7 +142,9 @@ export class OrdersController {
   @OperationId("GetDayPositionsStatic")
   // @Security("Bearer", ["AuthService"])
   @Post("get-day-positions-report")
-  public async getDayPositionsStatic(@Body() request: { stringDate: string }): Promise<any> {
+  public async getDayPositionsStatic(
+    @Body() request: { stringDate: string }
+  ): Promise<any> {
     return await ordersServices.getDayPositionsStatic(request.stringDate);
   }
   @Tags("OrdersService")
@@ -98,6 +154,9 @@ export class OrdersController {
   public async getPeriodPositionsStatic(
     @Body() request: { stringStartDate: string; stringEndDate: string }
   ): Promise<any> {
-    return await ordersServices.getPeriodPositionsStatic(request.stringStartDate, request.stringEndDate);
+    return await ordersServices.getPeriodPositionsStatic(
+      request.stringStartDate,
+      request.stringEndDate
+    );
   }
 }

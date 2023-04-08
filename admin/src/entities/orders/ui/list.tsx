@@ -4,7 +4,7 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 import { TableForOrderModal } from "./TableForOrderModal";
 import { OrderModal } from "./OrderModal";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { ordersModel } from "../model";
+import { EOrderStatus, ordersModel } from "../model";
 import { API_URL } from "shared/config";
 import { TableSelectWrapper, TableSetBlock } from "./syles";
 import { ButtonStyled } from "../../../app/styles";
@@ -25,8 +25,9 @@ export const OrdersList: React.FC = () => {
         return {
           ...t,
           isHaveOrders: !!ordersForTable.length,
-          countReadyOrders: ordersForTable.filter((oft) => !!oft.finishTime)
-            .length,
+          countReadyOrders: ordersForTable.filter(
+            (o) => o.status === EOrderStatus.FINISHED
+          ).length,
         };
       })
       .filter((t) => t.isHaveOrders);
