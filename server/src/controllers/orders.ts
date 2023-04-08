@@ -1,18 +1,19 @@
 import { Body, OperationId, Post, Request, Route, Security, Tags } from "tsoa";
 import {
-  IDayReportResponse,
-  IOrder,
-  IOrderForCreate,
-  IOrderForUpdate,
-} from "../interfaces/orders";
-import ordersServices from "../services/orders-services";
-import { EOrderPositionStatus, IAuthRequest } from "../enums.ts/ordersLogs";
-import { searchActiveOrdersByCompanyId } from "../services/orders/searchActiveOrdersByCompanyId";
-import { createOrder } from "../services/orders/createOrder";
-import { updateOrder } from "../services/orders/updateOrder";
-import { archiveOrder } from "../services/orders/archiveOrder";
-import { orderPositionStatusChange } from "../services/orders/orderPositionStatusChange";
-import { finishOrder } from "../services/orders/finishOrder";
+  searchActiveOrdersByCompanyId,
+  createOrder,
+  updateOrder,
+  getPaymentMethods,
+  finishOrder,
+  orderPositionStatusChange,
+  archiveOrder,
+  getDiscounts,
+} from "../services/orders";
+import { IPaymentMethod } from "../mappers/paymentMethods";
+import { IDiscount } from "../mappers/discounts";
+import { IAuthRequest } from "../mappers/common";
+import { IOrder, IOrderForCreate, IOrderForUpdate } from "../mappers/orders";
+import { EOrderPositionStatus } from "../mappers/orderPositions";
 
 @Route("orders")
 export class OrdersController {
@@ -115,48 +116,27 @@ export class OrdersController {
   @Security("Bearer", ["AuthService"])
   @Post("finish")
   public async finish(
-    @Body() request: { id: number; discount: number }
+    @Body() request: { id: number; discount: number; total: number }
   ): Promise<{}> {
-    await finishOrder(request.id, request.discount);
+    await finishOrder(request.id, request.discount, request.total);
     return {};
   }
-
   @Tags("OrdersService")
-  @OperationId("GetDayReport")
+  @OperationId("GetPaymentMethods")
   @Security("Bearer", ["AuthService"])
-  @Post("get-day-report")
-  public async getDayReport(
-    @Body() request: { date: Date },
+  @Post("get-payment-methods")
+  public async getPaymentMethods(
     @Request() { user }: IAuthRequest
-  ): Promise<IDayReportResponse> {
-    return await ordersServices.getDayReport(request.date);
+  ): Promise<IPaymentMethod[]> {
+    return await getPaymentMethods(user.companyId);
   }
   @Tags("OrdersService")
-  @OperationId("DayReport")
-  // @Security("Bearer", ["AuthService"])
-  @Post("day-report")
-  public async dayReport(@Body() request: { stringDate: string }): Promise<{}> {
-    return await ordersServices.dayReport(request.stringDate);
-  }
-  @Tags("OrdersService")
-  @OperationId("GetDayPositionsStatic")
-  // @Security("Bearer", ["AuthService"])
-  @Post("get-day-positions-report")
-  public async getDayPositionsStatic(
-    @Body() request: { stringDate: string }
-  ): Promise<any> {
-    return await ordersServices.getDayPositionsStatic(request.stringDate);
-  }
-  @Tags("OrdersService")
-  @OperationId("GetPeriodPositionsStatic")
-  // @Security("Bearer", ["AuthService"])
-  @Post("get-period-positions-report")
-  public async getPeriodPositionsStatic(
-    @Body() request: { stringStartDate: string; stringEndDate: string }
-  ): Promise<any> {
-    return await ordersServices.getPeriodPositionsStatic(
-      request.stringStartDate,
-      request.stringEndDate
-    );
+  @OperationId("GetDiscounts")
+  @Security("Bearer", ["AuthService"])
+  @Post("get-discounts")
+  public async getDiscounts(
+    @Request() { user }: IAuthRequest
+  ): Promise<IDiscount[]> {
+    return await getDiscounts(user.companyId);
   }
 }

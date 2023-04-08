@@ -279,40 +279,57 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IDayReportResponse": {
+			"IPaymentMethod": {
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
-					"time": {
+					"title": {
 						"type": "string"
 					},
-					"date": {
+					"description": {
 						"type": "string"
 					},
-					"discount": {
+					"companyId": {
 						"type": "number",
 						"format": "double"
-					},
-					"total": {
-						"type": "number",
-						"format": "double"
-					},
-					"positions": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
 					}
 				},
 				"required": [
-					"id",
-					"time",
-					"date",
-					"discount",
-					"total",
-					"positions"
+					"title",
+					"description",
+					"companyId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IDiscount": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"percent": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"companyId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"percent",
+					"title",
+					"description",
+					"companyId"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1384,6 +1401,10 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"total": {
+										"type": "number",
+										"format": "double"
+									},
 									"discount": {
 										"type": "number",
 										"format": "double"
@@ -1394,6 +1415,7 @@
 									}
 								},
 								"required": [
+									"total",
 									"discount",
 									"id"
 								],
@@ -1404,16 +1426,19 @@
 				}
 			}
 		},
-		"/orders/get-day-report": {
+		"/orders/get-payment-methods": {
 			"post": {
-				"operationId": "GetDayReport",
+				"operationId": "GetPaymentMethods",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IDayReportResponse"
+									"items": {
+										"$ref": "#/components/schemas/IPaymentMethod"
+									},
+									"type": "array"
 								}
 							}
 						}
@@ -1429,39 +1454,22 @@
 						]
 					}
 				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"date": {
-										"type": "string",
-										"format": "date-time"
-									}
-								},
-								"required": [
-									"date"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
+				"parameters": []
 			}
 		},
-		"/orders/day-report": {
+		"/orders/get-discounts": {
 			"post": {
-				"operationId": "DayReport",
+				"operationId": "GetDiscounts",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {},
-									"type": "object"
+									"items": {
+										"$ref": "#/components/schemas/IDiscount"
+									},
+									"type": "array"
 								}
 							}
 						}
@@ -1470,106 +1478,14 @@
 				"tags": [
 					"OrdersService"
 				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"stringDate": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"stringDate"
-								],
-								"type": "object"
-							}
-						}
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
 					}
-				}
-			}
-		},
-		"/orders/get-day-positions-report": {
-			"post": {
-				"operationId": "GetDayPositionsStatic",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"OrdersService"
 				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"stringDate": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"stringDate"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/orders/get-period-positions-report": {
-			"post": {
-				"operationId": "GetPeriodPositionsStatic",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"OrdersService"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"stringEndDate": {
-										"type": "string"
-									},
-									"stringStartDate": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"stringEndDate",
-									"stringStartDate"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
+				"parameters": []
 			}
 		},
 		"/positions/search": {
@@ -1719,6 +1635,54 @@
 								},
 								"required": [
 									"id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/update-daily-report": {
+			"post": {
+				"operationId": "UpdateDailyReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {},
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"ReportsService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"date": {
+										"type": "string",
+										"format": "date-time"
+									}
+								},
+								"required": [
+									"date"
 								],
 								"type": "object"
 							}

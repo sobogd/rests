@@ -1,9 +1,40 @@
-import { IOrder, TBDOOrder } from "../interfaces/orders";
-import {
-  IOrderPosition,
-  IOrderPositionDB,
-} from "../interfaces/orders-positions";
+export enum EOrderPositionStatus {
+  TO_DO = "to_do",
+  COOKING = "cooking",
+  READY = "ready",
+  FINISHED = "finished",
+  ARCHIVED = "archived",
+}
 
+export interface IOrderPositionForCreate {
+  positionId: number;
+  additional?: { id: number; count: number }[];
+  comment?: string;
+}
+
+export interface IOrderPositionForUpdate extends IOrderPositionForCreate {
+  id?: number;
+}
+
+export interface IOrderPosition {
+  id?: number;
+  orderId?: number;
+  positionId?: number;
+  additional?: string;
+  created?: string;
+  comment?: string;
+  status?: EOrderPositionStatus;
+}
+
+export interface IOrderPositionDB {
+  id?: number;
+  order_id?: number;
+  position_id?: number;
+  additional?: string;
+  created?: string;
+  comment?: string;
+  status?: EOrderPositionStatus;
+}
 export const mapOrderPositionsFromDB = (
   rows: IOrderPositionDB[]
 ): IOrderPosition[] =>

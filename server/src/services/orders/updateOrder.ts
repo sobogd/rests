@@ -1,10 +1,15 @@
-import { IOrderForUpdate } from "../../interfaces/orders";
 import pool from "../../db";
-import { mapOrdersFromDB } from "../../mappers/orders";
+import {
+  EOrderStatus,
+  IOrderForUpdate,
+  mapOrdersFromDB,
+} from "../../mappers/orders";
 import { PoolClient } from "pg";
 import { EOrderPositionLog } from "../../enums.ts/orders-positions-logs-enums";
-import { EOrderPositionStatus, EOrderStatus } from "../../enums.ts/ordersLogs";
-import { mapOrderPositionsFromDB } from "../../mappers/orderPositions";
+import {
+  EOrderPositionStatus,
+  mapOrderPositionsFromDB,
+} from "../../mappers/orderPositions";
 
 export const checkCompanyIdAndOrderId = async (
   client: PoolClient,

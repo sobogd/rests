@@ -1,10 +1,33 @@
-import { IOrder, TBDOOrder } from "../interfaces/orders";
-import {
-  IOrderPosition,
-  IOrderPositionDB,
-  IOrderWithPosition,
-  IOrderWithPositionDB,
-} from "../interfaces/orders-positions";
+import { EOrderStatus } from "./orders";
+import { EOrderPositionStatus } from "./orderPositions";
+
+export interface IOrderWithPosition {
+  orderId: number;
+  orderPositionId: number;
+  orderStatus: EOrderStatus;
+  orderPositionStatus: EOrderPositionStatus;
+  tableId: number;
+  orderComment?: string;
+  created: string;
+  additional?: string;
+  orderPositionCreated?: string;
+  orderPositionComment?: string;
+  positionId: number;
+}
+
+export interface IOrderWithPositionDB {
+  order_id: number;
+  order_position_id: number;
+  order_status: EOrderStatus;
+  order_position_status: EOrderPositionStatus;
+  table_id: number;
+  order_comment?: string;
+  created: string;
+  additional?: string;
+  order_position_created?: string;
+  order_position_comment?: string;
+  position_id: number;
+}
 
 export const mapOrderWithPositionsFromDB = (
   rows: IOrderWithPositionDB[]

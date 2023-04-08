@@ -1,7 +1,7 @@
-import { IOrder } from "../../interfaces/orders";
 import pool from "../../db";
-import { EOrderPositionStatus, EOrderStatus } from "../../enums.ts/ordersLogs";
 import { mapOrderWithPositionsFromDB } from "../../mappers/orderWithPositions";
+import { EOrderStatus, IOrder } from "../../mappers/orders";
+import { EOrderPositionStatus } from "../../mappers/orderPositions";
 
 export const searchActiveOrdersByCompanyId = async (
   companyId: number

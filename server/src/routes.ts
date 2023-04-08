@@ -15,6 +15,8 @@ import { OrdersController } from './controllers/orders';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { PositionsController } from './controllers/positions';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ReportsController } from './controllers/reports';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TablesController } from './controllers/tables';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './controllers/user';
@@ -138,15 +140,25 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IDayReportResponse": {
+    "IPaymentMethod": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
-            "time": {"dataType":"string","required":true},
-            "date": {"dataType":"string","required":true},
-            "discount": {"dataType":"double","required":true},
-            "total": {"dataType":"double","required":true},
-            "positions": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "id": {"dataType":"double"},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "companyId": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IDiscount": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double"},
+            "percent": {"dataType":"double","required":true},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "companyId": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
@@ -756,7 +768,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function OrdersController_finish(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"discount":{"dataType":"double","required":true},"id":{"dataType":"double","required":true}}},
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"double","required":true},"discount":{"dataType":"double","required":true},"id":{"dataType":"double","required":true}}},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -775,14 +787,13 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/orders/get-day-report',
+        app.post('/orders/get-payment-methods',
             authenticateMiddleware([{"Bearer":["AuthService"]}]),
             ...(fetchMiddlewares<RequestHandler>(OrdersController)),
-            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.getDayReport)),
+            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.getPaymentMethods)),
 
-            function OrdersController_getDayReport(request: any, response: any, next: any) {
+            function OrdersController_getPaymentMethods(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"date":{"dataType":"datetime","required":true}}},
                     undefined: {"in":"request","required":true,"dataType":"object"},
             };
 
@@ -795,20 +806,21 @@ export function RegisterRoutes(app: express.Router) {
                 const controller = new OrdersController();
 
 
-              const promise = controller.getDayReport.apply(controller, validatedArgs as any);
+              const promise = controller.getPaymentMethods.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/orders/day-report',
+        app.post('/orders/get-discounts',
+            authenticateMiddleware([{"Bearer":["AuthService"]}]),
             ...(fetchMiddlewares<RequestHandler>(OrdersController)),
-            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.dayReport)),
+            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.getDiscounts)),
 
-            function OrdersController_dayReport(request: any, response: any, next: any) {
+            function OrdersController_getDiscounts(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"stringDate":{"dataType":"string","required":true}}},
+                    undefined: {"in":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -820,57 +832,7 @@ export function RegisterRoutes(app: express.Router) {
                 const controller = new OrdersController();
 
 
-              const promise = controller.dayReport.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/orders/get-day-positions-report',
-            ...(fetchMiddlewares<RequestHandler>(OrdersController)),
-            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.getDayPositionsStatic)),
-
-            function OrdersController_getDayPositionsStatic(request: any, response: any, next: any) {
-            const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"stringDate":{"dataType":"string","required":true}}},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new OrdersController();
-
-
-              const promise = controller.getDayPositionsStatic.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/orders/get-period-positions-report',
-            ...(fetchMiddlewares<RequestHandler>(OrdersController)),
-            ...(fetchMiddlewares<RequestHandler>(OrdersController.prototype.getPeriodPositionsStatic)),
-
-            function OrdersController_getPeriodPositionsStatic(request: any, response: any, next: any) {
-            const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"stringEndDate":{"dataType":"string","required":true},"stringStartDate":{"dataType":"string","required":true}}},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new OrdersController();
-
-
-              const promise = controller.getPeriodPositionsStatic.apply(controller, validatedArgs as any);
+              const promise = controller.getDiscounts.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);
@@ -974,6 +936,33 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.remove.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/reports/update-daily-report',
+            authenticateMiddleware([{"Bearer":["AuthService"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ReportsController)),
+            ...(fetchMiddlewares<RequestHandler>(ReportsController.prototype.updateDailyReport)),
+
+            function ReportsController_updateDailyReport(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"date":{"dataType":"datetime","required":true}}},
+                    undefined: {"in":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new ReportsController();
+
+
+              const promise = controller.updateDailyReport.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

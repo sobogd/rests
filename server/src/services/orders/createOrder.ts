@@ -1,9 +1,14 @@
 import pool from "../../db";
 import { EOrderPositionLog } from "../../enums.ts/orders-positions-logs-enums";
-import { EOrderPositionStatus, EOrderStatus } from "../../enums.ts/ordersLogs";
-import { mapOrdersFromDB } from "../../mappers/orders";
-import { mapOrderPositionsFromDB } from "../../mappers/orderPositions";
-import { IOrderForCreate } from "../../interfaces/orders";
+import {
+  EOrderStatus,
+  IOrderForCreate,
+  mapOrdersFromDB,
+} from "../../mappers/orders";
+import {
+  EOrderPositionStatus,
+  mapOrderPositionsFromDB,
+} from "../../mappers/orderPositions";
 
 export const createOrder = async (
   companyId: number,
@@ -12,13 +17,12 @@ export const createOrder = async (
   const client = await pool.connect();
 
   const { rows } = await client.query(
-    "INSERT INTO orders (table_id, company_id, comment, status, discount) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+    "INSERT INTO orders (table_id, company_id, comment, status) VALUES ($1, $2, $3, $4) RETURNING *",
     [
       orderForCreate.tableId,
       companyId,
       orderForCreate.comment,
       EOrderStatus.ACTIVE,
-      0,
     ]
   );
 

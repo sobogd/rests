@@ -1,6 +1,6 @@
 import pool from "../../db";
-import { EOrderStatus } from "../../enums.ts/ordersLogs";
 import { checkCompanyIdAndOrderId } from "./updateOrder";
+import { EOrderStatus } from "../../mappers/orders";
 
 export const archiveOrder = async (
   id: number,

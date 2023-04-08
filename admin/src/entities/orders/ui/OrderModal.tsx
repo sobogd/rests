@@ -23,6 +23,7 @@ import { ordersService } from "shared/api";
 import { roundFive } from "shared/utils/roundFive";
 import { EOrderStatus, ordersModel } from "../model";
 import CloseIcon from "@mui/icons-material/Close";
+import { roundOrNull } from "../../../shared/utils/round";
 
 const discounts = [0, 10];
 
@@ -68,17 +69,20 @@ export const OrderModal: React.FC = () => {
   }
 
   let summary = 0;
+  let defaultSummary = 0;
 
-  const handleFinishOrder = (id: string, discount: number) => () => {
-    dispatch(
-      ordersService.finishOrder({
-        id,
-        discount,
-      })
-    ).then(() => {
-      dispatch(ordersService.searchOrders());
-    });
-  };
+  const handleFinishOrder =
+    (id: string, discount: number, total: number) => () => {
+      dispatch(
+        ordersService.finishOrder({
+          id,
+          discount,
+          total,
+        })
+      ).then(() => {
+        dispatch(ordersService.searchOrders());
+      });
+    };
 
   const handleCloseModal = () => {
     dispatch(ordersModel.actions.closeBillModal());
@@ -116,7 +120,12 @@ export const OrderModal: React.FC = () => {
               </TextSpan>
               {!!positionsForOrder?.length &&
                 positionsForOrder?.map((e: any) => {
-                  summary = summary + Number(e.price);
+                  const price = roundOrNull(
+                    e.price,
+                    !!discountForBill ? 1 - discountForBill / 100 : 1
+                  );
+                  summary = summary + price;
+                  defaultSummary = defaultSummary + Number(e.price);
 
                   const secondary: any[] = [];
 
@@ -128,14 +137,21 @@ export const OrderModal: React.FC = () => {
                       const pos = positions.find(
                         (pi) => Number(pi.id) === Number(colAndId[1])
                       );
-                      const price = Number(pos?.price) * Number(colAndId[0]);
-                      summary = summary + price;
+                      const additionalPrice = roundOrNull(
+                        pos?.price,
+                        Number(colAndId[0]) *
+                          (discountForBill ? 1 - discountForBill / 100 : 1)
+                      );
+                      summary = summary + additionalPrice;
+                      defaultSummary =
+                        defaultSummary +
+                        Number(pos?.price) * Number(colAndId[0]);
 
                       secondary.push(
                         <Grid container spacing={1}>
                           <Grid item xs={9}>
                             <TextSpan
-                              top={!index ? 10 : 0}
+                              top={!index ? 3 : 0}
                               size={14}
                               color={grey[500]}
                             >
@@ -143,8 +159,12 @@ export const OrderModal: React.FC = () => {
                             </TextSpan>
                           </Grid>
                           <Grid item xs={3} style={{ textAlign: "right" }}>
-                            <TextSpan size={14} color={grey[500]}>
-                              {Number(pos?.price) > 0 ? pos?.price : null}
+                            <TextSpan
+                              size={14}
+                              color={grey[500]}
+                              top={!index ? 3 : 0}
+                            >
+                              {additionalPrice}
                             </TextSpan>
                           </Grid>
                         </Grid>
@@ -159,9 +179,7 @@ export const OrderModal: React.FC = () => {
                           <TextSpan>{e?.name}</TextSpan>
                         </Grid>
                         <Grid item xs={3} style={{ textAlign: "right" }}>
-                          <TextSpan>
-                            {Number(e?.price) > 0 ? e?.price : null}
-                          </TextSpan>
+                          <TextSpan>{price}</TextSpan>
                         </Grid>
                       </Grid>
                       {secondary}
@@ -199,26 +217,27 @@ export const OrderModal: React.FC = () => {
                 ))}
               </Box>
               <TextSpan size={16} top={20} bottom={10}>
-                Total: {summary} TL
+                Total: {defaultSummary}
               </TextSpan>
               {!!discountForBill && (
                 <TextSpan size={16}>
-                  Total with discount:{" "}
-                  {roundFive(summary - summary * (discountForBill / 100))} TL
+                  Total with discount:
+                  {summary}
                 </TextSpan>
               )}
             </>
           )}
         </NewModalBody>
-        {isAllPositionFinished && (
+        {isAllPositionFinished && orderForBill?.id && (
           <NewModalFooter>
             <ButtonStyled
               onClick={handleFinishOrder(
-                orderForBill?.id || "",
-                discountForBill
+                orderForBill?.id,
+                discountForBill,
+                summary
               )}
             >
-              {roundFive(summary - summary * (discountForBill / 100))} TL Paid
+              {summary} Paid
             </ButtonStyled>
           </NewModalFooter>
         )}
