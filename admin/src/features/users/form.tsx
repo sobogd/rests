@@ -134,7 +134,7 @@ export const UsersForm: React.FC = () => {
               helperText={
                 errors["name"]
                   ? errors["name"]?.message?.toString()
-                  : "Fill user title for system"
+                  : "Fill users title for system"
               }
               variant="filled"
               style={{ marginBottom: 8 }}
@@ -206,7 +206,7 @@ export const UsersForm: React.FC = () => {
             watch("newPassword") === ""
           }
         >
-          {form.formData?.id ? "Save user" : "Add user"}
+          {form.formData?.id ? "Save users" : "Add users"}
         </Button>
         {form.formData?.id && (
           <Button

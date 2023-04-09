@@ -1,6 +1,6 @@
 import { Body, OperationId, Post, Request, Route, Security, Tags } from "tsoa";
 import { searchPositions } from "../services/positions/searchPositions";
-import { IAuthRequest } from "../mappers/common";
+import { IAuthRequest } from "../types";
 import { IPosition } from "../mappers/positions";
 import { createPosition } from "../services/positions/createPosition";
 import { updatePosition } from "../services/positions/updatePosition";

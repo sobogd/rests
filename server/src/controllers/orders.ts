@@ -11,7 +11,7 @@ import {
 } from "../services/orders";
 import { IPaymentMethod } from "../mappers/paymentMethods";
 import { IDiscount } from "../mappers/discounts";
-import { IAuthRequest } from "../mappers/common";
+import { IAuthRequest } from "../types";
 import { IOrder, IOrderForCreate, IOrderForUpdate } from "../mappers/orders";
 import { EOrderPositionStatus } from "../mappers/orderPositions";
 

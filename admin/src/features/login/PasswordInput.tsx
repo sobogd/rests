@@ -17,10 +17,10 @@ import {
 
 export const PasswordInput: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { error, login } = useAppSelector((s) => s.auth.form);
+  const { error, login, companyLogin } = useAppSelector((s) => s.auth.form);
 
   const handleFinishInput = (password: string) => {
-    dispatch(authUserByLoginAndPassword({ login, password }));
+    dispatch(authUserByLoginAndPassword({ login, password, companyLogin }));
   };
 
   const handleClickBack = () => {

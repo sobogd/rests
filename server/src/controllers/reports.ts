@@ -1,5 +1,5 @@
 import { Body, OperationId, Post, Request, Route, Security, Tags } from "tsoa";
-import { IAuthRequest } from "../mappers/common";
+import { IAuthRequest } from "../types";
 import { getReport } from "../services/reports/getReport";
 
 export enum EReportType {

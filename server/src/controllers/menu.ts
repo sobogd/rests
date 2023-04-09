@@ -1,5 +1,4 @@
 import { Body, Get, OperationId, Post, Route, Security, Tags } from "tsoa";
-import categoriesRepository from "../repositories/categories-repository";
 
 export interface ErrorResponse {
   error: string;

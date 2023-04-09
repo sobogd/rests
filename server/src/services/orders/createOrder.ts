@@ -1,11 +1,11 @@
 import pool from "../../db";
-import { EOrderPositionLog } from "../../enums.ts/orders-positions-logs-enums";
 import {
   EOrderStatus,
   IOrderForCreate,
   mapOrdersFromDB,
 } from "../../mappers/orders";
 import {
+  EOrderPositionLog,
   EOrderPositionStatus,
   mapOrderPositionsFromDB,
 } from "../../mappers/orderPositions";

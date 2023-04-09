@@ -6,6 +6,13 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"ECategoryStatus": {
+				"enum": [
+					"active",
+					"archived"
+				],
+				"type": "string"
+			},
 			"ICategory": {
 				"properties": {
 					"id": {
@@ -17,19 +24,42 @@
 					},
 					"description": {
 						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/ECategoryStatus"
+					},
+					"companyId": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"name",
-					"description"
+					"name"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
+			"EUserTypes": {
+				"enum": [
+					"admin",
+					"personal",
+					"manager",
+					"kitchen"
+				],
+				"type": "string"
+			},
+			"EUserStatuses": {
+				"enum": [
+					"active",
+					"archived"
+				],
+				"type": "string"
+			},
 			"IUser": {
 				"properties": {
 					"id": {
-						"type": "string"
+						"type": "number",
+						"format": "double"
 					},
 					"name": {
 						"type": "string"
@@ -41,16 +71,32 @@
 						"type": "string"
 					},
 					"type": {
+						"$ref": "#/components/schemas/EUserTypes"
+					},
+					"companyId": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EUserStatuses"
+					},
+					"companyLogin": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"id",
 					"name",
 					"type"
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"EElementStatus": {
+				"enum": [
+					"active",
+					"archived"
+				],
+				"type": "string"
 			},
 			"IElement": {
 				"properties": {
@@ -62,10 +108,19 @@
 						"type": "string"
 					},
 					"price": {
-						"type": "string"
+						"type": "number",
+						"format": "double"
 					},
 					"priceForCount": {
-						"type": "string"
+						"type": "number",
+						"format": "double"
+					},
+					"companyId": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EElementStatus"
 					}
 				},
 				"required": [
@@ -544,6 +599,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ETableStatuses": {
+				"enum": [
+					"active",
+					"archived"
+				],
+				"type": "string"
+			},
 			"ITable": {
 				"properties": {
 					"id": {
@@ -561,6 +623,13 @@
 					},
 					"positionY": {
 						"type": "string"
+					},
+					"companyId": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/ETableStatuses"
 					}
 				},
 				"required": [
@@ -575,13 +644,14 @@
 			"AuthorizationResponse": {
 				"properties": {
 					"id": {
-						"type": "string"
+						"type": "number",
+						"format": "double"
 					},
 					"name": {
 						"type": "string"
 					},
 					"type": {
-						"type": "string"
+						"$ref": "#/components/schemas/EUserTypes"
 					},
 					"token": {
 						"type": "string"
@@ -610,6 +680,9 @@
 			},
 			"AuthorizationRequest": {
 				"properties": {
+					"companyLogin": {
+						"type": "string"
+					},
 					"login": {
 						"type": "string"
 					},
@@ -618,6 +691,7 @@
 					}
 				},
 				"required": [
+					"companyLogin",
 					"login",
 					"password"
 				],
@@ -742,7 +816,8 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ICategory"
+									"properties": {},
+									"type": "object"
 								}
 							}
 						}
@@ -780,44 +855,6 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ICategory"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"CategoriesService"
-				],
-				"security": [
-					{
-						"Bearer": [
-							"AuthService"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ICategory"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/categories/remove": {
-			"post": {
-				"operationId": "Remove",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
 									"properties": {},
 									"type": "object"
 								}
@@ -848,26 +885,16 @@
 				}
 			}
 		},
-		"/companies/changePassword": {
+		"/categories/archive": {
 			"post": {
-				"operationId": "ChangePassword",
+				"operationId": "Archive",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										},
-										"isSuccess": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"isSuccess"
-									],
+									"properties": {},
 									"type": "object"
 								}
 							}
@@ -875,7 +902,7 @@
 					}
 				},
 				"tags": [
-					"CompaniesService"
+					"CategoriesService"
 				],
 				"security": [
 					{
@@ -891,16 +918,13 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"newPassword": {
-										"type": "string"
-									},
-									"oldPassword": {
-										"type": "string"
+									"id": {
+										"type": "number",
+										"format": "double"
 									}
 								},
 								"required": [
-									"newPassword",
-									"oldPassword"
+									"id"
 								],
 								"type": "object"
 							}
@@ -1010,7 +1034,8 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IElement"
+									"properties": {},
+									"type": "object"
 								}
 							}
 						}
@@ -1048,7 +1073,8 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IElement"
+									"properties": {},
+									"type": "object"
 								}
 							}
 						}
@@ -1077,9 +1103,9 @@
 				}
 			}
 		},
-		"/elements/remove": {
+		"/elements/archive": {
 			"post": {
-				"operationId": "Remove",
+				"operationId": "Archive",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1109,7 +1135,16 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IElement"
+								"properties": {
+									"id": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"id"
+								],
+								"type": "object"
 							}
 						}
 					}
@@ -1964,7 +1999,8 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ITable"
+									"properties": {},
+									"type": "object"
 								}
 							}
 						}
@@ -2002,44 +2038,6 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ITable"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"TablesService"
-				],
-				"security": [
-					{
-						"Bearer": [
-							"AuthService"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ITable"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/tables/remove": {
-			"post": {
-				"operationId": "Remove",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
 									"properties": {},
 									"type": "object"
 								}
@@ -2070,7 +2068,55 @@
 				}
 			}
 		},
-		"/user/authorization": {
+		"/tables/archive": {
+			"post": {
+				"operationId": "Archive",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {},
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"TablesService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"id": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/authorization": {
 			"post": {
 				"operationId": "Authorization",
 				"responses": {
@@ -2106,7 +2152,7 @@
 					}
 				},
 				"tags": [
-					"UserService"
+					"UsersService"
 				],
 				"security": [],
 				"parameters": [],
@@ -2122,7 +2168,7 @@
 				}
 			}
 		},
-		"/user/whoami": {
+		"/users/whoami": {
 			"get": {
 				"operationId": "WhoAmI",
 				"responses": {
@@ -2158,7 +2204,7 @@
 					}
 				},
 				"tags": [
-					"UserService"
+					"UsersService"
 				],
 				"security": [
 					{
@@ -2170,7 +2216,7 @@
 				"parameters": []
 			}
 		},
-		"/user/get-users-for-company": {
+		"/users/get-users-for-company": {
 			"get": {
 				"operationId": "GetUsersForCompany",
 				"responses": {
@@ -2178,7 +2224,22 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IUser"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized request response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
 							}
 						}
 					},
@@ -2194,13 +2255,19 @@
 					}
 				},
 				"tags": [
-					"UserService"
+					"UsersService"
 				],
-				"security": [],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
 				"parameters": []
 			}
 		},
-		"/user/update-user-data": {
+		"/users/update-users-data": {
 			"post": {
 				"operationId": "UpdateUserData",
 				"responses": {
@@ -2236,7 +2303,7 @@
 					}
 				},
 				"tags": [
-					"UserService"
+					"UsersService"
 				],
 				"security": [
 					{
@@ -2258,7 +2325,7 @@
 				}
 			}
 		},
-		"/user/create-new-user": {
+		"/users/create-new-users": {
 			"post": {
 				"operationId": "CreateNewUser",
 				"responses": {
@@ -2294,7 +2361,7 @@
 					}
 				},
 				"tags": [
-					"UserService"
+					"UsersService"
 				],
 				"security": [
 					{
@@ -2316,7 +2383,7 @@
 				}
 			}
 		},
-		"/user/remove-user": {
+		"/users/remove-users": {
 			"post": {
 				"operationId": "RemoveUser",
 				"responses": {
@@ -2352,7 +2419,7 @@
 					}
 				},
 				"tags": [
-					"UserService"
+					"UsersService"
 				],
 				"security": [
 					{

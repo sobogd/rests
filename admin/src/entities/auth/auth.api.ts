@@ -22,16 +22,16 @@ export const getUsersByCompanyLogin = createAsyncThunk<
 
 export const authUserByLoginAndPassword = createAsyncThunk<
   IUser,
-  { login: string; password: string },
+  { login: string; password: string; companyLogin: string },
   { rejectValue: IErrorWithFields }
 >(
   "auth/authUserByLoginAndPassword",
   async (data, { rejectWithValue }) =>
-    await request(rejectWithValue, "/user/authorization", "POST", data)
+    await request(rejectWithValue, "/users/authorization", "POST", data)
 );
 
 export const whoAmI = createAsyncThunk(
   "auth/whoAmI",
   async (_, { rejectWithValue }) =>
-    await request(rejectWithValue, "/user/whoami", "GET")
+    await request(rejectWithValue, "/users/whoami", "GET")
 );

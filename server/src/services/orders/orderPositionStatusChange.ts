@@ -1,9 +1,9 @@
 import pool from "../../db";
 import {
+  EOrderPositionLog,
   EOrderPositionStatus,
   mapOrderPositionsFromDB,
 } from "../../mappers/orderPositions";
-import { EOrderPositionLog } from "../../enums.ts/orders-positions-logs-enums";
 import { EOrderStatus } from "../../mappers/orders";
 
 export const orderPositionStatusChange = async (

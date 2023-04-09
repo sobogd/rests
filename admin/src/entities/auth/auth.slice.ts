@@ -43,6 +43,9 @@ export const authSlice = createSlice({
     setPassword: (state, { payload }: PayloadAction<string>) => {
       state.form.password = payload;
     },
+    setCompanyLogin: (state, { payload }: PayloadAction<string>) => {
+      state.form.companyLogin = payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getUsersByCompanyLogin.pending, (state: TAuthState) => {

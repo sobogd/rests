@@ -5,8 +5,8 @@ import {
   mapOrdersFromDB,
 } from "../../mappers/orders";
 import { PoolClient } from "pg";
-import { EOrderPositionLog } from "../../enums.ts/orders-positions-logs-enums";
 import {
+  EOrderPositionLog,
   EOrderPositionStatus,
   mapOrderPositionsFromDB,
 } from "../../mappers/orderPositions";

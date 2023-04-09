@@ -15,7 +15,7 @@
   },
   "routes": {
     "routesDir": "src",
-    "authenticationModule": "src/services/user/authentication.ts"
+    "authenticationModule": "src/services/users/authentication.ts"
   },
   "ignore": ["**/node_modules/**"]
 }

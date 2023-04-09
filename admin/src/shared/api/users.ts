@@ -3,21 +3,21 @@ import { IUserEditForm } from "entities/users";
 import { request } from "./base";
 
 export const getUsersForCompany = createAsyncThunk(
-  "user/getUsersForCompany",
+  "users/getUsersForCompany",
   async (_r, { rejectWithValue }) =>
-    await request(rejectWithValue, "/user/get-users-for-company", "GET")
+    await request(rejectWithValue, "/users/get-users-for-company", "GET")
 );
 
 export const updateUserData = createAsyncThunk(
-  "user/updateUserData",
+  "users/updateUserData",
   async (data: IUserEditForm, { rejectWithValue }) =>
-    await request(rejectWithValue, "/user/update-user-data", "POST", data)
+    await request(rejectWithValue, "/users/update-user-data", "POST", data)
 );
 
 export const createNewUser = createAsyncThunk(
-  "user/createNewUser",
+  "users/createNewUser",
   async (data: IUserEditForm, { rejectWithValue }) =>
-    await request(rejectWithValue, "/user/create-new-user", "POST", {
+    await request(rejectWithValue, "/users/create-new-user", "POST", {
       ...data,
       password: data.newPassword,
       newPassword: undefined,
@@ -25,9 +25,9 @@ export const createNewUser = createAsyncThunk(
 );
 
 export const removeUser = createAsyncThunk(
-  "user/removeUser",
+  "users/removeUser",
   async (userId: number, { rejectWithValue }) =>
-    await request(rejectWithValue, "/user/remove-user", "POST", {
+    await request(rejectWithValue, "/users/remove-user", "POST", {
       userId,
     })
 );

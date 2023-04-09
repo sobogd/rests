@@ -10,7 +10,7 @@ export const createPosition = async (
 
   const { rows: createdPositionsDB } = await client.query(
     `
-    INSERT INTO positions (name, description, price, is_additional, sort, status) 
+    INSERT INTO positions (name, description, price, is_additional, sort, company_id, status) 
     VALUES ($1, $2, $3, $4, $5, $6, $7) 
     RETURNING *
   `,

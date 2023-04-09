@@ -7,7 +7,7 @@ import {
   TitleH1,
 } from "../../app/styles";
 import { useAppDispatch, useAppSelector } from "../../app/store";
-import { getUsersByCompanyLogin } from "../../entities/auth";
+import { authSlice, getUsersByCompanyLogin } from "../../entities/auth";
 
 export const CompanyLogin: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -15,6 +15,7 @@ export const CompanyLogin: React.FC = () => {
 
   const handleFinishInput = (login: string) => {
     dispatch(getUsersByCompanyLogin(login));
+    dispatch(authSlice.actions.setCompanyLogin(login));
   };
 
   return (
