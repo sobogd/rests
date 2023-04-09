@@ -1,521 +1,341 @@
 import {
-  Button,
+  Autocomplete,
   Checkbox,
-  FormControl,
   FormControlLabel,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
 } from "@mui/material";
 import React from "react";
-import styled from "@emotion/styled";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import {
-  AlertStyled,
-  backgroundDefault,
-  MyForm,
-  MyFormSubtitle,
+  ButtonStyled,
+  ErrorBox,
+  NewModal,
+  NewModalBody,
+  NewModalCloseButton,
+  NewModalContainer,
+  NewModalHeader,
+  TitleH1,
 } from "app/styles";
 import { useAppDispatch, useAppSelector } from "app/store";
 import {
   categoriesService,
   createPosition,
   elementsService,
-  removePosition,
   updatePosition,
 } from "shared/api";
-import {
-  IPositionAdditional,
-  IPositionCategory,
-  IPositionComposition,
-  IPositionValues,
-  positionsModel,
-} from "../model";
-import { validatePrice, validateString } from "shared/utils/validate";
-import Header from "shared/header";
-import YouSure from "shared/you-sure";
+import { IPosition, positionsModel } from "../model";
+import CloseIcon from "@mui/icons-material/Close";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import * as yup from "yup";
+import { ICategory } from "../../categories/model";
 
-const ElementField = styled.div`
-  display: flex;
-  border: 1px solid #00897b;
-  border-radius: 5px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 20px 0;
-  position: relative;
-  margin-bottom: 20px;
+type Form = {
+  name: string;
+  description?: string;
+  price: number;
+  sort: number;
+  categories: ICategory[];
+  additional: IPosition[];
+  isAdditional: boolean;
+};
 
-  .MuiFormControl-root {
-    width: 100%;
-  }
-`;
-
-const RemoveButton = styled.button`
-  background: ${backgroundDefault};
-  position: absolute;
-  top: -15px;
-  right: 20px;
-
-  .svg {
-    color: ${backgroundDefault};
-  }
-`;
+const schema = yup
+  .object({
+    name: yup.string().required("Name is required"),
+    price: yup
+      .number()
+      .required("Price is required")
+      .typeError("Price is required (only numbers)"),
+    sort: yup.number().required().typeError("Sort is required (only numbers)"),
+  })
+  .required();
 
 export const PositionsForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const {
-    form: { values, composition, categories, additional, isAdditional },
-    error,
-    isOpenYouSure,
+    openedPosition,
     items: allPositions,
-    isLoading,
+    isOpenForm,
+    error,
   } = useAppSelector((s) => s.positions);
-  const { items: elements } = useAppSelector((s) => s.elements);
   const { items: allCategories } = useAppSelector((s) => s.categories);
-  const { id, name, price, description } = values;
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm<Form>({
+    resolver: yupResolver(schema),
+    reValidateMode: "onSubmit",
+    defaultValues: {
+      sort: 500,
+      isAdditional: false,
+      name: undefined,
+      description: undefined,
+      price: undefined,
+      categories: [],
+      additional: [],
+    },
+  });
 
   React.useEffect(() => {
-    dispatch(elementsService.searchElements());
-    dispatch(categoriesService.searchCategories());
-  }, []);
+    if (!!openedPosition?.id) {
+      const additional = openedPosition.additional
+        ?.map((c) => allPositions.find((f) => f.id === c.positionId))
+        .filter((c) => !!c?.id) as IPosition[];
 
-  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(
-      positionsModel.actions.setFormValue({
-        name: e.target.name,
-        value: e.target.value,
-      })
-    );
-  };
+      const categories = openedPosition.categories
+        ?.map((c) => allCategories.find((f) => f.id === c.categoryId))
+        .filter((c) => !!c?.id) as ICategory[];
 
-  const handleSubmitForm = () => {
-    const validatedValues: {
-      [Key in keyof IPositionValues]: { value: string; error: string };
-    } = Object.keys(values).reduce((acc, key) => {
-      switch (key) {
-        // case "price":
-        //   return {
-        //     ...acc,
-        //     [key]: { value: values[key].value, error: validatePrice(values[key].value, -1, 1000) },
-        //   };
-        case "name":
-          return {
-            ...acc,
-            [key]: {
-              value: values[key].value,
-              error: validateString(values[key].value, 2, 100),
-            },
-          };
-        default:
-          return acc;
-      }
-    }, values);
+      setValue("name", openedPosition.name);
+      setValue("price", openedPosition.price);
+      setValue("description", openedPosition.description);
+      setValue("sort", openedPosition?.sort || 500);
+      setValue("isAdditional", openedPosition.isAdditional || false);
+      setValue("additional", additional || []);
+      setValue("categories", categories || []);
+    }
+  }, [openedPosition]);
 
-    const validatedComposition: {
-      [Key in keyof IPositionComposition]: { value: string; error: string };
-    }[] = composition.map((c) =>
-      Object.keys(c).reduce((acc, key) => {
-        switch (key) {
-          case "element":
-            return {
-              ...acc,
-              [key]: {
-                value: c[key].value,
-                error: validatePrice(
-                  c[key].value,
-                  Math.min(...elements.map((e) => Number(e.id))),
-                  Math.max(...elements.map((e) => Number(e.id)))
-                ),
-              },
-            };
-          case "weight":
-            return {
-              ...acc,
-              [key]: {
-                value: c[key].value,
-                error: validatePrice(c[key].value, 1, 100),
-              },
-            };
-          default:
-            return acc;
-        }
-      }, c)
-    );
-
-    const validatedCategories: {
-      [Key in keyof IPositionCategory]: { value: string; error: string };
-    }[] = categories.map((c) =>
-      Object.keys(c).reduce((acc, key) => {
-        switch (key) {
-          case "categoryId":
-            return {
-              ...acc,
-              [key]: {
-                value: c[key].value,
-                error: validatePrice(
-                  c[key].value,
-                  Math.min(...allCategories.map((e) => Number(e.id))),
-                  Math.max(...allCategories.map((e) => Number(e.id)))
-                ),
-              },
-            };
-          default:
-            return acc;
-        }
-      }, c)
-    );
-
-    const validatedAdditional: {
-      [Key in keyof IPositionAdditional]: { value: string; error: string };
-    }[] = additional.map((c) =>
-      Object.keys(c).reduce((acc, key) => {
-        switch (key) {
-          case "positionId":
-            return {
-              ...acc,
-              [key]: {
-                value: c[key].value,
-                error: validatePrice(
-                  c[key].value,
-                  Math.min(...allPositions.map((e) => Number(e.id))),
-                  Math.max(...allPositions.map((e) => Number(e.id)))
-                ),
-              },
-            };
-          default:
-            return acc;
-        }
-      }, c)
-    );
-
-    const isValid =
-      !Object.values(validatedValues).filter((f) => f.error).length &&
-      !validatedCategories.filter((f) => f.categoryId.error).length &&
-      !validatedAdditional.filter((f) => f.positionId.error).length &&
-      !validatedComposition.filter((f) => f.element.error).length &&
-      !validatedComposition.filter((f) => f.weight.error).length;
-
-    const request = {
-      id: validatedValues.id.value,
-      name: validatedValues.name.value,
-      price: validatedValues.price.value,
-      description: validatedValues.description.value,
-      composition: validatedComposition.map((c) => ({
-        element: c.element.value,
-        weight: c.weight.value,
-      })),
-      categories: validatedCategories.map((c) => ({
-        categoryId: c.categoryId.value,
-      })),
-      additional: !isAdditional
-        ? validatedAdditional.map((c) => ({
-            positionId: c.positionId.value,
-          }))
-        : [],
-      isAdditional: isAdditional,
-    };
-
-    if (isValid) {
-      if (request.id) {
-        dispatch(updatePosition(request));
-      } else {
-        dispatch(createPosition(request));
-      }
+  const onSubmit: SubmitHandler<Form> = ({
+    name,
+    description,
+    price,
+    categories,
+    additional,
+    sort,
+    isAdditional,
+  }) => {
+    console.log({
+      openedPosition,
+      a: {
+        name,
+        description,
+        price,
+        categories,
+        additional,
+        sort,
+        isAdditional,
+      },
+    });
+    if (!!openedPosition?.id) {
+      dispatch(
+        updatePosition({
+          id: openedPosition?.id,
+          name,
+          description,
+          price,
+          categories: categories?.map((c) => ({ categoryId: c.id })) || [],
+          additional: additional?.map((c) => ({ positionId: c.id })) || [],
+          sort,
+          isAdditional,
+        })
+      );
     } else {
       dispatch(
-        positionsModel.actions.setFormData({
-          values: validatedValues,
-          composition: validatedComposition,
-          categories: validatedCategories,
-          additional: validatedAdditional,
+        createPosition({
+          name,
+          description,
+          price,
+          categories: categories?.map((c) => ({ categoryId: c.id })) || [],
+          additional: additional?.map((c) => ({ positionId: c.id })) || [],
+          sort,
           isAdditional,
         })
       );
     }
   };
 
-  const handleClickEnter = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    handleSubmitForm();
+  const handleCloseModal = () => {
+    dispatch(positionsModel.actions.toggleIsOpenForm());
+    reset();
   };
 
-  const handleDeleteItem = () => {
-    dispatch(removePosition({ id: id.value }));
-  };
+  const isAdditional = watch("isAdditional");
 
   return (
-    <>
-      <Header
-        title={id.value ? "Изменение позиции меню" : "Новая позиция меню"}
-        onClickBack={() => dispatch(positionsModel.actions.toggleIsOpenForm())}
-      />
-      <YouSure
-        onClickYes={handleDeleteItem}
-        onClickNo={() => dispatch(positionsModel.actions.toggleIsOpenYouSure())}
-        isOpen={isOpenYouSure && !isLoading}
-      />
-      <MyForm onSubmit={handleClickEnter}>
-        {error ? (
-          <AlertStyled style={{ marginBottom: 20 }} severity="error">
-            {error}
-          </AlertStyled>
-        ) : null}
-        <TextField
-          inputProps={{ form: { autocomplete: "off" } }}
-          label={"Наименование"}
-          variant="outlined"
-          helperText={name.error}
-          error={!!name.error}
-          required
-          name="name"
-          value={name.value}
-          onChange={handleChangeValue}
-        />
-        <TextField
-          inputProps={{ form: { autocomplete: "off" } }}
-          label={"Описание"}
-          multiline
-          maxRows={4}
-          minRows={2}
-          variant="outlined"
-          helperText={description.error}
-          error={!!description.error}
-          required
-          name="description"
-          value={description.value}
-          onChange={handleChangeValue}
-        />
-        <TextField
-          inputProps={{ form: { autocomplete: "off" } }}
-          label={"Цена"}
-          variant="outlined"
-          helperText={price.error}
-          error={!!price.error}
-          required
-          name="price"
-          value={price.value}
-          type="number"
-          InputProps={{
-            endAdornment: <InputAdornment position="end">TL</InputAdornment>,
-          }}
-          onChange={handleChangeValue}
-        />
-        <MyFormSubtitle>Состав</MyFormSubtitle>
-        {composition.length > 0 &&
-          composition.map((c, index) => (
-            <ElementField>
-              <RemoveButton
-                onClick={() =>
-                  dispatch(positionsModel.actions.removeComposition(index))
-                }
-              >
-                <DeleteForeverIcon />
-              </RemoveButton>
-              <FormControl>
-                <InputLabel id={"element" + index + "label"}>
-                  Элемент
-                </InputLabel>
-                <Select
-                  labelId={"element" + index}
-                  id={"element" + index}
-                  value={c.element.value}
-                  name="element"
-                  error={!!c.element.error}
-                  label="Элемент"
-                  required
-                  onChange={({ target: { name, value } }) =>
-                    dispatch(
-                      positionsModel.actions.setCompositionValue({
-                        name,
-                        value,
-                        index,
-                      })
-                    )
+    <NewModal open={isOpenForm} onClose={handleCloseModal}>
+      <NewModalContainer maxWidth={500}>
+        <NewModalHeader>
+          <TitleH1 size={22}>
+            {openedPosition?.id ? "Edit" : "New"} position
+          </TitleH1>
+        </NewModalHeader>
+        <NewModalCloseButton onClick={handleCloseModal}>
+          <CloseIcon />
+        </NewModalCloseButton>
+        <NewModalBody>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  fullWidth
+                  label="Name"
+                  error={!!errors["name"]?.message}
+                  helperText={
+                    errors["name"]
+                      ? errors["name"]?.message?.toString()
+                      : "Fill position name"
                   }
-                >
-                  {elements.map((i) => (
-                    <MenuItem value={i.id}>{i.element}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TextField
-                inputProps={{ form: { autocomplete: "off" } }}
-                label={"Вес/количество"}
-                variant="outlined"
-                helperText={
-                  c.weight.error || `Например: "100" грамм муки или "1" яйцо`
-                }
-                error={!!c.weight.error}
-                required
-                name="weight"
-                value={c.weight.value}
-                type="number"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">г/шт</InputAdornment>
-                  ),
-                }}
-                onChange={({ target: { name, value } }) =>
-                  dispatch(
-                    positionsModel.actions.setCompositionValue({
-                      name,
-                      value,
-                      index,
-                    })
-                  )
-                }
+                  variant="outlined"
+                  style={{ marginBottom: 15 }}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  fullWidth
+                  label="Description"
+                  error={!!errors["description"]?.message}
+                  helperText={
+                    errors["description"]
+                      ? errors["description"]?.message?.toString()
+                      : "Fill position description"
+                  }
+                  variant="outlined"
+                  minRows={3}
+                  multiline
+                  style={{ marginBottom: 15 }}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              name="price"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  fullWidth
+                  label="Price"
+                  error={!!errors["price"]?.message}
+                  helperText={
+                    errors["price"]
+                      ? errors["price"]?.message?.toString()
+                      : "Fill position price"
+                  }
+                  variant="outlined"
+                  style={{ marginBottom: 15 }}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              name="sort"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  fullWidth
+                  label="Sorting number"
+                  error={!!errors["sort"]?.message}
+                  helperText={
+                    errors["sort"]
+                      ? errors["sort"]?.message?.toString()
+                      : "Fill position sorting value"
+                  }
+                  variant="outlined"
+                  style={{ marginBottom: 15 }}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              name="categories"
+              control={control}
+              render={({ field }) => (
+                <Autocomplete
+                  multiple
+                  {...field}
+                  options={allCategories}
+                  onChange={(e, value) => {
+                    field.onChange(value);
+                  }}
+                  getOptionLabel={(option) => option.name}
+                  isOptionEqualToValue={(option: ICategory, value: ICategory) =>
+                    option.id === value.id
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      variant="outlined"
+                      label="Categories"
+                      placeholder="Select categories"
+                      helperText={
+                        errors["categories"]
+                          ? errors["categories"]?.message?.toString()
+                          : "Bind categories for position"
+                      }
+                      style={{ marginBottom: 15, marginTop: 0 }}
+                      error={!!errors["categories"]?.message}
+                    />
+                  )}
+                />
+              )}
+            />
+            <Controller
+              name="isAdditional"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  style={{ margin: "-15px 0 10px" }}
+                  control={<Checkbox {...field} />}
+                  label="Is additional position"
+                />
+              )}
+            />
+            {!isAdditional && (
+              <Controller
+                name="additional"
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    multiple
+                    {...field}
+                    options={allPositions}
+                    onChange={(e, value) => {
+                      field.onChange(value);
+                    }}
+                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(
+                      option: IPosition,
+                      value: IPosition
+                    ) => option.id === value.id}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        variant="outlined"
+                        label="Additional positions"
+                        placeholder="Select additional positions"
+                        helperText={
+                          errors["additional"]
+                            ? errors["additional"]?.message?.toString()
+                            : "Bind additional positions for this position"
+                        }
+                        style={{ marginBottom: 15, marginTop: 0 }}
+                        error={!!errors["additional"]?.message}
+                      />
+                    )}
+                  />
+                )}
               />
-            </ElementField>
-          ))}
-        <Button
-          onClick={() => dispatch(positionsModel.actions.addComposition())}
-          variant="outlined"
-          sx={{
-            marginBottom: "20px",
-            marginTop: "-5px",
-          }}
-        >
-          Добавить элемент в состав
-        </Button>
-        <MyFormSubtitle>Категории</MyFormSubtitle>
-        {categories.length > 0 &&
-          categories.map((c, index) => (
-            <ElementField>
-              <RemoveButton
-                onClick={() =>
-                  dispatch(positionsModel.actions.removeCategory(index))
-                }
-              >
-                <DeleteForeverIcon />
-              </RemoveButton>
-              <FormControl>
-                <InputLabel id={"categoryId" + index + "label"}>
-                  Категория
-                </InputLabel>
-                <Select
-                  labelId={"categoryId" + index}
-                  id={"categoryId" + index}
-                  value={c.categoryId.value}
-                  name="categoryId"
-                  error={!!c.categoryId.error}
-                  label="Категория"
-                  required
-                  onChange={({ target: { name, value } }) =>
-                    dispatch(
-                      positionsModel.actions.setCategoryValue({
-                        name,
-                        value,
-                        index,
-                      })
-                    )
-                  }
-                >
-                  {allCategories.map((i) => (
-                    <MenuItem value={i.id}>{i.name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </ElementField>
-          ))}
-        <Button
-          onClick={() => dispatch(positionsModel.actions.addCategory())}
-          variant="outlined"
-          sx={{
-            marginBottom: "20px",
-            marginTop: "-5px",
-          }}
-        >
-          Добавить категорию для позиции
-        </Button>
-        <MyFormSubtitle>Дополнительная позиция</MyFormSubtitle>
-        <FormControl>
-          <FormControlLabel
-            style={{ marginBottom: 20 }}
-            control={
-              <Checkbox
-                checked={isAdditional}
-                style={{ paddingTop: 0, paddingBottom: 0 }}
-                onChange={() =>
-                  dispatch(positionsModel.actions.toggleIsAdditional())
-                }
-              />
-            }
-            label="Эта позиция является дополнительной"
-          />
-        </FormControl>
-        {additional.length > 0 &&
-          !isAdditional &&
-          additional.map((a, index) => (
-            <ElementField>
-              <RemoveButton
-                onClick={() =>
-                  dispatch(positionsModel.actions.removeAdditional(index))
-                }
-              >
-                <DeleteForeverIcon />
-              </RemoveButton>
-              <FormControl>
-                <InputLabel id={"positionId" + index + "label"}>
-                  Дополнительная позиция
-                </InputLabel>
-                <Select
-                  labelId={"positionId" + index}
-                  id={"positionId" + index}
-                  value={a.positionId.value}
-                  name="positionId"
-                  error={!!a.positionId.error}
-                  label="Дополнительная позиция"
-                  required
-                  onChange={({ target: { name, value } }) =>
-                    dispatch(
-                      positionsModel.actions.setAdditionalValue({
-                        name,
-                        value,
-                        index,
-                      })
-                    )
-                  }
-                >
-                  {allPositions
-                    .filter((i) => i.isAdditional)
-                    .map((i) => (
-                      <MenuItem value={i.id}>{i.name}</MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </ElementField>
-          ))}
-        {!isAdditional && (
-          <Button
-            onClick={() => dispatch(positionsModel.actions.addAdditional())}
-            variant="outlined"
-            sx={{
-              marginBottom: "20px",
-              marginTop: "-5px",
-            }}
-          >
-            Добавить дополнительную позицию
-          </Button>
-        )}
-        <Button variant="contained" onClick={handleSubmitForm}>
-          Сохранить
-        </Button>
-        {!!id.value && (
-          <Button
-            style={{ marginTop: 10 }}
-            color="error"
-            variant="outlined"
-            onClick={() =>
-              dispatch(positionsModel.actions.toggleIsOpenYouSure())
-            }
-          >
-            Удалить
-          </Button>
-        )}
-      </MyForm>
-    </>
+            )}
+            {!!error && (
+              <ErrorBox style={{ marginBottom: 25 }}>{error}</ErrorBox>
+            )}
+            <ButtonStyled type="submit">Save position</ButtonStyled>
+          </form>
+        </NewModalBody>
+      </NewModalContainer>
+    </NewModal>
   );
 };

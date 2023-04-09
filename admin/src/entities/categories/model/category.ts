@@ -4,7 +4,7 @@ import { categoriesService } from "shared/api";
 const defaultField = { value: "", error: "" };
 
 export interface ICategory {
-  id: string;
+  id: number;
   name: string;
   description: string;
 }
@@ -69,10 +69,13 @@ export const categoriesModel = createSlice({
       state.isLoading = false;
       state.error = "Error with request";
     });
-    builder.addCase(categoriesService.searchCategories.fulfilled, (state, action) => {
-      state.items = action.payload;
-      state.isLoading = false;
-    });
+    builder.addCase(
+      categoriesService.searchCategories.fulfilled,
+      (state, action) => {
+        state.items = action.payload;
+        state.isLoading = false;
+      }
+    );
     builder.addCase(categoriesService.createCategory.pending, (state) => {
       state.isLoading = true;
     });

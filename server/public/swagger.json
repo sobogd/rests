@@ -343,10 +343,11 @@
 					"name": {
 						"type": "string"
 					},
-					"description": {
-						"type": "string"
-					},
 					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
 						"type": "string"
 					},
 					"isAdditional": {
@@ -375,7 +376,8 @@
 						"items": {
 							"properties": {
 								"weight": {
-									"type": "string"
+									"type": "number",
+									"format": "double"
 								},
 								"element": {
 									"type": "number",
@@ -408,12 +410,97 @@
 				},
 				"required": [
 					"name",
-					"description",
 					"price",
 					"isAdditional",
+					"sort",
 					"categories",
-					"composition",
 					"additional"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUpdatePositionRequest": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
+						"type": "string"
+					},
+					"isAdditional": {
+						"type": "boolean"
+					},
+					"sort": {
+						"type": "number",
+						"format": "double"
+					},
+					"categories": {
+						"items": {
+							"properties": {
+								"categoryId": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"categoryId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"composition": {
+						"items": {
+							"properties": {
+								"weight": {
+									"type": "number",
+									"format": "double"
+								},
+								"element": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"weight",
+								"element"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"additional": {
+						"items": {
+							"properties": {
+								"positionId": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"positionId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"price",
+					"isAdditional",
+					"sort",
+					"categories",
+					"additional",
+					"id"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -999,26 +1086,6 @@
 				}
 			}
 		},
-		"/menu/search": {
-			"get": {
-				"operationId": "Search",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"MenuService"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
 		"/orders/search": {
 			"post": {
 				"operationId": "Search",
@@ -1528,7 +1595,8 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ICreatePositionRequest"
+									"properties": {},
+									"type": "object"
 								}
 							}
 						}
@@ -1566,44 +1634,6 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ICreatePositionRequest"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"PositionsService"
-				],
-				"security": [
-					{
-						"Bearer": [
-							"AuthService"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ICreatePositionRequest"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/positions/remove": {
-			"post": {
-				"operationId": "Remove",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
 									"properties": {},
 									"type": "object"
 								}
@@ -1627,16 +1657,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"id": {
-										"type": "number",
-										"format": "double"
-									}
-								},
-								"required": [
-									"id"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/IUpdatePositionRequest"
 							}
 						}
 					}

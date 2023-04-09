@@ -9,8 +9,6 @@ import { CompaniesController } from './controllers/companies';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ElementsController } from './controllers/elements';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { MenuController } from './controllers/menu';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OrdersController } from './controllers/orders';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { PositionsController } from './controllers/positions';
@@ -168,12 +166,28 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"dataType":"double"},
             "name": {"dataType":"string","required":true},
-            "description": {"dataType":"string","required":true},
-            "price": {"dataType":"string","required":true},
+            "price": {"dataType":"double","required":true},
+            "description": {"dataType":"string"},
             "isAdditional": {"dataType":"boolean","required":true},
-            "sort": {"dataType":"double"},
+            "sort": {"dataType":"double","required":true},
             "categories": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"categoryId":{"dataType":"double","required":true}}},"required":true},
-            "composition": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"weight":{"dataType":"string","required":true},"element":{"dataType":"double","required":true}}},"required":true},
+            "composition": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"weight":{"dataType":"double","required":true},"element":{"dataType":"double","required":true}}}},
+            "additional": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"positionId":{"dataType":"double","required":true}}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUpdatePositionRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+            "price": {"dataType":"double","required":true},
+            "description": {"dataType":"string"},
+            "isAdditional": {"dataType":"boolean","required":true},
+            "sort": {"dataType":"double","required":true},
+            "categories": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"categoryId":{"dataType":"double","required":true}}},"required":true},
+            "composition": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"weight":{"dataType":"double","required":true},"element":{"dataType":"double","required":true}}}},
             "additional": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"positionId":{"dataType":"double","required":true}}},"required":true},
         },
         "additionalProperties": false,
@@ -525,30 +539,6 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/menu/search',
-            ...(fetchMiddlewares<RequestHandler>(MenuController)),
-            ...(fetchMiddlewares<RequestHandler>(MenuController.prototype.search)),
-
-            function MenuController_search(request: any, response: any, next: any) {
-            const args = {
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new MenuController();
-
-
-              const promise = controller.search.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/orders/search',
             authenticateMiddleware([{"Bearer":["AuthService"]}]),
             ...(fetchMiddlewares<RequestHandler>(OrdersController)),
@@ -846,6 +836,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function PositionsController_search(request: any, response: any, next: any) {
             const args = {
+                    undefined: {"in":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -872,6 +863,7 @@ export function RegisterRoutes(app: express.Router) {
             function PositionsController_create(request: any, response: any, next: any) {
             const args = {
                     request: {"in":"body","name":"request","required":true,"ref":"ICreatePositionRequest"},
+                    undefined: {"in":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -897,7 +889,8 @@ export function RegisterRoutes(app: express.Router) {
 
             function PositionsController_update(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"ref":"ICreatePositionRequest"},
+                    request: {"in":"body","name":"request","required":true,"ref":"IUpdatePositionRequest"},
+                    undefined: {"in":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -910,32 +903,6 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.update.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/positions/remove',
-            authenticateMiddleware([{"Bearer":["AuthService"]}]),
-            ...(fetchMiddlewares<RequestHandler>(PositionsController)),
-            ...(fetchMiddlewares<RequestHandler>(PositionsController.prototype.remove)),
-
-            function PositionsController_remove(request: any, response: any, next: any) {
-            const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double","required":true}}},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new PositionsController();
-
-
-              const promise = controller.remove.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

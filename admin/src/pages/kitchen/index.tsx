@@ -131,7 +131,7 @@ export const Kitchen: React.FC = () => {
     let count = 0;
 
     categoryIdsByOrderPosition?.forEach((c) => {
-      if (filterValues.includes(c)) {
+      if (filterValues.includes(c.toString())) {
         count++;
       }
     });

@@ -91,7 +91,7 @@ export const AddPositionDialog: React.FC = () => {
       .filter((p) =>
         p.categories
           .map((c) => c.categoryId)
-          .includes(positionsForm.categoryId?.toString() || "")
+          .includes(positionsForm.categoryId || 0)
       )
       .sort((a, b) => (a.sort && b.sort && a.sort < b.sort ? -1 : 1));
 
@@ -126,7 +126,7 @@ export const AddPositionDialog: React.FC = () => {
 
     return additionals.map((p) => {
       const foundedAdditionalInForm = positionsForm.additional?.find(
-        (a) => a.id === p.id
+        (a) => Number(a.id) === p.id
       );
 
       return (

@@ -1,16 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { createPosition, removePosition, searchPositions, updatePosition } from "shared/api";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createPosition,
+  removePosition,
+  searchPositions,
+  updatePosition,
+} from "shared/api";
 
-export interface IPosition {
-  id: string;
+export interface IPositionConstructor {
   name: string;
-  description: string;
-  price: string;
-  composition: IPositionComposition[];
+  description?: string;
+  price: number;
+  composition?: IPositionComposition[];
   categories: IPositionCategory[];
   additional: IPositionAdditional[];
   isAdditional: boolean;
   sort?: number;
+}
+
+export interface IPosition extends IPositionConstructor {
+  id: number;
+}
+
+export interface IPositionForCreate extends IPositionConstructor {
+  id?: number;
 }
 
 export interface IPositionValues {
@@ -26,44 +38,25 @@ export interface IPositionComposition {
 }
 
 export interface IPositionCategory {
-  categoryId: string;
+  categoryId: number;
 }
 
 export interface IPositionAdditional {
-  positionId: string;
+  positionId: number;
 }
 
 export interface IPositionsState {
   items: IPosition[];
-  form: {
-    values: { [Key in keyof IPositionValues]: { value: string; error: string } };
-    composition: { [Key in keyof IPositionComposition]: { value: string; error: string } }[];
-    categories: { [Key in keyof IPositionCategory]: { value: string; error: string } }[];
-    additional: { [Key in keyof IPositionAdditional]: { value: string; error: string } }[];
-    isAdditional: boolean;
-  };
+  openedPosition?: IPosition;
   isLoading: boolean;
   isOpenForm: boolean;
   isOpenYouSure: boolean;
   error: string;
 }
 
-const defaultField = { value: "", error: "" };
-
 const initialState: IPositionsState = {
   items: [],
-  form: {
-    values: {
-      id: defaultField,
-      name: defaultField,
-      price: defaultField,
-      description: defaultField,
-    },
-    composition: [],
-    categories: [],
-    additional: [],
-    isAdditional: false,
-  },
+  openedPosition: undefined,
   isLoading: false,
   isOpenForm: false,
   isOpenYouSure: false,
@@ -75,107 +68,19 @@ export const positionsModel = createSlice({
   initialState,
   reducers: {
     toggleIsOpenForm: (state) => {
-      if (state.isOpenForm && state.form.values.id.value) {
-        state.form = initialState.form;
+      if (!!state.isOpenForm) {
+        state.openedPosition = undefined;
       }
       state.isOpenForm = !state.isOpenForm;
-      state.error = "";
-    },
-    toggleIsAdditional: (state) => {
-      state.form.isAdditional = !state.form.isAdditional;
       state.error = "";
     },
     toggleIsOpenYouSure: (state) => {
       state.isOpenYouSure = !state.isOpenYouSure;
       state.error = "";
     },
-    startEditItem: (state, { payload }) => {
-      state.form = {
-        ...state.form,
-        values: {
-          id: { value: payload.id, error: "" },
-          name: { value: payload.name, error: "" },
-          price: { value: payload.price, error: "" },
-          description: { value: payload.description, error: "" },
-        },
-        composition: payload.composition.map((c: any) => ({
-          element: { value: c.element, error: "" },
-          weight: { value: c.weight, error: "" },
-        })),
-        categories: payload.categories.map((c: any) => ({
-          categoryId: { value: c.categoryId, error: "" },
-        })),
-        additional: payload.additional.map((a: any) => ({
-          positionId: { value: a.positionId, error: "" },
-        })),
-        isAdditional: payload.isAdditional,
-      };
+    startEditItem: (state, { payload }: PayloadAction<IPosition>) => {
+      state.openedPosition = payload;
       state.isOpenForm = true;
-    },
-    setFormValue: (state, { payload: { name, value } }) => {
-      state.form.values = {
-        ...state.form.values,
-        [name]: { value, error: "" },
-      };
-      state.error = "";
-    },
-    setFormData: (state, { payload }) => {
-      state.form = payload;
-    },
-    addComposition: (state) => {
-      state.form.composition = [
-        ...state.form.composition,
-        {
-          element: defaultField,
-          weight: defaultField,
-        },
-      ];
-    },
-    removeComposition: (state, { payload }) => {
-      state.form.composition.splice(payload, 1);
-    },
-    setCompositionValue: (state, { payload: { name, value, index } }) => {
-      state.form.composition[index] = {
-        ...state.form.composition[index],
-        [name]: { value, error: "" },
-      };
-      state.error = "";
-    },
-    addCategory: (state) => {
-      state.form.categories = [
-        ...state.form.categories,
-        {
-          categoryId: defaultField,
-        },
-      ];
-    },
-    removeCategory: (state, { payload }) => {
-      state.form.categories.splice(payload, 1);
-    },
-    setCategoryValue: (state, { payload: { name, value, index } }) => {
-      state.form.categories[index] = {
-        ...state.form.categories[index],
-        [name]: { value, error: "" },
-      };
-      state.error = "";
-    },
-    addAdditional: (state) => {
-      state.form.additional = [
-        ...state.form.additional,
-        {
-          positionId: defaultField,
-        },
-      ];
-    },
-    removeAdditional: (state, { payload }) => {
-      state.form.additional.splice(payload, 1);
-    },
-    setAdditionalValue: (state, { payload: { name, value, index } }) => {
-      state.form.additional[index] = {
-        ...state.form.additional[index],
-        [name]: { value, error: "" },
-      };
-      state.error = "";
     },
   },
   extraReducers(builder) {
@@ -199,7 +104,7 @@ export const positionsModel = createSlice({
     });
     builder.addCase(createPosition.fulfilled, (state) => {
       state.isLoading = false;
-      state.form = initialState.form;
+      state.openedPosition = initialState.openedPosition;
       state.isOpenForm = false;
       state.error = "";
     });
@@ -211,9 +116,10 @@ export const positionsModel = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(updatePosition.fulfilled, (state) => {
-      state.form = initialState.form;
+      state.openedPosition = initialState.openedPosition;
       state.isOpenForm = false;
       state.isLoading = false;
+      state.error = "";
     });
     builder.addCase(removePosition.pending, (state) => {
       state.isLoading = true;
@@ -223,7 +129,7 @@ export const positionsModel = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(removePosition.fulfilled, (state) => {
-      state.form = initialState.form;
+      state.openedPosition = initialState.openedPosition;
       state.isOpenForm = false;
       state.isOpenYouSure = false;
       state.isLoading = false;

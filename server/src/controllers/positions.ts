@@ -1,9 +1,18 @@
-import { Body, OperationId, Post, Route, Security, Tags } from "tsoa";
-import { ICreatePositionRequest, IPosition } from "../interfaces/positions";
-import positionsServices from "../services/positions-services";
+import { Body, OperationId, Post, Request, Route, Security, Tags } from "tsoa";
+import { searchPositions } from "../services/positions/searchPositions";
+import { IAuthRequest } from "../mappers/common";
+import { IPosition } from "../mappers/positions";
+import { createPosition } from "../services/positions/createPosition";
+import { updatePosition } from "../services/positions/updatePosition";
 
-export interface ErrorResponse {
-  error: string;
+export interface ICreatePositionRequest extends IPosition {
+  categories: { categoryId: number }[];
+  composition?: { element: number; weight: number }[];
+  additional: { positionId: number }[];
+}
+
+export interface IUpdatePositionRequest extends ICreatePositionRequest {
+  id: number;
 }
 
 @Route("positions")
@@ -12,28 +21,38 @@ export class PositionsController {
   @OperationId("Search")
   @Security("Bearer", ["AuthService"])
   @Post("search")
-  public async search(): Promise<ICreatePositionRequest[]> {
-    return await positionsServices.search();
+  public async search(
+    @Request() { user }: IAuthRequest
+  ): Promise<ICreatePositionRequest[]> {
+    return await searchPositions(user.companyId);
   }
   @Tags("PositionsService")
   @OperationId("Create")
   @Security("Bearer", ["AuthService"])
   @Post("create")
-  public async create(@Body() request: ICreatePositionRequest): Promise<ICreatePositionRequest> {
-    return await positionsServices.create(request);
+  public async create(
+    @Body() request: ICreatePositionRequest,
+    @Request() { user }: IAuthRequest
+  ): Promise<{}> {
+    await createPosition(request, user.companyId);
+    return {};
   }
   @Tags("PositionsService")
   @OperationId("Update")
   @Security("Bearer", ["AuthService"])
   @Post("update")
-  public async update(@Body() request: ICreatePositionRequest): Promise<ICreatePositionRequest> {
-    return await positionsServices.update(request);
+  public async update(
+    @Body() request: IUpdatePositionRequest,
+    @Request() { user }: IAuthRequest
+  ): Promise<{}> {
+    await updatePosition(request, user.companyId);
+    return {};
   }
-  @Tags("PositionsService")
-  @OperationId("Remove")
-  @Security("Bearer", ["AuthService"])
-  @Post("remove")
-  public async remove(@Body() request: { id: number }): Promise<{}> {
-    return await positionsServices.remove(request);
-  }
+  // @Tags("PositionsService")
+  // @OperationId("Remove")
+  // @Security("Bearer", ["AuthService"])
+  // @Post("remove")
+  // public async remove(@Body() request: { id: number }): Promise<{}> {
+  //   return await positionsServices.remove(request);
+  // }
 }

@@ -14,23 +14,34 @@ export const CategoriesForm: React.FC = () => {
   const { id, name, description } = form;
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(categoriesModel.actions.setFormValue({ name: e.target.name, value: e.target.value }));
+    dispatch(
+      categoriesModel.actions.setFormValue({
+        name: e.target.name,
+        value: e.target.value,
+      })
+    );
   };
 
   const handleSubmitForm = () => {
-    const validatedForm: { [Key in keyof ICategory]: { value: string; error: string } } = Object.keys(
-      form
-    ).reduce((acc, key) => {
+    const validatedForm: {
+      [Key in keyof ICategory]: { value: string; error: string };
+    } = Object.keys(form).reduce((acc, key) => {
       switch (key) {
         case "name":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validateString(form[key].value, 1, 1000) },
+            [key]: {
+              value: form[key].value,
+              error: validateString(form[key].value, 1, 1000),
+            },
           };
         case "description":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validateString(form[key].value, 2, 100) },
+            [key]: {
+              value: form[key].value,
+              error: validateString(form[key].value, 2, 100),
+            },
           };
         default:
           return acc;
@@ -40,13 +51,17 @@ export const CategoriesForm: React.FC = () => {
     const isValid = !Object.values(validatedForm).filter((f) => f.error).length;
 
     const request = {
-      id: validatedForm.id.value,
+      id: Number(validatedForm.id.value),
       name: validatedForm.name.value,
       description: validatedForm.description.value,
     };
 
     if (isValid) {
-      dispatch(categoriesService[request.id ? "updateCategory" : "createCategory"](request));
+      dispatch(
+        categoriesService[request.id ? "updateCategory" : "createCategory"](
+          request
+        )
+      );
     } else {
       dispatch(categoriesModel.actions.setFormData(validatedForm));
     }
@@ -60,7 +75,7 @@ export const CategoriesForm: React.FC = () => {
   const handleDeleteItem = () => {
     dispatch(
       categoriesService.removeCategory({
-        id: id.value,
+        id: Number(id.value),
         name: name.value,
         description: description.value,
       })
@@ -75,7 +90,9 @@ export const CategoriesForm: React.FC = () => {
       />
       <YouSure
         onClickYes={handleDeleteItem}
-        onClickNo={() => dispatch(categoriesModel.actions.toggleIsOpenYouSure())}
+        onClickNo={() =>
+          dispatch(categoriesModel.actions.toggleIsOpenYouSure())
+        }
         isOpen={isOpenYouSure}
       />
       <MyForm onSubmit={handleClickEnter}>
@@ -117,7 +134,9 @@ export const CategoriesForm: React.FC = () => {
             style={{ marginTop: 10 }}
             color="error"
             variant="outlined"
-            onClick={() => dispatch(categoriesModel.actions.toggleIsOpenYouSure())}
+            onClick={() =>
+              dispatch(categoriesModel.actions.toggleIsOpenYouSure())
+            }
           >
             Удалить
           </Button>

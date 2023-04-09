@@ -29,7 +29,9 @@ export const PositionsFilling: React.FC = () => {
     return (
       !!selectedPositions?.length &&
       selectedPositions.map((p, index: number) => {
-        const positionData = positions.find((pos) => pos.id === p.positionId);
+        const positionData = positions.find(
+          (pos) => pos.id === Number(p.positionId)
+        );
 
         return (
           <Item top={10} bottom={0} paddingX={20} paddingY={10} isHaveIcons>

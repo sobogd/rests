@@ -52,8 +52,8 @@ export interface IOrderStatePositionForm {
   id?: number;
   editIndex?: number;
   isOpened?: boolean;
-  categoryId?: string;
-  positionId?: string;
+  categoryId?: number;
+  positionId?: number;
   additional?: {
     id: string;
     count: number;
@@ -230,7 +230,7 @@ export const ordersModel = createSlice({
         state.selectedPositions = [
           ...state.selectedPositions,
           {
-            positionId: positionsForm.positionId || "",
+            positionId: positionsForm.positionId,
             comment: positionsForm.comment,
             additional: positionsForm.additional,
           },
