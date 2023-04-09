@@ -178,7 +178,7 @@ export const theme = createTheme({
         },
         root: {
           "&.MuiInputLabel-shrink": {
-            color: teal[600],
+            color: grey[900],
           },
         },
       },

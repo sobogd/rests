@@ -139,8 +139,17 @@
 					"status": {
 						"type": "string"
 					},
-					"discount": {
-						"type": "string"
+					"discountId": {
+						"type": "number",
+						"format": "double"
+					},
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"paymentMethodId": {
+						"type": "number",
+						"format": "double"
 					},
 					"positions": {
 						"items": {
@@ -504,6 +513,14 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"EReportType": {
+				"enum": [
+					"DAILY",
+					"WEEKLY",
+					"MONTHLY"
+				],
+				"type": "string"
 			},
 			"ITableImageResponse": {
 				"properties": {
@@ -1664,17 +1681,63 @@
 				}
 			}
 		},
-		"/reports/update-daily-report": {
+		"/reports/get_report": {
 			"post": {
-				"operationId": "UpdateDailyReport",
+				"operationId": "GetReport",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {},
-									"type": "object"
+									"items": {
+										"properties": {
+											"totalSummary": {
+												"type": "number",
+												"format": "double"
+											},
+											"date": {
+												"type": "string"
+											},
+											"averageReceipt": {
+												"type": "number",
+												"format": "double"
+											},
+											"ordersCount": {
+												"type": "number",
+												"format": "double"
+											},
+											"summary": {
+												"items": {
+													"properties": {
+														"paymentMethodId": {
+															"type": "number",
+															"format": "double"
+														},
+														"total": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"paymentMethodId",
+														"total"
+													],
+													"type": "object"
+												},
+												"type": "array"
+											}
+										},
+										"required": [
+											"totalSummary",
+											"date",
+											"averageReceipt",
+											"ordersCount",
+											"summary"
+										],
+										"type": "object"
+									},
+									"type": "array"
 								}
 							}
 						}
@@ -1697,13 +1760,22 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"date": {
+									"type": {
+										"$ref": "#/components/schemas/EReportType"
+									},
+									"endDate": {
+										"type": "string",
+										"format": "date-time"
+									},
+									"startDate": {
 										"type": "string",
 										"format": "date-time"
 									}
 								},
 								"required": [
-									"date"
+									"type",
+									"endDate",
+									"startDate"
 								],
 								"type": "object"
 							}

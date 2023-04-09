@@ -90,7 +90,9 @@ const models: TsoaRoute.Models = {
             "created": {"dataType":"string"},
             "comment": {"dataType":"string"},
             "status": {"dataType":"string"},
-            "discount": {"dataType":"string"},
+            "discountId": {"dataType":"double"},
+            "total": {"dataType":"double"},
+            "paymentMethodId": {"dataType":"double"},
             "positions": {"dataType":"array","array":{"dataType":"refObject","ref":"IOrderPosition"}},
         },
         "additionalProperties": false,
@@ -191,6 +193,11 @@ const models: TsoaRoute.Models = {
             "additional": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"positionId":{"dataType":"double","required":true}}},"required":true},
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EReportType": {
+        "dataType": "refEnum",
+        "enums": ["DAILY","WEEKLY","MONTHLY"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ITableImageResponse": {
@@ -909,14 +916,14 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/reports/update-daily-report',
+        app.post('/reports/get_report',
             authenticateMiddleware([{"Bearer":["AuthService"]}]),
             ...(fetchMiddlewares<RequestHandler>(ReportsController)),
-            ...(fetchMiddlewares<RequestHandler>(ReportsController.prototype.updateDailyReport)),
+            ...(fetchMiddlewares<RequestHandler>(ReportsController.prototype.getReport)),
 
-            function ReportsController_updateDailyReport(request: any, response: any, next: any) {
+            function ReportsController_getReport(request: any, response: any, next: any) {
             const args = {
-                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"date":{"dataType":"datetime","required":true}}},
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"type":{"ref":"EReportType","required":true},"endDate":{"dataType":"datetime","required":true},"startDate":{"dataType":"datetime","required":true}}},
                     undefined: {"in":"request","required":true,"dataType":"object"},
             };
 
@@ -929,7 +936,7 @@ export function RegisterRoutes(app: express.Router) {
                 const controller = new ReportsController();
 
 
-              const promise = controller.updateDailyReport.apply(controller, validatedArgs as any);
+              const promise = controller.getReport.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

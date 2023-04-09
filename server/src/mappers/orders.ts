@@ -11,7 +11,9 @@ export interface IOrder {
   created?: string;
   comment?: string;
   status?: string;
-  discount?: string;
+  discountId?: number;
+  total?: number;
+  paymentMethodId?: number;
   positions?: IOrderPosition[];
 }
 
@@ -22,7 +24,9 @@ export interface IOrderDB {
   created?: string;
   comment?: string;
   status?: string;
-  discount?: string;
+  total?: number;
+  discount_id?: number;
+  payment_method_id?: number;
 }
 
 export interface IOrderForCreate {
@@ -52,7 +56,9 @@ export const mapOrdersFromDB = (rows: IOrderDB[]): IOrder[] =>
         created: row.created,
         comment: row.comment,
         status: row.status,
-        discount: row.discount,
+        total: row.total,
+        discountId: row.discount_id,
+        paymentMethodId: row.payment_method_id,
       }))
     : [];
 
@@ -65,6 +71,8 @@ export const mapOrdersToDB = (rows: IOrder[]): IOrderDB[] =>
         created: row.created,
         comment: row.comment,
         status: row.status,
-        discount: row.discount,
+        total: row.total,
+        discount_id: row.discountId,
+        payment_method_id: row.paymentMethodId,
       }))
     : [];

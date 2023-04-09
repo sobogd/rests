@@ -10,6 +10,7 @@ import { ordersModel } from "entities/orders";
 import { companiesModel } from "../../entities/companies/model";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { authSlice } from "../../entities/auth";
+import { reportsSlice } from "../../entities/reports";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     orders: ordersModel.reducer,
     companies: companiesModel.reducer,
     auth: authSlice.reducer,
+    reports: reportsSlice.reducer,
   },
 });
 

@@ -1,18 +1,44 @@
 import { Body, OperationId, Post, Request, Route, Security, Tags } from "tsoa";
 import { IAuthRequest } from "../mappers/common";
-import { updateDailyReport } from "../services/reports/updateDailyReport";
+import { getReport } from "../services/reports/getReport";
+
+export enum EReportType {
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+}
 
 @Route("reports")
 export class ReportsController {
   @Tags("ReportsService")
-  @OperationId("UpdateDailyReport")
+  @OperationId("GetReport")
   @Security("Bearer", ["AuthService"])
-  @Post("update-daily-report")
-  public async updateDailyReport(
-    @Body() request: { date: Date },
+  @Post("get_report")
+  public async getReport(
+    @Body()
+    request: {
+      startDate: Date;
+      endDate: Date;
+      type: EReportType;
+    },
     @Request() { user }: IAuthRequest
-  ): Promise<{}> {
-    await updateDailyReport(request.date, user.companyId);
-    return {};
+  ): Promise<
+    {
+      summary: {
+        total: number;
+        paymentMethodId: number;
+      }[];
+      ordersCount: number;
+      averageReceipt: number;
+      date: string;
+      totalSummary: number;
+    }[]
+  > {
+    return await getReport(
+      request.startDate,
+      request.endDate,
+      request.type,
+      user.companyId
+    );
   }
 }

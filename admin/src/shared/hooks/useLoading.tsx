@@ -1,5 +1,3 @@
-import React from "react";
-import { bool } from "yup";
 import { useAppSelector } from "../../app/store";
 
 export const useLoading = (): boolean => {
@@ -10,6 +8,7 @@ export const useLoading = (): boolean => {
   const { isLoading: isLoadingElements } = useAppSelector((s) => s.elements);
   const { isLoading: isLoadingPositions } = useAppSelector((s) => s.positions);
   const { isLoading: isLoadingCompanies } = useAppSelector((s) => s.companies);
+  const { isLoading: isLoadingReports } = useAppSelector((s) => s.reports);
   const { form: authForm } = useAppSelector((s) => s.auth);
 
   return (
@@ -20,6 +19,7 @@ export const useLoading = (): boolean => {
     isLoadingElements ||
     isLoadingPositions ||
     isLoadingCompanies ||
+    isLoadingReports ||
     authForm.isLoading
   );
 };
