@@ -1,5 +1,9 @@
 import pool from "../../db";
-import { IPosition, mapPositionsFromDB } from "../../mappers/positions";
+import {
+  EPositionStatuses,
+  IPosition,
+  mapPositionsFromDB,
+} from "../../mappers/positions";
 import { mapPositionsAdditionalFromDB } from "../../mappers/positionsAdditional";
 import { mapPositionsCategoriesFromDB } from "../../mappers/positionsCategories";
 import { mapPositionsElementsFromDB } from "../../mappers/positionsElements";
@@ -11,8 +15,8 @@ export const searchPositions = async (
   const client = await pool.connect();
 
   const { rows: positionsDB } = await client.query(
-    "SELECT * FROM positions WHERE company_id = $1",
-    [companyId]
+    "SELECT * FROM positions WHERE company_id = $1 AND status = $2",
+    [companyId, EPositionStatuses.ACTIVE]
   );
 
   const positions = mapPositionsFromDB(positionsDB);

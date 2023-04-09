@@ -163,6 +163,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EPositionStatuses": {
+        "dataType": "refEnum",
+        "enums": ["active","archived"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ICreatePositionRequest": {
         "dataType": "refObject",
         "properties": {
@@ -172,6 +177,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string"},
             "isAdditional": {"dataType":"boolean","required":true},
             "sort": {"dataType":"double","required":true},
+            "status": {"ref":"EPositionStatuses"},
             "categories": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"categoryId":{"dataType":"double","required":true}}},"required":true},
             "composition": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"weight":{"dataType":"double","required":true},"element":{"dataType":"double","required":true}}}},
             "additional": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"positionId":{"dataType":"double","required":true}}},"required":true},
@@ -188,6 +194,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string"},
             "isAdditional": {"dataType":"boolean","required":true},
             "sort": {"dataType":"double","required":true},
+            "status": {"ref":"EPositionStatuses"},
             "categories": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"categoryId":{"dataType":"double","required":true}}},"required":true},
             "composition": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"weight":{"dataType":"double","required":true},"element":{"dataType":"double","required":true}}}},
             "additional": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"positionId":{"dataType":"double","required":true}}},"required":true},
@@ -910,6 +917,32 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.update.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/positions/archive',
+            authenticateMiddleware([{"Bearer":["AuthService"]}]),
+            ...(fetchMiddlewares<RequestHandler>(PositionsController)),
+            ...(fetchMiddlewares<RequestHandler>(PositionsController.prototype.archive)),
+
+            function PositionsController_archive(request: any, response: any, next: any) {
+            const args = {
+                    request: {"in":"body","name":"request","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new PositionsController();
+
+
+              const promise = controller.archive.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

@@ -1,3 +1,8 @@
+export enum EPositionStatuses {
+  ACTIVE = "active",
+  ARCHIVED = "archived",
+}
+
 export interface IPosition {
   id?: number;
   name: string;
@@ -5,6 +10,7 @@ export interface IPosition {
   description?: string;
   isAdditional: boolean;
   sort: number;
+  status?: EPositionStatuses;
 }
 
 export interface IPositionDB {
@@ -14,6 +20,7 @@ export interface IPositionDB {
   description?: string;
   is_additional: boolean;
   sort: number;
+  status?: EPositionStatuses;
 }
 
 export const mapPositionsFromDB = (rows: IPositionDB[]): IPosition[] =>
@@ -25,6 +32,7 @@ export const mapPositionsFromDB = (rows: IPositionDB[]): IPosition[] =>
         price: row.price,
         isAdditional: row.is_additional,
         sort: row.sort,
+        status: row.status,
       }))
     : [];
 
@@ -37,5 +45,6 @@ export const mapPositionsToDB = (rows: IPosition[]): IPositionDB[] =>
         price: row.price,
         is_additional: row.isAdditional,
         sort: row.sort,
+        status: row.status,
       }))
     : [];

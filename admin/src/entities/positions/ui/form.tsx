@@ -17,6 +17,7 @@ import {
 } from "app/styles";
 import { useAppDispatch, useAppSelector } from "app/store";
 import {
+  archivePosition,
   categoriesService,
   createPosition,
   elementsService,
@@ -28,6 +29,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 import * as yup from "yup";
 import { ICategory } from "../../categories/model";
+import { red } from "@mui/material/colors";
 
 type Form = {
   name: string;
@@ -81,6 +83,12 @@ export const PositionsForm: React.FC = () => {
   });
 
   React.useEffect(() => {
+    if (!isOpenForm) {
+      reset();
+    }
+  }, [isOpenForm]);
+
+  React.useEffect(() => {
     if (!!openedPosition?.id) {
       const additional = openedPosition.additional
         ?.map((c) => allPositions.find((f) => f.id === c.positionId))
@@ -109,41 +117,29 @@ export const PositionsForm: React.FC = () => {
     sort,
     isAdditional,
   }) => {
-    console.log({
-      openedPosition,
-      a: {
-        name,
-        description,
-        price,
-        categories,
-        additional,
-        sort,
-        isAdditional,
-      },
-    });
     if (!!openedPosition?.id) {
       dispatch(
         updatePosition({
           id: openedPosition?.id,
           name,
-          description,
+          description: description || undefined,
           price,
           categories: categories?.map((c) => ({ categoryId: c.id })) || [],
           additional: additional?.map((c) => ({ positionId: c.id })) || [],
-          sort,
-          isAdditional,
+          sort: sort || 500,
+          isAdditional: isAdditional || false,
         })
       );
     } else {
       dispatch(
         createPosition({
-          name,
-          description,
-          price,
+          name: name,
+          description: description || undefined,
+          price: price,
           categories: categories?.map((c) => ({ categoryId: c.id })) || [],
           additional: additional?.map((c) => ({ positionId: c.id })) || [],
-          sort,
-          isAdditional,
+          sort: sort || 500,
+          isAdditional: isAdditional || false,
         })
       );
     }
@@ -152,6 +148,13 @@ export const PositionsForm: React.FC = () => {
   const handleCloseModal = () => {
     dispatch(positionsModel.actions.toggleIsOpenForm());
     reset();
+  };
+
+  const handleRemovePosition = () => {
+    if (!!openedPosition?.id) {
+      dispatch(archivePosition(openedPosition.id));
+      reset();
+    }
   };
 
   const isAdditional = watch("isAdditional");
@@ -334,6 +337,15 @@ export const PositionsForm: React.FC = () => {
             )}
             <ButtonStyled type="submit">Save position</ButtonStyled>
           </form>
+          {!!openedPosition?.id && (
+            <ButtonStyled
+              top={15}
+              onClick={handleRemovePosition}
+              background={red[800]}
+            >
+              Remove position
+            </ButtonStyled>
+          )}
         </NewModalBody>
       </NewModalContainer>
     </NewModal>

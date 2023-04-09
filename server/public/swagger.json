@@ -343,6 +343,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"EPositionStatuses": {
+				"enum": [
+					"active",
+					"archived"
+				],
+				"type": "string"
+			},
 			"ICreatePositionRequest": {
 				"properties": {
 					"id": {
@@ -365,6 +372,9 @@
 					"sort": {
 						"type": "number",
 						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EPositionStatuses"
 					},
 					"categories": {
 						"items": {
@@ -450,6 +460,9 @@
 					"sort": {
 						"type": "number",
 						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EPositionStatuses"
 					},
 					"categories": {
 						"items": {
@@ -1675,6 +1688,54 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/IUpdatePositionRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/positions/archive": {
+			"post": {
+				"operationId": "Archive",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {},
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PositionsService"
+				],
+				"security": [
+					{
+						"Bearer": [
+							"AuthService"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"id": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"id"
+								],
+								"type": "object"
 							}
 						}
 					}

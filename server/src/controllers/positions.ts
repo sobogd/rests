@@ -4,6 +4,7 @@ import { IAuthRequest } from "../mappers/common";
 import { IPosition } from "../mappers/positions";
 import { createPosition } from "../services/positions/createPosition";
 import { updatePosition } from "../services/positions/updatePosition";
+import { archivePosition } from "../services/positions/archivePosition";
 
 export interface ICreatePositionRequest extends IPosition {
   categories: { categoryId: number }[];
@@ -48,11 +49,12 @@ export class PositionsController {
     await updatePosition(request, user.companyId);
     return {};
   }
-  // @Tags("PositionsService")
-  // @OperationId("Remove")
-  // @Security("Bearer", ["AuthService"])
-  // @Post("remove")
-  // public async remove(@Body() request: { id: number }): Promise<{}> {
-  //   return await positionsServices.remove(request);
-  // }
+  @Tags("PositionsService")
+  @OperationId("Archive")
+  @Security("Bearer", ["AuthService"])
+  @Post("archive")
+  public async archive(@Body() request: { id: number }): Promise<{}> {
+    await archivePosition(request.id);
+    return {};
+  }
 }

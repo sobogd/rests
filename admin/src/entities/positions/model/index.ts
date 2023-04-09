@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
+  archivePosition,
   createPosition,
-  removePosition,
   searchPositions,
   updatePosition,
 } from "shared/api";
@@ -103,9 +103,9 @@ export const positionsModel = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(createPosition.fulfilled, (state) => {
-      state.isLoading = false;
       state.openedPosition = initialState.openedPosition;
       state.isOpenForm = false;
+      state.isLoading = false;
       state.error = "";
     });
     builder.addCase(updatePosition.pending, (state) => {
@@ -121,18 +121,18 @@ export const positionsModel = createSlice({
       state.isLoading = false;
       state.error = "";
     });
-    builder.addCase(removePosition.pending, (state) => {
+    builder.addCase(archivePosition.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(removePosition.rejected, (state) => {
+    builder.addCase(archivePosition.rejected, (state) => {
       state.isLoading = false;
       state.error = "Error with request";
     });
-    builder.addCase(removePosition.fulfilled, (state) => {
+    builder.addCase(archivePosition.fulfilled, (state) => {
       state.openedPosition = initialState.openedPosition;
       state.isOpenForm = false;
-      state.isOpenYouSure = false;
       state.isLoading = false;
+      state.error = "";
     });
   },
 });

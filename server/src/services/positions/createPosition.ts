@@ -1,5 +1,5 @@
 import pool from "../../db";
-import { mapPositionsFromDB } from "../../mappers/positions";
+import { EPositionStatuses, mapPositionsFromDB } from "../../mappers/positions";
 import { ICreatePositionRequest } from "../../controllers/positions";
 
 export const createPosition = async (
@@ -10,8 +10,8 @@ export const createPosition = async (
 
   const { rows: createdPositionsDB } = await client.query(
     `
-    INSERT INTO positions (name, description, price, is_additional, sort) 
-    VALUES ($1, $2, $3, $4, $5, $6) 
+    INSERT INTO positions (name, description, price, is_additional, sort, status) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7) 
     RETURNING *
   `,
     [
@@ -21,6 +21,7 @@ export const createPosition = async (
       request.isAdditional || false,
       request.sort || 500,
       companyId,
+      EPositionStatuses.ACTIVE,
     ]
   );
 
