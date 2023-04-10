@@ -39,13 +39,9 @@ export const expressAuthentication = async (
       [payload.id, payload.companyLogin]
     );
 
-    console.log({ payload, usersDB });
-
     const user = mapUsersFromDB(usersDB)[0];
 
     await client.release();
-
-    console.log({ payload });
 
     if (
       user.id !== payload.id ||

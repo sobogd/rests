@@ -303,7 +303,7 @@ export const PositionsForm: React.FC = () => {
                   <Autocomplete
                     multiple
                     {...field}
-                    options={allPositions}
+                    options={allPositions.filter((p) => p.isAdditional)}
                     onChange={(e, value) => {
                       field.onChange(value);
                     }}

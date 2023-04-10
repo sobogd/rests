@@ -15,7 +15,7 @@ export const searchPositions = async (
   const client = await pool.connect();
 
   const { rows: positionsDB } = await client.query(
-    "SELECT * FROM positions WHERE company_id = $1 AND status = $2",
+    "SELECT * FROM positions WHERE company_id = $1 AND status = $2 ORDER BY is_additional asc, sort asc",
     [companyId, EPositionStatuses.ACTIVE]
   );
 

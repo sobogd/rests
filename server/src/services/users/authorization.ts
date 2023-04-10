@@ -28,8 +28,6 @@ const authorization = async (
   );
   const user = mapUsersFromDB(usersDB)[0];
 
-  console.log({ request, usersDB });
-
   await client.release();
 
   if (!user || !user.id || !user.password) {
