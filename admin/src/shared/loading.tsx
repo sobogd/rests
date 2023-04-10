@@ -1,7 +1,7 @@
 import { CircularProgress } from "@mui/material";
 import React from "react";
 import styled from "@emotion/styled";
-import { backgroundDefault } from "../app/styles";
+import { backgroundDefault, primaryColor } from "../app/styles";
 
 export const LoadingContainer = styled.div<{ isLoading: boolean }>`
   position: fixed;
@@ -18,7 +18,7 @@ export const LoadingContainer = styled.div<{ isLoading: boolean }>`
   opacity: ${({ isLoading }) => (isLoading ? "1" : "0")};
 
   svg {
-    color: #661fe7;
+    color: ${primaryColor};
   }
 `;
 

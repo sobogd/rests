@@ -6,7 +6,7 @@ export const backgroundDefault = "#f9f7ff";
 export const textDefaultColor = grey[900];
 export const textDefaultWhiteColor = grey[50];
 export const primaryColor = "#661fe7";
-export const secondaryColor = "#07facb";
+export const secondaryColor = "#e61fe7";
 
 export const theme = createTheme({
   components: {

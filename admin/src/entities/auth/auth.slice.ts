@@ -7,6 +7,7 @@ import {
   getUsersByCompanyLogin,
   whoAmI,
 } from "./auth.api";
+import { boolean } from "yup";
 
 const initialState: TAuthState = {
   form: {
@@ -17,6 +18,9 @@ const initialState: TAuthState = {
     users: [],
     step: ELoginSteps.LOGIN,
     error: "",
+  },
+  registration: {
+    isOpenForm: false,
   },
   user: undefined,
 };
@@ -45,6 +49,9 @@ export const authSlice = createSlice({
     },
     setCompanyLogin: (state, { payload }: PayloadAction<string>) => {
       state.form.companyLogin = payload;
+    },
+    toggleIsOpenRegistration: (state) => {
+      state.registration.isOpenForm = !state.registration.isOpenForm;
     },
   },
   extraReducers: (builder) => {

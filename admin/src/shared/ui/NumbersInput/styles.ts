@@ -1,5 +1,6 @@
 import { styled } from "@mui/material";
 import { ENumbersButtonType } from "./enums";
+import { primaryColor, secondaryColor } from "../../../app/styles";
 
 export const NumbersInputedButton = styled("span")`
   height: 50px;
@@ -24,25 +25,25 @@ export const NumbersInputButton = styled("button")<{
   margin: 5px;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: 2px 2px 7px -3px #661fe7;
-  background: #661fe7;
+  box-shadow: 2px 2px 7px -3px ${primaryColor};
+  background: ${primaryColor};
   font-weight: 500;
   background: ${({ buttonType }) => {
     switch (buttonType) {
       case ENumbersButtonType.CLEAR_ALL:
-        return "#07facb";
+        return secondaryColor;
       case ENumbersButtonType.CLEAR_ONE:
-        return "#07facb";
+        return secondaryColor;
       default:
-        return "#661fe7";
+        return primaryColor;
     }
   }};
   color: ${({ buttonType }) => {
     switch (buttonType) {
       case ENumbersButtonType.CLEAR_ALL:
-        return "black";
+        return "white";
       case ENumbersButtonType.CLEAR_ONE:
-        return "black";
+        return "white";
       default:
         return "white";
     }
@@ -52,11 +53,11 @@ export const NumbersInputButton = styled("button")<{
     background: ${({ buttonType }) => {
       switch (buttonType) {
         case ENumbersButtonType.CLEAR_ALL:
-          return "#661fe7";
+          return primaryColor;
         case ENumbersButtonType.CLEAR_ONE:
-          return "#661fe7";
+          return primaryColor;
         default:
-          return "#07facb";
+          return secondaryColor;
       }
     }};
     color: ${({ buttonType }) => {

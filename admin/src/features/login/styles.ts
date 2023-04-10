@@ -1,11 +1,12 @@
 import { styled } from "@mui/material";
+import { primaryColor, secondaryColor } from "../../app/styles";
 
 export const LoginBackIconButton = styled("button")`
   cursor: pointer;
   position: absolute;
   top: -20px;
   left: -20px;
-  background: #07facb;
+  background: ${secondaryColor};
   height: 40px;
   width: 40px;
   border-radius: 20px;
@@ -16,7 +17,7 @@ export const LoginBackIconButton = styled("button")`
   }
 
   :hover {
-    background: #661fe7;
+    background: ${primaryColor};
 
     svg {
       color: white;

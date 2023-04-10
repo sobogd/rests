@@ -11,6 +11,9 @@ export type TAuthState = {
     isLoading: boolean;
     error: string;
   };
+  registration: {
+    isOpenForm: boolean;
+  };
   user?: IUser;
 };
 

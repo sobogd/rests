@@ -11,6 +11,7 @@ import {
 import {
   backgroundDefault,
   primaryColor,
+  secondaryColor,
   textDefaultColor,
   textDefaultWhiteColor,
 } from "./theme";
@@ -169,6 +170,28 @@ export const TextSpan = styled.span<{
   color: ${(p) => p.color || "inherit"};
 `;
 
+export const TextLink = styled.a<{
+  size?: number;
+  top?: number;
+  bottom?: number;
+  color?: string;
+}>`
+  font-size: ${(p) => p.size || 14}px;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  margin-top: ${(p) => p.top || 0}px;
+  margin-bottom: ${(p) => p.bottom || 0}px;
+  display: flex;
+  width: 100%;
+  color: ${(p) => p.color || primaryColor};
+  text-decoration: underline;
+  cursor: pointer;
+  :hover {
+    text-decoration: none;
+  }
+`;
+
 export const Item = styled.div<{
   paddingX?: number;
   paddingY?: number;
@@ -268,22 +291,18 @@ export const NewModalCloseButton = styled.button`
   position: absolute;
   top: -20px;
   right: -20px;
-  background: #07facb;
+  background: ${secondaryColor};
   height: 40px;
   width: 40px;
   border-radius: 20px;
   padding: 9px;
   svg {
-    color: black;
+    color: white;
     font-size: 22px;
   }
 
   :hover {
-    background: #661fe7;
-
-    svg {
-      color: white;
-    }
+    opacity: 0.8;
   }
 `;
 
@@ -292,21 +311,17 @@ export const NewModalBackButton = styled.button`
   position: absolute;
   top: -20px;
   left: -20px;
-  background: #07facb;
+  background: ${secondaryColor};
   height: 40px;
   width: 40px;
   border-radius: 20px;
   padding: 9px;
   svg {
-    color: black;
+    color: white;
     font-size: 22px;
   }
 
   :hover {
-    background: #661fe7;
-
-    svg {
-      color: white;
-    }
+    opacity: 0.8;
   }
 `;
