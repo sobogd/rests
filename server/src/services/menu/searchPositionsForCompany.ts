@@ -12,7 +12,7 @@ export const searchPositionsForCompany = async (companyId: number) => {
         LEFT JOIN positions_categories pc ON pc.position_id = p.id 
         LEFT JOIN categories c ON c.id = pc.category_id 
         LEFT JOIN companies cc ON cc.id = p.company_id 
-        WHERE p.status = $1 AND p.company_id = $2 AND p.is_additional = false AND category_id IS NOT NULL 
+        WHERE p.status = $1 AND p.company_id = $2 AND p.is_additional = false AND pc.category_id IS NOT NULL AND p.price <> '0' AND p.price <> ''
         ORDER BY p.sort ASC
   `,
     [EPositionStatuses.ACTIVE, companyId]
