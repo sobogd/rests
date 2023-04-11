@@ -131,6 +131,47 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IMenuResponse": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"positions": {
+						"items": {
+							"properties": {
+								"price": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"id": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"price",
+								"name",
+								"id"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"positions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"EOrderPositionStatus": {
 				"enum": [
 					"to_do",
@@ -1149,6 +1190,41 @@
 						}
 					}
 				}
+			}
+		},
+		"/menu/{companyId}": {
+			"get": {
+				"operationId": "SearchForCompanyId",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IMenuResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"MenuService"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "companyId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/orders/search": {
