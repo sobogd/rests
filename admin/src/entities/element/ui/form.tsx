@@ -2,10 +2,9 @@ import { Button, InputAdornment, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { AlertStyled, MyForm } from "app/styles";
 import React from "react";
-import { elementsService } from "shared/api";
-import Header from "shared/header";
+import { elementsService } from "api";
 import YouSure from "shared/you-sure";
-import { validatePrice, validateString } from "shared/utils/validate";
+import { validatePrice, validateString } from "utils/validate";
 import { elementModel, IElement } from "../model";
 
 export const ElementsForm: React.FC = () => {
@@ -14,28 +13,42 @@ export const ElementsForm: React.FC = () => {
   const { id, element, price, priceForCount } = form;
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(elementModel.actions.setFormValue({ name: e.target.name, value: e.target.value }));
+    dispatch(
+      elementModel.actions.setFormValue({
+        name: e.target.name,
+        value: e.target.value,
+      })
+    );
   };
 
   const handleSubmitForm = () => {
-    const validatedForm: { [Key in keyof IElement]: { value: string; error: string } } = Object.keys(
-      form
-    ).reduce((acc, key) => {
+    const validatedForm: {
+      [Key in keyof IElement]: { value: string; error: string };
+    } = Object.keys(form).reduce((acc, key) => {
       switch (key) {
         case "price":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validatePrice(form[key].value, 1, 1500) },
+            [key]: {
+              value: form[key].value,
+              error: validatePrice(form[key].value, 1, 1500),
+            },
           };
         case "element":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validateString(form[key].value, 2, 100) },
+            [key]: {
+              value: form[key].value,
+              error: validateString(form[key].value, 2, 100),
+            },
           };
         case "priceForCount":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validatePrice(form[key].value, 1, 500) },
+            [key]: {
+              value: form[key].value,
+              error: validatePrice(form[key].value, 1, 500),
+            },
           };
         default:
           return acc;
@@ -52,7 +65,9 @@ export const ElementsForm: React.FC = () => {
     };
 
     if (isValid) {
-      dispatch(elementsService[request.id ? "updateElement" : "createElement"](request));
+      dispatch(
+        elementsService[request.id ? "updateElement" : "createElement"](request)
+      );
     } else {
       dispatch(elementModel.actions.setFormData(validatedForm));
     }
@@ -76,10 +91,6 @@ export const ElementsForm: React.FC = () => {
 
   return (
     <>
-      <Header
-        title={id.value ? "Редактировать элемент" : "Новый элемент"}
-        onClickBack={() => dispatch(elementModel.actions.toggleIsOpenForm())}
-      />
       <YouSure
         onClickYes={handleDeleteItem}
         onClickNo={() => dispatch(elementModel.actions.toggleIsOpenYouSure())}
@@ -112,20 +123,27 @@ export const ElementsForm: React.FC = () => {
           name="price"
           value={price.value}
           type="number"
-          InputProps={{ endAdornment: <InputAdornment position="end">лир</InputAdornment> }}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">лир</InputAdornment>,
+          }}
           onChange={handleChangeValue}
         />
         <TextField
           inputProps={{ form: { autocomplete: "off" } }}
           label={"Вес/количество в упаковке"}
           variant="outlined"
-          helperText={priceForCount.error || `Например: "1000" грамм муки или "10" штук яиц`}
+          helperText={
+            priceForCount.error ||
+            `Например: "1000" грамм муки или "10" штук яиц`
+          }
           error={!!priceForCount.error}
           required
           name="priceForCount"
           value={priceForCount.value}
           type="number"
-          InputProps={{ endAdornment: <InputAdornment position="end">г/шт</InputAdornment> }}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">г/шт</InputAdornment>,
+          }}
           onChange={handleChangeValue}
         />
         <Button variant="contained" onClick={handleSubmitForm}>

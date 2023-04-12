@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { ordersService } from "shared/api";
+import { ordersService } from "api";
 import { OrdersForm, OrdersList } from "entities/orders";
 import { WrapperScrolled } from "../../app/styles";
 

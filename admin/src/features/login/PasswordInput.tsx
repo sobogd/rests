@@ -7,13 +7,13 @@ import {
   TitleH1,
 } from "../../app/styles";
 import { LoginBackIconButton } from "./styles";
-import { NumbersInput } from "../../shared/ui";
 import { useAppDispatch, useAppSelector } from "../../app/store";
 import {
   authSlice,
   authUserByLoginAndPassword,
   ELoginSteps,
 } from "../../entities/auth";
+import NumbersInput from "../../shared/NumbersInput";
 
 export const PasswordInput: React.FC = () => {
   const dispatch = useAppDispatch();

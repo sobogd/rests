@@ -10,4 +10,5 @@ export enum EPages {
   POSITIONS = "POSITIONS",
   HOME = "HOME",
   USERS = "USERS",
+  END_OF_THE_DAY = "END_OF_THE_DAY",
 }

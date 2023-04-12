@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { tablesService } from "shared/api";
+import { tablesService } from "api";
 
 export interface ITableImage {
   filePath?: string;

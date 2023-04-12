@@ -1,9 +1,8 @@
 import { IconButton, List, ListItem, ListItemText } from "@mui/material";
 import React from "react";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
-import Header from "shared/header";
 import { categoriesModel } from "../model";
-import { categoriesService } from "shared/api";
+import { categoriesService } from "api";
 import { useAppDispatch, useAppSelector } from "app/store";
 
 export const CategoriesList: React.FC = () => {
@@ -16,10 +15,6 @@ export const CategoriesList: React.FC = () => {
 
   return (
     <>
-      <Header
-        title="Список категорий"
-        onClickAdd={() => dispatch(categoriesModel.actions.toggleIsOpenForm())}
-      />
       <List disablePadding>
         {!!items.length &&
           items.map((i) => (

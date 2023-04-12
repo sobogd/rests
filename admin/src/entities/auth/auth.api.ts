@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { request } from "../../shared/api/base";
+import { request } from "../../api/base";
 import { IUser } from "../users";
 import { IErrorWithFields } from "../../app/interfaces";
 

@@ -4,7 +4,7 @@ import {
   createPosition,
   searchPositions,
   updatePosition,
-} from "shared/api";
+} from "api";
 
 export interface IPositionConstructor {
   name: string;

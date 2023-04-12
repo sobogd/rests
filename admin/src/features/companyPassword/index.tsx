@@ -13,7 +13,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useAppDispatch, useAppSelector } from "../../app/store";
-import { changeCompanyPassword } from "../../shared/api/companies";
+import { changeCompanyPassword } from "../../api/companies";
 import YouSure from "../../shared/you-sure";
 import { companiesModel } from "../../entities/companies/model";
 

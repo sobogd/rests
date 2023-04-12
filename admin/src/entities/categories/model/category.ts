@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { categoriesService } from "shared/api";
+import { categoriesService } from "api";
 
 const defaultField = { value: "", error: "" };
 

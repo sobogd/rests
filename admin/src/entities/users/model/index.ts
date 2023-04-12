@@ -4,7 +4,7 @@ import {
   getUsersForCompany,
   removeUser,
   updateUserData,
-} from "shared/api";
+} from "api";
 import { IUser, IUsersState } from "../interfaces";
 
 const initialState: IUsersState = {
@@ -58,6 +58,9 @@ export const usersModel = createSlice({
         ...state.form,
         isOpenRemove: payload,
       };
+    },
+    toggleIsOpenModal: (state) => {
+      state.form.isOpen = !state.form.isOpen;
     },
   },
   extraReducers: (builder) => {

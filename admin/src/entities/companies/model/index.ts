@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { changeCompanyPassword } from "shared/api";
+import { changeCompanyPassword } from "api";
 
 export interface ICategoriesState {
   isLoading: boolean;

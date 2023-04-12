@@ -2,8 +2,7 @@ import { IconButton, List, ListItem, ListItemText } from "@mui/material";
 import React from "react";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { tablesService } from "shared/api";
-import Header from "shared/header";
+import { tablesService } from "api";
 import { tablesModel } from "..";
 
 export const TablesList: React.FC = () => {
@@ -16,10 +15,6 @@ export const TablesList: React.FC = () => {
 
   return (
     <>
-      <Header
-        title="Tables items"
-        onClickAdd={() => dispatch(tablesModel.actions.toggleIsOpenForm())}
-      />
       <List disablePadding>
         {!!items.length &&
           items.map((i) => (

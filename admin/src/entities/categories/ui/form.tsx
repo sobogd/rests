@@ -2,10 +2,9 @@ import { Button, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { AlertStyled, MyForm } from "app/styles";
 import React from "react";
-import { categoriesService } from "shared/api";
-import Header from "shared/header";
+import { categoriesService } from "api";
 import YouSure from "shared/you-sure";
-import { validateString } from "shared/utils/validate";
+import { validateString } from "utils/validate";
 import { categoriesModel, ICategory } from "../model";
 
 export const CategoriesForm: React.FC = () => {
@@ -84,10 +83,6 @@ export const CategoriesForm: React.FC = () => {
 
   return (
     <>
-      <Header
-        title={id.value ? "Изменение категории" : "Новая категория"}
-        onClickBack={() => dispatch(categoriesModel.actions.toggleIsOpenForm())}
-      />
       <YouSure
         onClickYes={handleDeleteItem}
         onClickNo={() =>

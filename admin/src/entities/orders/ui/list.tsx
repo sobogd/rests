@@ -5,7 +5,7 @@ import { TableForOrderModal } from "./TableForOrderModal";
 import { OrderModal } from "./OrderModal";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { EOrderStatus, ordersModel } from "../model";
-import { API_URL } from "shared/config";
+import { API_URL } from "config";
 import { TableSelectWrapper, TableSetBlock } from "./syles";
 import { ButtonStyled } from "../../../app/styles";
 

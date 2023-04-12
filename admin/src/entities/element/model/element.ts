@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { elementsService } from "shared/api";
+import { elementsService } from "api";
 
 export interface IElement {
   id: string;
@@ -21,7 +21,12 @@ const defaultField = { value: "", error: "" };
 
 const initialState: IElementState = {
   items: [],
-  form: { id: defaultField, element: defaultField, price: defaultField, priceForCount: defaultField },
+  form: {
+    id: defaultField,
+    element: defaultField,
+    price: defaultField,
+    priceForCount: defaultField,
+  },
   isLoading: false,
   isOpenForm: false,
   isOpenYouSure: false,
@@ -71,10 +76,13 @@ export const elementModel = createSlice({
       state.isLoading = false;
       state.error = "Error with request";
     });
-    builder.addCase(elementsService.searchElements.fulfilled, (state, action) => {
-      state.items = action.payload;
-      state.isLoading = false;
-    });
+    builder.addCase(
+      elementsService.searchElements.fulfilled,
+      (state, action) => {
+        state.items = action.payload;
+        state.isLoading = false;
+      }
+    );
     builder.addCase(elementsService.createElement.pending, (state) => {
       state.isLoading = true;
     });

@@ -15,7 +15,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Autocomplete, TextField } from "@mui/material";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 import * as yup from "yup";
-import { currencies, languages, timezones } from "../../shared/utils/timezones";
+import { currencies, languages, timezones } from "../../utils/timezones";
 
 interface Form {
   email: string;

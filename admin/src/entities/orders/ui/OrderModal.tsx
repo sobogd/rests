@@ -19,11 +19,11 @@ import {
   TitleH1,
 } from "app/styles";
 import React from "react";
-import { ordersService } from "shared/api";
-import { roundFive } from "shared/utils/roundFive";
+import { ordersService } from "api";
+import { roundFive } from "utils/roundFive";
 import { EOrderStatus, ordersModel } from "../model";
 import CloseIcon from "@mui/icons-material/Close";
-import { roundOrNull } from "../../../shared/utils/round";
+import { roundOrNull } from "../../../utils/round";
 
 const discounts = [0, 10];
 

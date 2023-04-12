@@ -4,7 +4,7 @@ import { grey, teal } from "@mui/material/colors";
 import { Box, Button, Chip, Divider, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { ordersService } from "shared/api";
+import { ordersService } from "api";
 import {
   backgroundDefault,
   ButtonStyled,
@@ -20,7 +20,7 @@ import {
   KitchenTableBlockBody,
   KitchenTableBlockHeader,
 } from "./styles";
-import { getTimeInSeconds } from "../../shared/utils/timeInFormat";
+import { getTimeInSeconds } from "../../utils/timeInFormat";
 import { TimeDifference } from "./timeDifference";
 
 export enum EOrderPositionStatuses {

@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ITable } from "entities/tables/model";
-import { ordersService } from "shared/api";
+import { ordersService } from "api";
 import { EOrderPositionStatuses } from "../../../pages";
+import { archiveOrder } from "../../../api/orders";
 
 export enum EOrderSteps {
   TABLE = "table",
@@ -352,7 +353,28 @@ export const ordersModel = createSlice({
       state.error = "Error with request";
     });
     builder.addCase(ordersService.updateOrder.fulfilled, (state) => {
-      console.log(111);
+      state.isLoading = initialState.isLoading;
+      state.isOpenForm = initialState.isOpenForm;
+      state.isOpenYouSure = initialState.isOpenYouSure;
+      state.error = initialState.error;
+      state.activeStep = initialState.activeStep;
+      state.orderId = initialState.orderId;
+      state.selectedPositions = initialState.selectedPositions;
+      state.selectedTable = initialState.selectedTable;
+      state.positionsForm = initialState.positionsForm;
+      state.comment = initialState.comment;
+      state.orderForBill = undefined;
+      state.discountForBill = 0;
+      state.tableForModal = undefined;
+    });
+    builder.addCase(ordersService.archiveOrder.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(ordersService.archiveOrder.rejected, (state) => {
+      state.isLoading = false;
+      state.error = "Error with request";
+    });
+    builder.addCase(ordersService.archiveOrder.fulfilled, (state) => {
       state.isLoading = initialState.isLoading;
       state.isOpenForm = initialState.isOpenForm;
       state.isOpenYouSure = initialState.isOpenYouSure;

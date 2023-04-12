@@ -1,8 +1,8 @@
 import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store";
 import React from "react";
-import { tablesService } from "shared/api";
-import { API_URL } from "shared/config";
+import { tablesService } from "api";
+import { API_URL } from "config";
 import { CompanyPassword } from "../../features/companyPassword";
 
 export const Account: React.FC = () => {

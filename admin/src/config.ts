@@ -1,0 +1,1 @@
+export const API_URL = `${import.meta.env.VITE_REACT_APP_API_PROTOCOL}://${import.meta.env.VITE_REACT_APP_API_IP}:${import.meta.env.VITE_REACT_APP_API_PORT}`;

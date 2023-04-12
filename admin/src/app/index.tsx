@@ -1,18 +1,14 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "./store";
 import { Route, Routes } from "react-router-dom";
-import { HeaderBar } from "../widgets";
 import Loading from "../shared/loading";
 import { CLinks, CPageComponents, CPages } from "./consts";
 import { BodyContainer, Wrapper } from "./styles";
 import { CssBaseline } from "@mui/material";
-import {
-  categoriesService,
-  searchPositions,
-  tablesService,
-} from "../shared/api";
-import { useLoading } from "../shared/hooks/useLoading";
-import { useAuthorization } from "../shared/hooks/useAuthorization";
+import { categoriesService, searchPositions, tablesService } from "../api";
+import { useLoading } from "../hooks/useLoading";
+import { useAuthorization } from "../hooks/useAuthorization";
+import { HeaderBar } from "../shared/HeaderBar";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();

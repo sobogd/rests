@@ -22,7 +22,7 @@ import {
   createPosition,
   elementsService,
   updatePosition,
-} from "shared/api";
+} from "api";
 import { IPosition, positionsModel } from "../model";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";

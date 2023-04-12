@@ -23,6 +23,8 @@ import AppsIcon from "@mui/icons-material/Apps";
 import SoupKitchenIcon from "@mui/icons-material/SoupKitchen";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import GroupIcon from "@mui/icons-material/Group";
+import { EndOfTheDay } from "../../pages/endOfTheDay";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 
 export const CLinks = {
   [EPages.HOME]: "/",
@@ -36,6 +38,7 @@ export const CLinks = {
   [EPages.REPORTS]: "/reports",
   [EPages.POSITIONS]: "/positions",
   [EPages.USERS]: "/users",
+  [EPages.END_OF_THE_DAY]: "/end",
 };
 
 export const CPageNames = {
@@ -50,6 +53,7 @@ export const CPageNames = {
   [EPages.REPORTS]: "Reports",
   [EPages.POSITIONS]: "Positions",
   [EPages.USERS]: "Users",
+  [EPages.END_OF_THE_DAY]: "End of the day",
 };
 
 export const CPageComponents = {
@@ -64,6 +68,7 @@ export const CPageComponents = {
   [EPages.REPORTS]: <Day />,
   [EPages.POSITIONS]: <Positions />,
   [EPages.USERS]: <UsersPage />,
+  [EPages.END_OF_THE_DAY]: <EndOfTheDay />,
 };
 
 export const CPageIcons = {
@@ -78,6 +83,7 @@ export const CPageIcons = {
   [EPages.REPORTS]: <AssessmentIcon sx={{ color: teal[50] }} />,
   [EPages.POSITIONS]: <MenuBookIcon sx={{ color: teal[50] }} />,
   [EPages.USERS]: <GroupIcon sx={{ color: teal[50] }} />,
+  [EPages.END_OF_THE_DAY]: <ScheduleIcon sx={{ color: teal[50] }} />,
 };
 
 export const CPages: IPageActive[] = [
@@ -125,7 +131,7 @@ export const CPages: IPageActive[] = [
   },
   {
     id: EPages.KITCHEN,
-    permissions: ["kitchen", "admin", "personal"],
+    permissions: ["manager", "kitchen", "admin", "personal"],
     showInMenu: true,
     hideHeader: false,
   },
@@ -138,6 +144,12 @@ export const CPages: IPageActive[] = [
   {
     id: EPages.REPORTS,
     permissions: ["admin"],
+    showInMenu: true,
+    hideHeader: false,
+  },
+  {
+    id: EPages.END_OF_THE_DAY,
+    permissions: ["admin", "manager", "personal"],
     showInMenu: true,
     hideHeader: false,
   },

@@ -4,7 +4,7 @@ import { AddPositionDialog } from "./AddPositionDialog";
 import TableBarIcon from "@mui/icons-material/TableBar";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { ordersModel } from "../model";
-import { ordersService } from "shared/api";
+import { ordersService } from "api";
 import {
   ButtonStyled,
   ErrorBox,
@@ -17,11 +17,12 @@ import {
   TextSpan,
   TitleH1,
 } from "app/styles";
-import { API_URL } from "shared/config";
+import { API_URL } from "config";
 import { TableSelectWrapper, TableSetBlock } from "./syles";
-import { grey } from "@mui/material/colors";
+import { grey, red } from "@mui/material/colors";
 import CloseIcon from "@mui/icons-material/Close";
 import { PositionsFilling } from "./PositionsFilling";
+import { EUserType } from "../../users";
 
 export const OrdersForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -34,6 +35,7 @@ export const OrdersForm: React.FC = () => {
     isOpenForm,
   } = useAppSelector((s) => s.orders);
   const { imageSrc, items: tables } = useAppSelector((s) => s.tables);
+  const userType = useAppSelector((s) => s.auth.user?.type);
 
   const handleSendOrder = () => {
     if (orderId) {
@@ -62,6 +64,12 @@ export const OrdersForm: React.FC = () => {
           comment: comment || undefined,
         })
       );
+    }
+  };
+
+  const handleArchiveOrder = () => {
+    if (orderId) {
+      dispatch(ordersService.archiveOrder(orderId));
     }
   };
 
@@ -142,6 +150,16 @@ export const OrdersForm: React.FC = () => {
             <ErrorBox>
               For continue you need fill the table and positions
             </ErrorBox>
+          )}
+          {userType === EUserType.ADMIN && !!orderId && (
+            <ButtonStyled
+              disabled={isDisableSaveButton}
+              onClick={handleArchiveOrder}
+              bottom={15}
+              background={red[800]}
+            >
+              Archive order
+            </ButtonStyled>
           )}
         </NewModalBody>
         <NewModalFooter>

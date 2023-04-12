@@ -1,18 +1,7 @@
-import {
-  Button,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  Modal,
-} from "@mui/material";
-import { Box } from "@mui/system";
 import { useAppDispatch, useAppSelector } from "app/store";
 import {
-  backgroundDefault,
   ButtonStyled,
   Item,
-  ModalScrollable,
   NewModal,
   NewModalBody,
   NewModalCloseButton,
@@ -22,11 +11,9 @@ import {
   TitleH1,
 } from "app/styles";
 import React from "react";
-import Header from "shared/header";
 import { IOrder, ordersModel } from "../model";
 import CloseIcon from "@mui/icons-material/Close";
-import { format } from "date-fns";
-import { getTimeInFormat } from "../../../shared/utils/timeInFormat";
+import { getTimeInFormat } from "../../../utils/timeInFormat";
 
 export const TableForOrderModal: React.FC = () => {
   const dispatch = useAppDispatch();

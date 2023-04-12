@@ -2,11 +2,7 @@ import { useAppDispatch, useAppSelector } from "app/store";
 import { PositionsForm, PositionsList } from "entities/positions";
 import React from "react";
 import { WrapperScrolled } from "../../app/styles";
-import {
-  categoriesService,
-  elementsService,
-  searchPositions,
-} from "../../shared/api";
+import { categoriesService, elementsService, searchPositions } from "../../api";
 
 export const Positions: React.FC = () => {
   const dispatch = useAppDispatch();

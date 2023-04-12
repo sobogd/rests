@@ -2,8 +2,7 @@ import { IconButton, List, ListItem, ListItemText } from "@mui/material";
 import React from "react";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { elementsService } from "shared/api";
-import Header from "shared/header";
+import { elementsService } from "api";
 import { elementModel } from "../model";
 import { useLocation } from "react-router-dom";
 
@@ -18,10 +17,6 @@ export const ElementsList: React.FC = () => {
 
   return (
     <>
-      <Header
-        title="Список элементов"
-        onClickAdd={() => dispatch(elementModel.actions.toggleIsOpenForm())}
-      />
       <List disablePadding>
         {!!items.length &&
           items.map((i) => (

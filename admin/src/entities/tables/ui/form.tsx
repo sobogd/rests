@@ -3,12 +3,11 @@ import React from "react";
 import styled from "@emotion/styled";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { ITable, tablesModel } from "../model";
-import { tablesService } from "shared/api";
-import { validatePrice, validateString } from "shared/utils/validate";
-import Header from "shared/header";
+import { tablesService } from "api";
+import { validatePrice, validateString } from "utils/validate";
 import YouSure from "shared/you-sure";
 import { AlertStyled, MyForm, MyFormSubtitle } from "app/styles";
-import { API_URL } from "shared/config";
+import { API_URL } from "config";
 
 const TableSetBlock = styled.div<{ positionX: string; positionY: string }>`
   position: relative;
@@ -30,27 +29,40 @@ const TableSetBlock = styled.div<{ positionX: string; positionY: string }>`
 
 export const TablesForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { form, error, isOpenYouSure, imageSrc } = useAppSelector((s) => s.tables);
+  const { form, error, isOpenYouSure, imageSrc } = useAppSelector(
+    (s) => s.tables
+  );
   const { id, number, name, positionX, positionY } = form;
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(tablesModel.actions.setFormValue({ name: e.target.name, value: e.target.value }));
+    dispatch(
+      tablesModel.actions.setFormValue({
+        name: e.target.name,
+        value: e.target.value,
+      })
+    );
   };
 
   const handleSubmitForm = () => {
-    const validatedForm: { [Key in keyof ITable]: { value: string; error: string } } = Object.keys(
-      form
-    ).reduce((acc, key) => {
+    const validatedForm: {
+      [Key in keyof ITable]: { value: string; error: string };
+    } = Object.keys(form).reduce((acc, key) => {
       switch (key) {
         case "number":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validatePrice(form[key].value, 1, 100) },
+            [key]: {
+              value: form[key].value,
+              error: validatePrice(form[key].value, 1, 100),
+            },
           };
         case "name":
           return {
             ...acc,
-            [key]: { value: form[key].value, error: validateString(form[key].value, 2, 100) },
+            [key]: {
+              value: form[key].value,
+              error: validateString(form[key].value, 2, 100),
+            },
           };
         default:
           return acc;
@@ -68,7 +80,9 @@ export const TablesForm: React.FC = () => {
     };
 
     if (isValid) {
-      dispatch(tablesService[request.id ? "updateTable" : "createTable"](request));
+      dispatch(
+        tablesService[request.id ? "updateTable" : "createTable"](request)
+      );
     } else {
       dispatch(tablesModel.actions.setFormData(validatedForm));
     }
@@ -93,10 +107,6 @@ export const TablesForm: React.FC = () => {
 
   return (
     <>
-      <Header
-        title={id.value ? "Edit element" : "New element"}
-        onClickBack={() => dispatch(tablesModel.actions.toggleIsOpenForm())}
-      />
       <YouSure
         onClickYes={handleDeleteItem}
         onClickNo={() => dispatch(tablesModel.actions.toggleIsOpenYouSure())}
@@ -134,7 +144,10 @@ export const TablesForm: React.FC = () => {
         <MyFormSubtitle>Position on the map</MyFormSubtitle>
         <Stack spacing={1} direction="row" marginBottom={7} height={300}>
           <div>
-            <TableSetBlock positionX={positionX.value} positionY={positionY.value}>
+            <TableSetBlock
+              positionX={positionX.value}
+              positionY={positionY.value}
+            >
               <img
                 src={`${API_URL}${imageSrc}?w=248&fit=crop&auto=format`}
                 srcSet={`${API_URL}${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}

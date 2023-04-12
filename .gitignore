@@ -135,7 +135,7 @@ dist
 ### Node Patch ###
 # Serverless Webpack directories
 .webpack/
-
+**/build/*
 # Optional stylelint cache
 
 # SvelteKit build / generate output
@@ -143,5 +143,11 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 .pnpm-debug.log*
-
-lib/
+build*
+.DS_Store
+*/.DS_Store
+*.DS_Store
+.idea*
+admin/.DS_Store
+build/
+build/*

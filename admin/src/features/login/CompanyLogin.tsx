@@ -1,5 +1,5 @@
 import React from "react";
-import { NumbersInput } from "../../shared/ui";
+import NumbersInput from "../../shared/NumbersInput";
 import {
   ErrorBox,
   NewModalBody,
